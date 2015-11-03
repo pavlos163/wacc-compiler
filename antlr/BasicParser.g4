@@ -6,7 +6,7 @@ options {
 
 program: BEGIN func* stat END;
 
-func: type IDENT OPEN_PARENTHESES paramList CLOSE_PARENTHESES IS funcStat END ;
+func: type IDENT LEFT_PAR paramList RIGHT_PAR IS funcStat END ;
 
 paramList: (param (COMMA param)*)? ;
 
@@ -34,9 +34,9 @@ assignLHS: IDENT
 
 assignRHS: expr                                             
 | arrayLiter                                                 
-| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES 
+| NEWPAIR LEFT_PAR expr COMMA expr RIGHT_PAR
 | pairElem                                                   
-| CALL IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES     
+| CALL IDENT LEFT_PAR argList? RIGHT_PAR     
 ;
 
 argList: expr (COMMA expr)* ;
@@ -46,7 +46,7 @@ pairElem: FIRST expr
 ;
 
 type: baseType                   
-| type OPEN_SQUARE CLOSE_SQUARE  
+| type LEFT_SQ RIGHT_SQ  
 | pairType                       
 ;
 
@@ -56,12 +56,12 @@ baseType: INT
 | STRING        
 ;
 
-arrayType: type OPEN_SQUARE CLOSE_SQUARE;
+arrayType: type LEFT_SQ RIGHT_SQ;
 
-pairType: PAIR OPEN_PARENTHESES pairElemType COMMA pairElemType CLOSE_PARENTHESES;
+pairType: PAIR LEFT_PAR pairElemType COMMA pairElemType RIGHT_PAR;
 
 pairElemType: baseType
-| type OPEN_SQUARE CLOSE_SQUARE
+| type LEFT_SQ RIGHT_SQ
 | PAIR
 ;
 
@@ -74,19 +74,17 @@ expr: intLiter
 | arrayElem
 | unaryOper expr
 | expr binaryOper expr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES
+| LEFT_PAR expr RIGHT_PAR
 ;
 
 
-unaryOper: NOT | MINUS | LEN | ORD | CHR ;
+unaryOper: NOT | NEGATIVE | LEN | ORD | CHR ;
 
-binaryOper : MULT | DIV | MOD | PLUS | MINUS | MORETHAN | MOREEQUAL | LESSTHAN | LESSEQUAL | ISEQUAL | NOTEQUAL | AND | OR ;
+binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOTEQUAL | AND | OR ;
 
-arrayElem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE) PLUS;
+arrayElem: IDENT (LEFT_SQ expr RIGHT_SQ) PLUS;
 
-intLiter: intSign? INTEGER ;
-
-digit: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 ;
+intLiter: intSign? DIGIT+ ;
 
 intSign: PLUS | MINUS ;
 
@@ -100,11 +98,10 @@ character: ASCII | escapedChar ;
 
 escapedChar: E_ZERO | E_B | E_TAB | E_LF | E_FF | E_CR | E_DOUBLEQUOTE | E_SINGLEQUOTE | ESC_BACKSLASH;
 
-arrayLiter: OPEN_SQUARE (argList)? CLOSE_SQUARE ;
+arrayLiter: LEFT_SQ (argList)? RIGHT_SQ ;
 
 pairLiter: NULL ;
 
-comment: HASH character* END;
 
 
 
