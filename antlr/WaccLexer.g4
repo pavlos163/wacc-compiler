@@ -31,8 +31,8 @@ NEWPAIR: 'newpair';
 CALL: 'call';
 
 // Pair Element
-FST: 'fst';
-SND: 'snd';
+FIRST: 'fst';
+SECOND: 'snd';
 
 // Base Types
 INT: 'int';
@@ -80,7 +80,7 @@ fragment DIGIT: '0'..'9';
 INTEGER: ('+' | '-')? DIGIT+;
 
 // Escaped Characters
-fragment ESC: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\"' | '\\'' | '\\\\';
+fragment ESC: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\"' | '\\\'' | '\\\\';
 
 // String Literals
 STRING_LITER: '"' (ESC|.)*? '"';
