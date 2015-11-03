@@ -1,7 +1,57 @@
 lexer grammar WaccLexer;
 
+IMPORT: 'import';
+FILE: [_a-zA-z0-9]* '.wacc';
+
+SEMICOLON: ';';
+
+// Program
+BEGIN: 'begin';
+IS: 'is';
+END: 'end';
+
+// Statements
+SKIP: 'skip';
+READ: 'read';
+FREE: 'free';
+RETURN: 'return';
+EXIT: 'exit';
+PRINT: 'print';
+PRINTLN: 'println';
+IF: 'if';
+THEN: 'then';
+ELSE: 'else';
+FI: 'fi';
+WHILE: 'while';
+DO: 'do';
+DONE: 'done';
+
+// Assign RHS
+NEWPAIR: 'newpair';
+CALL: 'call';
+
+// Pair Element
+FST: 'fst';
+SND: 'snd';
+
+// Base Types
+INT: 'int';
+BOOL: 'bool';
+CHAR: 'char';
+STRING: 'string';
+PAIR: 'pair';
+
+// Brackets
+LEFT_PAR: '(';
+RIGHT_PAR: ')';
+LEFT_SQ: '[';
+RIGHT_SQ: ']';
+COMMA: ',';
+ASSIGNMENT: '=';
+
 // Unary Operators
 NOT: '!';
+NEGATIVE: '-';
 LEN: 'len';
 ORD: 'ord';
 CHR: 'chr';
@@ -20,16 +70,21 @@ EQUAL: '==';
 AND: '&&';
 OR: '||';
 
-// Brackets
-OPEN_PARENTHESES : '(' ;
-CLOSE_PARENTHESES : ')' ;
+IDENT: [_a-zA-Z][_a-zA-Z0-9]*;
 
-//numbers
-fragment DIGIT : '0'..'9' ; 
+// Numbers
+fragment DIGIT: '0'..'9';
 
-INTEGER: DIGIT+ ;
+// Integer Literals
+INTEGER: ('+' | '-')? DIGIT+;
 
+// Bool values
+TRUE: 'true';
+FALSE: 'false';
 
+// Null
+NULL: 'null';
 
-
-
+// Comment and whitespace
+COMMENT: '#' .*? '\n' -> skip;
+WHITESPACE: [ \n\t\r] -> skip;
