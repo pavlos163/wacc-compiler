@@ -78,7 +78,16 @@ fragment DIGIT: '0'..'9';
 // Integer Literals
 INTEGER: ('+' | '-')? DIGIT+;
 
-// Bool values
+// Escaped Characters
+fragment ESC: '\\"' | '\\\\';
+
+// String Literals
+STRING_LITER: '"' (ESC|.)*? '"';
+
+// Char Literals
+CHAR_LITER: '\'' (ESC|.)*? '\'';
+
+// Bool Values
 TRUE: 'true';
 FALSE: 'false';
 
