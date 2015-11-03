@@ -80,7 +80,7 @@ expr: intLiter
 
 unaryOper: NOT | NEGATIVE | LEN | ORD | CHR ;
 
-binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOTEQUAL | AND | OR ;
+binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR ;
 
 arrayElem: IDENT (LEFT_SQ expr RIGHT_SQ) PLUS;
 
@@ -90,13 +90,7 @@ intSign: PLUS | MINUS ;
 
 boolLiter: TRUE | FALSE ;
 
-charLiter: OPEN_SINGLEQUOTE character CLOSE_SINGLEQUOTE ;
-
-strLiter: OPEN_DOUBLEQUOTE character* CLOSE_DOUBLEQUOTE ;
-
 character: ASCII | escapedChar ;
-
-escapedChar: E_ZERO | E_B | E_TAB | E_LF | E_FF | E_CR | E_DOUBLEQUOTE | E_SINGLEQUOTE | ESC_BACKSLASH;
 
 arrayLiter: LEFT_SQ (argList)? RIGHT_SQ ;
 
