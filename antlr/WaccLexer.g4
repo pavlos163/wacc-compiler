@@ -67,6 +67,7 @@ GREATER_OR_EQUAL: '>=';
 LESS: '<';
 LESS_OR_EQUAL: '<=';
 EQUAL: '==';
+NOT_EQUAL: '!=';
 AND: '&&';
 OR: '||';
 
@@ -79,7 +80,7 @@ fragment DIGIT: '0'..'9';
 INTEGER: ('+' | '-')? DIGIT+;
 
 // Escaped Characters
-fragment ESC: '\\"' | '\\\\';
+fragment ESC: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\"' | '\\'' | '\\\\';
 
 // String Literals
 STRING_LITER: '"' (ESC|.)*? '"';
@@ -94,6 +95,6 @@ FALSE: 'false';
 // Null
 NULL: 'null';
 
-// Comment and whitespace
+// Comments and whitespace
 COMMENT: '#' .*? '\n' -> skip;
 WHITESPACE: [ \n\t\r] -> skip;
