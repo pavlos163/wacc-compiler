@@ -4,7 +4,7 @@ options {
   tokenVocab=WaccLexer;
 }
 
-program: (IMPORT FILE SEMICOLON)*? BEGIN func* stat END EOF;
+program: BEGIN func* stat END EOF;
 
 func: type IDENT L_PAR paramList R_PAR IS stat END;
 

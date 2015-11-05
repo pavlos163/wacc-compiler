@@ -1,6 +1,5 @@
 lexer grammar WaccLexer;
 
-IMPORT: 'import';
 FILE: [_a-zA-z0-9]* '.wacc';
 
 SEMICOLON: ';';
