@@ -4,12 +4,107 @@ options {
   tokenVocab=BasicLexer;
 }
 
-binaryOper : PLUS | MINUS ;
+program: BEGIN func* stat END;
 
-expr: expr binaryOper expr
-| INTEGER
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES
+func: type IDENT LEFT_PAR paramList RIGHT_PAR IS funcStat END ;
+
+paramList: (param (COMMA param)*)? ;
+
+param: type IDENT ;
+
+stat: SKIP                       
+| type IDENT EQUAL assignRHS	
+| assignLHS EQUAL assignRHS      
+| READ assignLHS                 
+| FREE expr                     
+| RETURN expr                   
+| EXIT expr                      
+| PRINT expr                    
+| PRINTLN expr                  
+| IF expr THEN stat ELSE stat FI 
+| WHILE expr DO stat DONE        
+| BEGIN stat END                 
+| stat SEMICOLON stat            
 ;
 
-// EOF indicates that the program must consume to the end of the input.
-prog: (expr)*  EOF ;
+assignLHS: IDENT 
+| arrayElem      
+| pairElem       
+;
+
+assignRHS: expr                                             
+| arrayLiter                                                 
+| NEWPAIR LEFT_PAR expr COMMA expr RIGHT_PAR
+| pairElem                                                   
+| CALL IDENT LEFT_PAR argList? RIGHT_PAR     
+;
+
+argList: expr (COMMA expr)* ;
+
+pairElem: FIRST expr  
+| SECOND expr         
+;
+
+type: baseType                   
+| type LEFT_SQ RIGHT_SQ  
+| pairType                       
+;
+
+baseType: INT   
+| BOOL          
+| CHAR          
+| STRING        
+;
+
+arrayType: type LEFT_SQ RIGHT_SQ;
+
+pairType: PAIR LEFT_PAR pairElemType COMMA pairElemType RIGHT_PAR;
+
+pairElemType: baseType
+| type LEFT_SQ RIGHT_SQ
+| PAIR
+;
+
+expr: intLiter
+| boolLiter
+| charLiter
+| strLiter
+| pairLiter
+| IDENT
+| arrayElem
+| unaryOper expr
+| expr binaryOper expr
+| LEFT_PAR expr RIGHT_PAR
+;
+
+
+unaryOper: NOT | NEGATIVE | LEN | ORD | CHR ;
+
+binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR ;
+
+arrayElem: IDENT (LEFT_SQ expr RIGHT_SQ) PLUS;
+
+intLiter: intSign? DIGIT+ ;
+
+intSign: PLUS | MINUS ;
+
+boolLiter: TRUE | FALSE ;
+
+character: ASCII | escapedChar ;
+
+arrayLiter: LEFT_SQ (argList)? RIGHT_SQ ;
+
+pairLiter: NULL ;
+
+
+
+
+
+
+
+
+
+
+
+
+
