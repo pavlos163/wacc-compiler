@@ -42,8 +42,8 @@ STRING: 'string';
 PAIR: 'pair';
 
 // Brackets
-LEFT_PAR: '(';
-RIGHT_PAR: ')';
+L_PAR: '(';
+R_PAR: ')';
 LEFT_SQ: '[';
 RIGHT_SQ: ']';
 COMMA: ',';
