@@ -45,16 +45,19 @@ assignRHS:
 
 argList: expr (COMMA expr)*;
 
-pairElem: FIRST expr  
+pairElem: 
+  FIRST expr  
 | SECOND expr         
 ;
 
-type: baseType                   
+type: 
+  baseType                   
 | type L_SQ R_SQ  
 | pairType                       
 ;
 
-baseType: INT   
+baseType: 
+  INT   
 | BOOL          
 | CHAR          
 | STRING        
@@ -64,19 +67,17 @@ arrayType: type L_SQ R_SQ;
 
 pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
 
-pairElemType: baseType
+pairElemType: 
+  baseType
 | type L_SQ R_SQ
 | PAIR
 ;
 
-charLiter: SINGLE_QUOTE (ESC|.)*? SINGLE_QUOTE;
-
-strLiter: DOUBLE_QUOTE (ESC|.)*? DOUBLE_QUOTE;
-
-expr: intLiter
+expr: 
+  intLiter
 | boolLiter
-| charLiter
-| strLiter
+| CHAR_LITER
+| STRING_LITER
 | pairLiter
 | IDENT
 | arrayElem
@@ -88,13 +89,13 @@ expr: intLiter
 
 unaryOper: NOT | NEGATIVE | LEN | ORD | CHR;
 
-binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
+binaryOper : MUL | DIV | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 
 arrayElem: IDENT (L_SQ expr R_SQ) PLUS;
 
 intSign: PLUS | MINUS;
 
-intLiter: intSign? DIGIT+;
+intLiter: INTEGER;
 
 boolLiter: TRUE | FALSE;
 
