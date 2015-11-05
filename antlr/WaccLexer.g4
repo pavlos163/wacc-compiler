@@ -44,8 +44,8 @@ PAIR: 'pair';
 // Brackets
 L_PAR: '(';
 R_PAR: ')';
-LEFT_SQ: '[';
-RIGHT_SQ: ']';
+L_SQ: '[';
+R_SQ: ']';
 COMMA: ',';
 ASSIGN: '=';
 SINGLE_QUOTE: '\'';
