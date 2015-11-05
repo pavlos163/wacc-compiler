@@ -47,7 +47,9 @@ R_PAR: ')';
 LEFT_SQ: '[';
 RIGHT_SQ: ']';
 COMMA: ',';
-ASSIGNMENT: '=';
+ASSIGN: '=';
+SINGLE_QUOTE: '\'';
+DOUBLE_QUOTE: '"';
 
 // Unary Operators
 NOT: '!';
@@ -57,8 +59,8 @@ ORD: 'ord';
 CHR: 'chr';
 
 // Binary Operators
-TIMES: '*';
-DIVIDED: '/';
+MUL: '*';
+DIV: '/';
 MOD: '%';
 PLUS: '+';
 MINUS: '-';
