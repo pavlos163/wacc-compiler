@@ -4,49 +4,53 @@ options {
   tokenVocab=WaccLexer;
 }
 
-program: BEGIN func* stat END;
+program: (IMPORT FILE SEMICOLON)*? BEGIN func* stat END EOF;
 
-func: type IDENT LEFT_PAR paramList RIGHT_PAR IS stat END ;
+func: type IDENT L_PAR paramList R_PAR IS stat END;
 
-paramList: (param (COMMA param)*)? ;
+paramList: (param (COMMA param)*)?;
 
-param: type IDENT ;
+param: type IDENT;
 
-stat: SKIP                       
-| type IDENT EQUAL assignRHS	
-| assignLHS EQUAL assignRHS      
+stat: 
+  SKIP                       
+| type IDENT ASSIGN assignRHS	
+| assignLHS ASSIGN assignRHS      
 | READ assignLHS                 
 | FREE expr                     
 | RETURN expr                   
 | EXIT expr                      
 | PRINT expr                    
-| PRINTLN expr                  
+| PRINTLN expr 
+| IF expr THEN stat FI 
 | IF expr THEN stat ELSE stat FI 
 | WHILE expr DO stat DONE        
 | BEGIN stat END                 
-| stat SEMICOLON stat            
+| stat SEMICOLON stat
 ;
 
-assignLHS: IDENT 
+assignLHS: 
+  IDENT 
 | arrayElem      
 | pairElem       
 ;
 
-assignRHS: expr                                             
+assignRHS: 
+  expr                                             
 | arrayLiter                                                 
-| NEWPAIR LEFT_PAR expr COMMA expr RIGHT_PAR
+| NEWPAIR L_PAR expr COMMA expr R_PAR
 | pairElem                                                   
-| CALL IDENT LEFT_PAR argList? RIGHT_PAR     
+| CALL IDENT L_PAR argList? R_PAR     
 ;
 
-argList: expr (COMMA expr)* ;
+argList: expr (COMMA expr)*;
 
 pairElem: FIRST expr  
 | SECOND expr         
 ;
 
 type: baseType                   
-| type LEFT_SQ RIGHT_SQ  
+| type L_SQ R_SQ  
 | pairType                       
 ;
 
@@ -56,12 +60,12 @@ baseType: INT
 | STRING        
 ;
 
-arrayType: type LEFT_SQ RIGHT_SQ;
+arrayType: type L_SQ R_SQ;
 
-pairType: PAIR LEFT_PAR pairElemType COMMA pairElemType RIGHT_PAR;
+pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
 
 pairElemType: baseType
-| type LEFT_SQ RIGHT_SQ
+| type L_SQ R_SQ
 | PAIR
 ;
 
@@ -78,35 +82,24 @@ expr: intLiter
 | arrayElem
 | unaryOper expr
 | expr binaryOper expr
-| LEFT_PAR expr RIGHT_PAR
+| L_PAR expr R_PAR
 ;
 
 
-unaryOper: NOT | NEGATIVE | LEN | ORD | CHR ;
+unaryOper: NOT | NEGATIVE | LEN | ORD | CHR;
 
-binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR ;
+binaryOper : TIMES | DIVIDED | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 
-arrayElem: IDENT (LEFT_SQ expr RIGHT_SQ) PLUS;
+arrayElem: IDENT (L_SQ expr R_SQ) PLUS;
 
-intSign: PLUS | MINUS ;
+intSign: PLUS | MINUS;
 
-intLiter: intSign? DIGIT+ ;
+intLiter: intSign? DIGIT+;
 
-boolLiter: TRUE | FALSE ;
+boolLiter: TRUE | FALSE;
 
-arrayLiter: LEFT_SQ (argList)? RIGHT_SQ ;
+arrayLiter: L_SQ (argList)? R_SQ;
 
-pairLiter: NULL ;
-
-
-
-
-
-
-
-
-
-
-
+pairLiter: NULL;
 
 
