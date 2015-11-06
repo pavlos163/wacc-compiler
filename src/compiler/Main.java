@@ -15,12 +15,10 @@ public class Main {
     Compiler compiler = new Compiler();
 
     if (args.length != 1) {
-      throw new RuntimeException("You must specify exactly one file to be compiled"); 
+      throw new RuntimeException  
+        ("You must specify exactly one file to be compiled"); 
     }
     
-    if (args[0] != null) {
-      inputFile = args[0];
-    }
 
     if (!isExtension(inputFile, "wacc") {
       throw new RuntimeException("File to be compiled must be of type .wacc");
