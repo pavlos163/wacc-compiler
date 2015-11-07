@@ -18,11 +18,25 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIntSign(@NotNull WaccParser.IntSignContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code charLiterExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharLiterExpr(@NotNull WaccParser.CharLiterExprContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link WaccParser#argList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitArgList(@NotNull WaccParser.ArgListContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code identExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentExpr(@NotNull WaccParser.IdentExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link WaccParser#arrayType}.
 	 * @param ctx the parse tree
@@ -36,29 +50,18 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParam(@NotNull WaccParser.ParamContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#pairElem}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPairElem(@NotNull WaccParser.PairElemContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link WaccParser#arrayElem}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayElem(@NotNull WaccParser.ArrayElemContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link WaccParser#binaryOper}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryOper(@NotNull WaccParser.BinaryOperContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link WaccParser#paramList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParamList(@NotNull WaccParser.ParamListContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stringLiterExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiterExpr(@NotNull WaccParser.StringLiterExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link WaccParser#assignRHS}.
 	 * @param ctx the parse tree
@@ -66,29 +69,11 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignRHS(@NotNull WaccParser.AssignRHSContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr(@NotNull WaccParser.ExprContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link WaccParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitType(@NotNull WaccParser.TypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link WaccParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStat(@NotNull WaccParser.StatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link WaccParser#assignLHS}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignLHS(@NotNull WaccParser.AssignLHSContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link WaccParser#boolLiter}.
 	 * @param ctx the parse tree
@@ -96,35 +81,25 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBoolLiter(@NotNull WaccParser.BoolLiterContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#unaryOper}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryOper(@NotNull WaccParser.UnaryOperContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link WaccParser#baseType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBaseType(@NotNull WaccParser.BaseTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#program}.
+	 * Visit a parse tree produced by the {@code binaryOperExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProgram(@NotNull WaccParser.ProgramContext ctx);
+	T visitBinaryOperExpr(@NotNull WaccParser.BinaryOperExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#pairType}.
+	 * Visit a parse tree produced by the {@code boolLiterExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPairType(@NotNull WaccParser.PairTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link WaccParser#arrayLiter}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayLiter(@NotNull WaccParser.ArrayLiterContext ctx);
+	T visitBoolLiterExpr(@NotNull WaccParser.BoolLiterExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link WaccParser#pairLiter}.
 	 * @param ctx the parse tree
@@ -149,4 +124,93 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPairElemType(@NotNull WaccParser.PairElemTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arrayElemExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayElemExpr(@NotNull WaccParser.ArrayElemExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code intLiterExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntLiterExpr(@NotNull WaccParser.IntLiterExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code paranthesesExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParanthesesExpr(@NotNull WaccParser.ParanthesesExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#pairElem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPairElem(@NotNull WaccParser.PairElemContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#arrayElem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayElem(@NotNull WaccParser.ArrayElemContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#binaryOper}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryOper(@NotNull WaccParser.BinaryOperContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStat(@NotNull WaccParser.StatContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#assignLHS}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignLHS(@NotNull WaccParser.AssignLHSContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#unaryOper}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryOper(@NotNull WaccParser.UnaryOperContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#program}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgram(@NotNull WaccParser.ProgramContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#pairType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPairType(@NotNull WaccParser.PairTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link WaccParser#arrayLiter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayLiter(@NotNull WaccParser.ArrayLiterContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code unaryOperExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryOperExpr(@NotNull WaccParser.UnaryOperExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code pairLiterExpr}
+	 * labeled alternative in {@link WaccParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPairLiterExpr(@NotNull WaccParser.PairLiterExprContext ctx);
 }

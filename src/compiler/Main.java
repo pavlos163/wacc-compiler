@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import org.apache.commons.io.FilenameUtils;
 
 public class Main {
   
-  public static void main(String[] args) {
-
+  public static void main(String[] args) throws Exception {
     String inputFile = null;
     String outputFile = null;
-    Compiler compiler = new Compiler();
+    //Compiler compiler = new Compiler();
 
     if (args.length != 1) {
       throw new RuntimeException("You must specify exactly one file to be compiled"); 
@@ -22,10 +20,10 @@ public class Main {
       inputFile = args[0];
     }
 
-    if (!isExtension(inputFile, "wacc") {
+    if (!isExtension(inputFile, ".wacc")) {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
-    outputFile = removeExtension(inputFile) + ".s";
+    outputFile = replaceExtension(outputFile, ".s");
     
     InputStream input = new FileInputStream(inputFile);
     PrintStream output = new PrintStream(new File(outputFile));
@@ -33,8 +31,16 @@ public class Main {
     // output.print(compiler.compile(input));
     output.close();
 
-    System.exit(0);
-  
+    System.exit(0); 
+  }
+
+  private static boolean isExtension(String fileName, String extension) {
+    String current = fileName.substring(fileName.lastIndexOf('.'));
+    return current.equals(extension);
+  }
+
+  private static String replaceExtension(String fileName, String extension) {
+    return fileName.substring(0, fileName.lastIndexOf('.')) + extension;
   }
 
 }

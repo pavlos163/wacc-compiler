@@ -74,16 +74,16 @@ pairElemType:
 ;
 
 expr: 
-  intLiter
-| boolLiter
-| CHAR_LITER
-| STRING_LITER
-| pairLiter
-| IDENT
-| arrayElem
-| unaryOper expr
-| expr binaryOper expr
-| L_PAR expr R_PAR
+  intLiter              #intLiterExpr
+| boolLiter             #boolLiterExpr
+| CHAR_LITER            #charLiterExpr
+| STRING_LITER          #stringLiterExpr
+| pairLiter             #pairLiterExpr
+| IDENT                 #identExpr
+| arrayElem             #arrayElemExpr
+| unaryOper expr        #unaryOperExpr
+| expr binaryOper expr  #binaryOperExpr
+| L_PAR expr R_PAR      #paranthesesExpr
 ;
 
 
