@@ -9,7 +9,6 @@ import org.apache.commons.io.FilenameUtils;
 public class Main {
   
   public static void main(String[] args) {
-
     String inputFile = null;
     String outputFile = null;
     Compiler compiler = new Compiler();
@@ -19,7 +18,6 @@ public class Main {
         ("You must specify exactly one file to be compiled"); 
     }
     
-
     if (!isExtension(inputFile, "wacc") {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
@@ -30,9 +28,7 @@ public class Main {
     
     // output.print(compiler.compile(input));
     output.close();
-
     System.exit(0);
-  
   }
 
 }
