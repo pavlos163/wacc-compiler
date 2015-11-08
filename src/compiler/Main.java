@@ -1,4 +1,4 @@
-package wacc.compiler;
+package compiler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,7 @@ public class Main {
     // output.print(compiler.compile(input));
     output.close();
 
-    System.exit(0); 
+    System.exit(0);
   }
 
   private static boolean isExtension(String fileName, String extension) {
