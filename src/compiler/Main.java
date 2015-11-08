@@ -12,7 +12,7 @@ public class Main {
     String outputFile = null;
     Compiler compiler = new Compiler();
     
-    if (args.length != 1) {
+    if (args.length != 2) {
       throw new RuntimeException  
         ("You must specify exactly one file to be compiled"); 
     }
