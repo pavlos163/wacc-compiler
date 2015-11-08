@@ -36,9 +36,6 @@ public class Compiler {
 	}
 	
 	public void compile(InputStream code) throws IOException {
-	  // WaccAST ast = constructAST(code);
-	  // If there is no error we proceed to code generation.
-	  
 	  initializeParserAndLexer(code);
 	  syntacticAnalysis();
 	  semanticAnalysis();

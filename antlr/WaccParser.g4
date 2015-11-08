@@ -14,13 +14,13 @@ param: type IDENT;
 
 stat: 
   SKIP                       
-| type IDENT ASSIGN assignRHS	
-| assignLHS ASSIGN assignRHS      
-| READ assignLHS                 
-| FREE expr                     
-| RETURN expr                   
-| EXIT expr                      
-| PRINT expr                    
+| type IDENT ASSIGN assignRHS
+| assignLHS ASSIGN assignRHS     
+| READ assignLHS     
+| FREE expr                
+| RETURN expr                  
+| EXIT expr                    
+| PRINT expr            
 | PRINTLN expr 
 | IF expr THEN stat FI 
 | IF expr THEN stat ELSE stat FI 
