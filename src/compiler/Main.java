@@ -1,5 +1,3 @@
-package wacc.compiler;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -17,10 +15,12 @@ public class Main {
         ("You must specify exactly one file to be compiled"); 
     }
     
+    inputFile = args[0];
+    
     if (!isExtension(inputFile, ".wacc")) {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
-    outputFile = replaceExtension(outputFile, ".s");
+    outputFile = replaceExtension(inputFile, ".s");
     
     InputStream input = new FileInputStream(inputFile);
     PrintStream output = new PrintStream(new File(outputFile));
