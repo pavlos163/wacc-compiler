@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.semanticCheck.SemanticCheckVisitor;
+
 import antlr.WaccLexer;
 import antlr.WaccParser;
 
@@ -26,13 +28,14 @@ public class Compiler {
 	private void semanticAnalysis() {
 	  try {
 	    // TODO visit the AST.
+	    new SemanticCheckVisitor().visit(this.tree);
 	  }catch (Exception e) { // Exception for syntactical errors.
  	    // print to the output the error. Exits the system.
 	  }
 	  // TODO another catch for the semantical errors.
 	}
 	
-	public void Compile(InputStream code) throws IOException {
+	public void compile(InputStream code) throws IOException {
 	  // WaccAST ast = constructAST(code);
 	  // If there is no error we proceed to code generation.
 	  
