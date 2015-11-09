@@ -10,22 +10,24 @@ public class Main {
   public static void main(String[] args) throws Exception {
     String inputFile = null;
     String outputFile = null;
-    Compiler compiler = new Compiler();
+    // Compiler compiler = new Compiler();
     
-    if (args.length != 2) {
-      throw new RuntimeException  
+    if (args.length != 1) {
+      throw new RuntimeException
         ("You must specify exactly one file to be compiled"); 
     }
+    
+    inputFile = args[0];
     
     if (!isExtension(inputFile, ".wacc")) {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
-    outputFile = replaceExtension(outputFile, ".s");
+    outputFile = replaceExtension(inputFile, ".s");
     
     InputStream input = new FileInputStream(inputFile);
     PrintStream output = new PrintStream(new File(outputFile));
     
-    compiler.compile(input);
+    // compiler.compile(input);
     output.close();
 
     System.exit(0);

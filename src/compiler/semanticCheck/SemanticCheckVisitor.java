@@ -40,220 +40,220 @@ import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParser.UnaryOperExprContext;
 import antlr.WaccParserVisitor;
 
-public class SemanticCheckVisitor implements WaccParserVisitor<Void> {
+public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
 
   @Override
-  public Void visit(@NotNull ParseTree arg0) {
+  public Type visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitChildren(@NotNull RuleNode arg0) {
+  public Type visitChildren(@NotNull RuleNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitErrorNode(@NotNull ErrorNode arg0) {
+  public Type visitErrorNode(@NotNull ErrorNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitTerminal(@NotNull TerminalNode arg0) {
+  public Type visitTerminal(@NotNull TerminalNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitIntSign(IntSignContext ctx) {
+  public Type visitIntSign(IntSignContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitCharLiterExpr(CharLiterExprContext ctx) {
+  public Type visitCharLiterExpr(CharLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitArgList(ArgListContext ctx) {
+  public Type visitArgList(ArgListContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitIdentExpr(IdentExprContext ctx) {
+  public Type visitIdentExpr(IdentExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitArrayType(ArrayTypeContext ctx) {
+  public Type visitArrayType(ArrayTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitParam(ParamContext ctx) {
+  public Type visitParam(ParamContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitParamList(ParamListContext ctx) {
+  public Type visitParamList(ParamListContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitStringLiterExpr(StringLiterExprContext ctx) {
+  public Type visitStringLiterExpr(StringLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitAssignRHS(AssignRHSContext ctx) {
+  public Type visitAssignRHS(AssignRHSContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitType(TypeContext ctx) {
+  public Type visitType(TypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitBoolLiter(BoolLiterContext ctx) {
+  public Type visitBoolLiter(BoolLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitBaseType(BaseTypeContext ctx) {
+  public Type visitBaseType(BaseTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitBinaryOperExpr(BinaryOperExprContext ctx) {
+  public Type visitBinaryOperExpr(BinaryOperExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitBoolLiterExpr(BoolLiterExprContext ctx) {
+  public Type visitBoolLiterExpr(BoolLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitPairLiter(PairLiterContext ctx) {
+  public Type visitPairLiter(PairLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitFunc(FuncContext ctx) {
+  public Type visitFunc(FuncContext ctx) {
     System.out.println("I found a function definition!");
     return null;
   }
 
   @Override
-  public Void visitIntLiter(IntLiterContext ctx) {
+  public Type visitIntLiter(IntLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitPairElemType(PairElemTypeContext ctx) {
+  public Type visitPairElemType(PairElemTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitArrayElemExpr(ArrayElemExprContext ctx) {
+  public Type visitArrayElemExpr(ArrayElemExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitIntLiterExpr(IntLiterExprContext ctx) {
+  public Type visitIntLiterExpr(IntLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitParanthesesExpr(ParanthesesExprContext ctx) {
+  public Type visitParanthesesExpr(ParanthesesExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitPairElem(PairElemContext ctx) {
+  public Type visitPairElem(PairElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitArrayElem(ArrayElemContext ctx) {
+  public Type visitArrayElem(ArrayElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitBinaryOper(BinaryOperContext ctx) {
+  public Type visitBinaryOper(BinaryOperContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitStat(StatContext ctx) {
+  public Type visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitAssignLHS(AssignLHSContext ctx) {
+  public Type visitAssignLHS(AssignLHSContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitUnaryOper(UnaryOperContext ctx) {
+  public Type visitUnaryOper(UnaryOperContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitProgram(ProgramContext ctx) {
+  public Type visitProgram(ProgramContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitPairType(PairTypeContext ctx) {
+  public Type visitPairType(PairTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitArrayLiter(ArrayLiterContext ctx) {
+  public Type visitArrayLiter(ArrayLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitUnaryOperExpr(UnaryOperExprContext ctx) {
+  public Type visitUnaryOperExpr(UnaryOperExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Void visitPairLiterExpr(PairLiterExprContext ctx) {
+  public Type visitPairLiterExpr(PairLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }

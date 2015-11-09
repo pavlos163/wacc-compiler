@@ -16,10 +16,10 @@ stat:
   SKIP                       
 | type IDENT ASSIGN assignRHS
 | assignLHS ASSIGN assignRHS     
-| READ assignLHS     
+| READ assignLHS
 | FREE expr                
 | RETURN expr                  
-| EXIT expr                    
+| EXIT expr
 | PRINT expr            
 | PRINTLN expr 
 | IF expr THEN stat FI 

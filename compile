@@ -1,6 +1,3 @@
 #!/usr/bin/ruby
-# Ruby front-end for your compiler.
-# You are free to change the language used for this script,
-# but do *not* change its name.
 
-java -cp "lib/*:bin/" compiler.Main $1 -01
+system "java -cp src/ compiler.Main #{ARGV[0]}"

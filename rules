@@ -1,0 +1,9 @@
+src/compiler/Main.java
+src/compiler/semanticCheck/Type.java
+src/compiler/semanticCheck/SemanticCheckVisitor.java
+src/compiler/CodePosition.java
+src/compiler/Compiler.java
+src/antlr/WaccParserVisitor.java
+src/antlr/WaccParserBaseVisitor.java
+src/antlr/WaccLexer.java
+src/antlr/WaccParser.java
