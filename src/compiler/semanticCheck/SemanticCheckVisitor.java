@@ -13,14 +13,20 @@ import antlr.WaccParser.ArrayLiterContext;
 import antlr.WaccParser.ArrayTypeContext;
 import antlr.WaccParser.AssignLHSContext;
 import antlr.WaccParser.AssignRHSContext;
+import antlr.WaccParser.AssignStatContext;
 import antlr.WaccParser.BaseTypeContext;
+import antlr.WaccParser.BeginStatContext;
 import antlr.WaccParser.BinaryOperContext;
 import antlr.WaccParser.BinaryOperExprContext;
 import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.BoolLiterExprContext;
 import antlr.WaccParser.CharLiterExprContext;
+import antlr.WaccParser.ExitStatContext;
+import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
+import antlr.WaccParser.IfThenElseStatContext;
+import antlr.WaccParser.IfThenStatContext;
 import antlr.WaccParser.IntLiterContext;
 import antlr.WaccParser.IntLiterExprContext;
 import antlr.WaccParser.IntSignContext;
@@ -32,12 +38,19 @@ import antlr.WaccParser.PairTypeContext;
 import antlr.WaccParser.ParamContext;
 import antlr.WaccParser.ParamListContext;
 import antlr.WaccParser.ParanthesesExprContext;
+import antlr.WaccParser.PrintStatContext;
+import antlr.WaccParser.PrintlnStatContext;
 import antlr.WaccParser.ProgramContext;
+import antlr.WaccParser.ReadStatContext;
+import antlr.WaccParser.ReturnStatContext;
+import antlr.WaccParser.SkipStatContext;
 import antlr.WaccParser.StatContext;
+import antlr.WaccParser.StatListContext;
 import antlr.WaccParser.StringLiterExprContext;
 import antlr.WaccParser.TypeContext;
 import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParser.UnaryOperExprContext;
+import antlr.WaccParser.WhileStatContext;
 import antlr.WaccParserVisitor;
 
 public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
@@ -210,8 +223,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
     return null;
   }
 
-  @Override
-  public Type visitStat(StatContext ctx) {
+  
+  private Type visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -231,6 +244,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
   @Override
   public Type visitProgram(ProgramContext ctx) {
     // TODO Auto-generated method stub
+    System.out.println("Who's awake?");
     return null;
   }
 
@@ -254,6 +268,84 @@ public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
 
   @Override
   public Type visitPairLiterExpr(PairLiterExprContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitIfThenElseStat(IfThenElseStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitIfThenStat(IfThenStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitStatList(StatListContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitBeginStat(BeginStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitReadStat(ReadStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitReturnStat(ReturnStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitAssignStat(AssignStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitWhileStat(WhileStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitPrintStat(PrintStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitFreeStat(FreeStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitExitStat(ExitStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitSkipStat(SkipStatContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Type visitPrintlnStat(PrintlnStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }

@@ -10,7 +10,7 @@ public class Main {
   public static void main(String[] args) throws Exception {
     String inputFile = null;
     String outputFile = null;
-    // Compiler compiler = new Compiler();
+    Compiler compiler = new Compiler();
     
     if (args.length != 1) {
       throw new RuntimeException
@@ -27,7 +27,7 @@ public class Main {
     InputStream input = new FileInputStream(inputFile);
     PrintStream output = new PrintStream(new File(outputFile));
     
-    // compiler.compile(input);
+    compiler.compile(input);
     output.close();
 
     System.exit(0);

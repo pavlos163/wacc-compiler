@@ -28,8 +28,8 @@ public class Compiler {
 	private void semanticAnalysis() {
 	  try {
 	    // TODO visit the AST.
-	    new SemanticCheckVisitor().visit(this.tree);
-	  }catch (Exception e) { // Exception for syntactical errors.
+	    tree.accept(new SemanticCheckVisitor());
+	  }catch (Exception e) { // Exception for syntax errors.
  	    // print to the output the error. Exits the system.
 	  }
 	  // TODO another catch for the semantical errors.
@@ -38,7 +38,10 @@ public class Compiler {
 	public void compile(InputStream code) throws IOException {
 	  initializeParserAndLexer(code);
 	  syntacticAnalysis();
+	  // Prints for debugging purposes.
+	  System.out.print("Syntax analysis has been completed.\n");
 	  semanticAnalysis();
+	  System.out.print("Semantic analysis has been completed.\n");
 	  
 	  // If none of the above exited the program then the compiler
 	  // proceeds to code generation.
