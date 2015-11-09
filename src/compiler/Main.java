@@ -1,3 +1,5 @@
+package compiler;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -16,7 +18,7 @@ public class Main {
     }
     
     inputFile = args[0];
-    
+
     if (!isExtension(inputFile, ".wacc")) {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }

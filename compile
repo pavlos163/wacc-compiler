@@ -1,5 +1,3 @@
 #!/usr/bin/ruby
 
-ARGV.each do|a|
-  system "java -cp src/compiler/ Main #{a}"
-end
+system "java -cp src/ compiler.Main #{ARGV[0]}"
