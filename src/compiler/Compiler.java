@@ -29,7 +29,7 @@ public class Compiler {
 	  try {
 	    // TODO visit the AST.
 	    tree.accept(new SemanticCheckVisitor());
-	  }catch (Exception e) { // Exception for syntax errors.
+	  } catch (Exception e) { // Exception for syntax errors.
  	    // print to the output the error. Exits the system.
 	  }
 	  // TODO another catch for the semantical errors.
@@ -54,4 +54,5 @@ public class Compiler {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		this.parser = new WaccParser(tokens);
 	}
+	
 }
