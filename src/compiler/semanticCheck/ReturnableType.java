@@ -2,6 +2,6 @@ package compiler.semanticCheck;
 
 import compiler.CodePosition;
 
-public interface Type {
+public interface ReturnableType {
   public CodePosition getPosition();
 }
