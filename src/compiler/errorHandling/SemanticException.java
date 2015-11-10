@@ -1,10 +1,10 @@
 package compiler.errorHandling;
 
-public class SemanticError extends Exception {
+public class SemanticException extends Exception {
   
   private final String errorMessage;
   
-  public SemanticError(String errorMessage) {
+  public SemanticException(String errorMessage) {
     this.errorMessage = errorMessage;
   }
   
