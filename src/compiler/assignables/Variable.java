@@ -1,8 +1,9 @@
 package compiler.assignables;
 
+import compiler.expressions.Expr;
 import compiler.semanticCheck.ReturnableType;
 
-public class Variable implements AssignLHS {
+public class Variable implements AssignLHS, Expr {
   
   public Variable() {
     
