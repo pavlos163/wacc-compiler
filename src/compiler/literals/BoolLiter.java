@@ -4,6 +4,10 @@ import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
 public class BoolLiter implements Liter {
+  
+  public BoolLiter() {
+    
+  }
 
   @Override
   public CodePosition getPosition() {

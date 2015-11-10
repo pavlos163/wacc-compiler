@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class NewPair implements Assignable {
+  
+  public NewPair() {
+    
+  }
 
   @Override
   public String getName() {

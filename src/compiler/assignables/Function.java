@@ -4,6 +4,10 @@ import compiler.semanticCheck.ReturnableType;
 
 public class Function implements Assignable {
 
+  public Function() {
+    
+  }
+  
   @Override
   public String getName() {
     // TODO Auto-generated method stub

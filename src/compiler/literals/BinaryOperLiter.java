@@ -3,7 +3,11 @@ package compiler.literals;
 import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
-public class UnaryOper implements Liter {
+public class BinaryOperLiter implements Liter {
+  
+  public BinaryOperLiter() {
+    
+  }
 
   @Override
   public CodePosition getPosition() {

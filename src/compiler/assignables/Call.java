@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class Call implements Assignable {
+  
+  public Call() {
+    
+  }
 
   @Override
   public String getName() {

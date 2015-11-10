@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class Variable implements Assignable {
+  
+  public Variable() {
+    
+  }
 
   @Override
   public String getName() {

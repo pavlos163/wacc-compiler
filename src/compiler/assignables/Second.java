@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class Second implements Assignable {
+  
+  public Second() {
+    
+  }
 
   @Override
   public String getName() {

@@ -4,6 +4,10 @@ import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
 public class StringLiter implements Liter {
+  
+  public StringLiter() {
+    
+  }
 
   @Override
   public CodePosition getPosition() {

@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class ArrayElem implements Assignable {
+  
+  public ArrayElem() {
+    
+  }
 
   @Override
   public String getName() {

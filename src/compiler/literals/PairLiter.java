@@ -4,6 +4,10 @@ import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
 public class PairLiter implements Liter {
+  
+  public PairLiter() {
+    
+  }
 
   @Override
   public CodePosition getPosition() {

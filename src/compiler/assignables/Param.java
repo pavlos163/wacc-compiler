@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class Param implements Assignable {
+  
+  public Param() {
+    
+  }
 
   @Override
   public String getName() {

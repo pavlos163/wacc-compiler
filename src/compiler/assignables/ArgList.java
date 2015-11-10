@@ -3,6 +3,10 @@ package compiler.assignables;
 import compiler.semanticCheck.ReturnableType;
 
 public class ArgList implements Assignable {
+  
+  public ArgList() {
+    
+  }
 
   @Override
   public String getName() {
