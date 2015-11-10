@@ -19,40 +19,40 @@ public class Compiler {
   private WaccParser parser;
   
   public Compiler() {
-	}
+  }
 	
   private void syntacticAnalysis() {
-	  this.tree = parser.program();
-	}
+    this.tree = parser.program();
+  }
 	
-	private void semanticAnalysis() {
-	  try {
+  private void semanticAnalysis() {
+    try {
 	    // TODO visit the AST.
-	    tree.accept(new SemanticCheckVisitor());
-	  } catch (Exception e) { // Exception for syntax errors.
+	  tree.accept(new SemanticCheckVisitor());
+	} catch (Exception e) { // Exception for syntax errors.
  	    // print to the output the error. Exits the system.
-	  }
-	  // TODO another catch for the semantical errors.
 	}
+	  // TODO another catch for the semantical errors.
+  }
 	
   public void compile(InputStream code) throws IOException {
-	  initializeParserAndLexer(code);
-	  syntacticAnalysis();
-	  // Prints for debugging purposes.
-	  System.out.print("Syntax analysis has been completed.\n");
-	  semanticAnalysis();
-	  System.out.print("Semantic analysis has been completed.\n");
-	  
-	  // If none of the above exited the program then the compiler
-	  // proceeds to code generation.
-	}
+    initializeParserAndLexer(code);
+    syntacticAnalysis();
+    // Prints for debugging purposes.
+    System.out.print("Syntax analysis has been completed.\n");
+    semanticAnalysis();
+    System.out.print("Semantic analysis has been completed.\n");
+  
+    // If none of the above exited the program then the compiler
+    // proceeds to code generation.
+  }
 	
   public void initializeParserAndLexer(InputStream code) 
 	  throws IOException {
-		ANTLRInputStream input = new ANTLRInputStream(code);
-		this.lexer = new WaccLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		this.parser = new WaccParser(tokens);
-	}
+    ANTLRInputStream input = new ANTLRInputStream(code);
+    this.lexer = new WaccLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    this.parser = new WaccParser(tokens);
+  }
 	
 }
