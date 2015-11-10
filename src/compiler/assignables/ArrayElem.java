@@ -2,7 +2,7 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public class ArrayElem implements Assignable {
+public class ArrayElem implements AssignLHS {
   
   public ArrayElem() {
     

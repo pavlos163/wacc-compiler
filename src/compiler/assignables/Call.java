@@ -2,16 +2,10 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public class Call implements Assignable {
+public class Call implements AssignRHS {
   
   public Call() {
     
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override

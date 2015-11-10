@@ -1,21 +1,16 @@
 package compiler.assignables;
 
+import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
-public class ArgList implements Assignable {
+public class ArgList implements ReturnableType {
   
   public ArgList() {
     
   }
 
   @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ReturnableType getType() {
+  public CodePosition getPosition() {
     // TODO Auto-generated method stub
     return null;
   }

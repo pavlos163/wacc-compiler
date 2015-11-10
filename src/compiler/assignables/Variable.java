@@ -2,7 +2,7 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public class Variable implements Assignable {
+public class Variable implements AssignLHS {
   
   public Variable() {
     

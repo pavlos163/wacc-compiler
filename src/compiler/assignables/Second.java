@@ -2,7 +2,7 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public class Second implements Assignable {
+public class Second implements AssignLHS {
   
   public Second() {
     

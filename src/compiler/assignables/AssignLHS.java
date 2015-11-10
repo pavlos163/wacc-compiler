@@ -2,7 +2,7 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public interface Assignable {
+public interface AssignLHS {
   
   public String getName();
     

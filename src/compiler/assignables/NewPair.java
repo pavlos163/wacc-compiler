@@ -2,16 +2,10 @@ package compiler.assignables;
 
 import compiler.semanticCheck.ReturnableType;
 
-public class NewPair implements Assignable {
+public class NewPair implements AssignRHS {
   
   public NewPair() {
     
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override
