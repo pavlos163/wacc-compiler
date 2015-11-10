@@ -1,3 +1,9 @@
 #!/usr/bin/ruby
 
-system "java -cp src/ compiler.Main #{ARGV[0]}"
+system "java -cp bin:lib/antlr-4.4-complete.jar compiler.Main #{ARGV[0]}"
+
+if ($?.exitstatus == 100)
+  exit 100
+else ($?.exitstatus == 200)
+  exit 200
+end
