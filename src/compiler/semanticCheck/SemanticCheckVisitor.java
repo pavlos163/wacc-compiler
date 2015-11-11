@@ -6,6 +6,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import compiler.CodePosition;
+import compiler.errorHandling.SyntaxException;
+import compiler.expressions.Expr;
+import compiler.literals.ArrayLiter;
+import compiler.literals.BoolLiter;
+import compiler.literals.CharLiter;
+import compiler.literals.IntLiter;
+import compiler.literals.PairLiter;
+import compiler.literals.StringLiter;
+import compiler.types.ArrType;
+
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayElemExprContext;
@@ -81,14 +92,24 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitIntSign(IntSignContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum);  
+	String sign = ctx.start.getText(); //am I getting sign here?
+	int value = Integer.parseInt(ctx.getChild(1).getText()); //I need to get 2nd token(number) here
+	if(sign == "-"){
+		value = value * (-1);
+	}
+    return new IntLiter(value,p);
   }
 
   @Override
   public ReturnableType visitCharLiterExpr(CharLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum);  //duplication
+	String text = ctx.start.getText();
+	return new CharLiter(text,p);
   }
 
   @Override
@@ -123,8 +144,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitStringLiterExpr(StringLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+    int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum); 
+	String text = ctx.start.getText();
+	return new StringLiter(text,p);
   }
 
   @Override
@@ -141,8 +165,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitBoolLiter(BoolLiterContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum); 
+	String value = ctx.start.getText();
+	return new BoolLiter(value,p);
   }
 
   @Override
@@ -165,8 +192,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitPairLiter(PairLiterContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum); 
+	Expr first = (Expr) ctx.getChild(0);
+	Expr second = (Expr) ctx.getChild(1);
+	return new PairLiter(first,second,p);
   }
 
   @Override
@@ -177,8 +208,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitIntLiter(IntLiterContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum);
+	int value = Integer.parseInt(ctx.start.getText());
+    return new IntLiter(value,p);
   }
 
   @Override
@@ -256,8 +290,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitArrayLiter(ArrayLiterContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+	/*int lineNum = ctx.start.getLine();
+	int charNum = ctx.start.getCharPositionInLine();
+	CodePosition p = new CodePosition(lineNum, charNum);
+	int type = ctx.start.getType();
+    return new ArrayLiter();*/
   }
 
   @Override
