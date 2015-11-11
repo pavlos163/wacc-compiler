@@ -53,299 +53,299 @@ import antlr.WaccParser.UnaryOperExprContext;
 import antlr.WaccParser.WhileStatContext;
 import antlr.WaccParserVisitor;
 
-public class SemanticCheckVisitor implements WaccParserVisitor<Type> {
+public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
-  public Type visit(@NotNull ParseTree arg0) {
+  public ReturnableType visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitChildren(@NotNull RuleNode arg0) {
+  public ReturnableType visitChildren(@NotNull RuleNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitErrorNode(@NotNull ErrorNode arg0) {
+  public ReturnableType visitErrorNode(@NotNull ErrorNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitTerminal(@NotNull TerminalNode arg0) {
+  public ReturnableType visitTerminal(@NotNull TerminalNode arg0) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitIntSign(IntSignContext ctx) {
+  public ReturnableType visitIntSign(IntSignContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitCharLiterExpr(CharLiterExprContext ctx) {
+  public ReturnableType visitCharLiterExpr(CharLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitArgList(ArgListContext ctx) {
+  public ReturnableType visitArgList(ArgListContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitIdentExpr(IdentExprContext ctx) {
+  public ReturnableType visitIdentExpr(IdentExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitArrayType(ArrayTypeContext ctx) {
+  public ReturnableType visitArrayType(ArrayTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitParam(ParamContext ctx) {
+  public ReturnableType visitParam(ParamContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitParamList(ParamListContext ctx) {
+  public ReturnableType visitParamList(ParamListContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitStringLiterExpr(StringLiterExprContext ctx) {
+  public ReturnableType visitStringLiterExpr(StringLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitAssignRHS(AssignRHSContext ctx) {
+  public ReturnableType visitAssignRHS(AssignRHSContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitType(TypeContext ctx) {
+  public ReturnableType visitType(TypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBoolLiter(BoolLiterContext ctx) {
+  public ReturnableType visitBoolLiter(BoolLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBaseType(BaseTypeContext ctx) {
+  public ReturnableType visitBaseType(BaseTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBinaryOperExpr(BinaryOperExprContext ctx) {
+  public ReturnableType visitBinaryOperExpr(BinaryOperExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBoolLiterExpr(BoolLiterExprContext ctx) {
+  public ReturnableType visitBoolLiterExpr(BoolLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPairLiter(PairLiterContext ctx) {
+  public ReturnableType visitPairLiter(PairLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitFunc(FuncContext ctx) {
+  public ReturnableType visitFunc(FuncContext ctx) {
     System.out.println("I found a function definition!");
     return null;
   }
 
   @Override
-  public Type visitIntLiter(IntLiterContext ctx) {
+  public ReturnableType visitIntLiter(IntLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPairElemType(PairElemTypeContext ctx) {
+  public ReturnableType visitPairElemType(PairElemTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitArrayElemExpr(ArrayElemExprContext ctx) {
+  public ReturnableType visitArrayElemExpr(ArrayElemExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitIntLiterExpr(IntLiterExprContext ctx) {
+  public ReturnableType visitIntLiterExpr(IntLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitParanthesesExpr(ParanthesesExprContext ctx) {
+  public ReturnableType visitParanthesesExpr(ParanthesesExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPairElem(PairElemContext ctx) {
+  public ReturnableType visitPairElem(PairElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitArrayElem(ArrayElemContext ctx) {
+  public ReturnableType visitArrayElem(ArrayElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBinaryOper(BinaryOperContext ctx) {
+  public ReturnableType visitBinaryOper(BinaryOperContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   
-  private Type visitStat(StatContext ctx) {
+  private ReturnableType visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitAssignLHS(AssignLHSContext ctx) {
+  public ReturnableType visitAssignLHS(AssignLHSContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitUnaryOper(UnaryOperContext ctx) {
+  public ReturnableType visitUnaryOper(UnaryOperContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitProgram(ProgramContext ctx) {
+  public ReturnableType visitProgram(ProgramContext ctx) {
     // TODO Auto-generated method stub
     System.out.println("Who's awake?");
     return null;
   }
 
   @Override
-  public Type visitPairType(PairTypeContext ctx) {
+  public ReturnableType visitPairType(PairTypeContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitArrayLiter(ArrayLiterContext ctx) {
+  public ReturnableType visitArrayLiter(ArrayLiterContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitUnaryOperExpr(UnaryOperExprContext ctx) {
+  public ReturnableType visitUnaryOperExpr(UnaryOperExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPairLiterExpr(PairLiterExprContext ctx) {
+  public ReturnableType visitPairLiterExpr(PairLiterExprContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitIfThenElseStat(IfThenElseStatContext ctx) {
+  public ReturnableType visitIfThenElseStat(IfThenElseStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitIfThenStat(IfThenStatContext ctx) {
+  public ReturnableType visitIfThenStat(IfThenStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitStatList(StatListContext ctx) {
+  public ReturnableType visitStatList(StatListContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitBeginStat(BeginStatContext ctx) {
+  public ReturnableType visitBeginStat(BeginStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitReadStat(ReadStatContext ctx) {
+  public ReturnableType visitReadStat(ReadStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitReturnStat(ReturnStatContext ctx) {
+  public ReturnableType visitReturnStat(ReturnStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitAssignStat(AssignStatContext ctx) {
+  public ReturnableType visitAssignStat(AssignStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitWhileStat(WhileStatContext ctx) {
+  public ReturnableType visitWhileStat(WhileStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPrintStat(PrintStatContext ctx) {
+  public ReturnableType visitPrintStat(PrintStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitFreeStat(FreeStatContext ctx) {
+  public ReturnableType visitFreeStat(FreeStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitExitStat(ExitStatContext ctx) {
+  public ReturnableType visitExitStat(ExitStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitSkipStat(SkipStatContext ctx) {
+  public ReturnableType visitSkipStat(SkipStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Type visitPrintlnStat(PrintlnStatContext ctx) {
+  public ReturnableType visitPrintlnStat(PrintlnStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }

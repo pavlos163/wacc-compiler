@@ -18,10 +18,10 @@ public class Compiler {
   private WaccLexer lexer;
   private WaccParser parser;
   
-	public Compiler() {
+  public Compiler() {
 	}
 	
-	private void syntacticAnalysis() {
+  private void syntacticAnalysis() {
 	  this.tree = parser.program();
 	}
 	
@@ -35,7 +35,7 @@ public class Compiler {
 	  // TODO another catch for the semantical errors.
 	}
 	
-	public void compile(InputStream code) throws IOException {
+  public void compile(InputStream code) throws IOException {
 	  initializeParserAndLexer(code);
 	  syntacticAnalysis();
 	  // Prints for debugging purposes.
@@ -47,7 +47,7 @@ public class Compiler {
 	  // proceeds to code generation.
 	}
 	
-	public void initializeParserAndLexer(InputStream code) 
+  public void initializeParserAndLexer(InputStream code) 
 	  throws IOException {
 		ANTLRInputStream input = new ANTLRInputStream(code);
 		this.lexer = new WaccLexer(input);
