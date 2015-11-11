@@ -1,29 +1,35 @@
 package compiler.literals;
 
 import compiler.CodePosition;
+import compiler.expressions.Expr;
 import compiler.semanticCheck.ReturnableType;
+import compiler.types.PairType;
+import compiler.types.Type;
 
 public class PairLiter implements Liter {
   
-  public PairLiter() {
-    
+  private final Expr fst;
+  private final Expr snd;
+  private final CodePosition codePos;
+  
+  public PairLiter(Expr fst, Expr snd, CodePosition codePos) {
+    this.fst = fst;
+    this.snd = snd;
+    this.codePos = codePos;
   }
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
   @Override
   public ReturnableType getType() {
-    // TODO Auto-generated method stub
-    return null;
+    return new PairType((Type) fst.getType(), (Type) snd.getType());
   }
 
   @Override
-  public String getValue() {
-    // TODO Auto-generated method stub
+  public String getString() {
     return null;
   }
 

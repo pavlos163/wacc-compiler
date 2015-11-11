@@ -10,8 +10,15 @@ public enum BaseType implements Type {
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  public String toString() {
+    if (this.equals(null)) {
+      return "null";
+    }
+    return super.toString().substring(4);
   }
 
 }
