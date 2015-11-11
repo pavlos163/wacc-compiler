@@ -6,6 +6,6 @@ public interface Liter extends ReturnableType {
   
   public ReturnableType getType();
   
-  public String getValue();
-  
+  public String getString();
+    
 }

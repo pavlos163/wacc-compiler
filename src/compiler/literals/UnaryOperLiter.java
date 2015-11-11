@@ -1,30 +1,73 @@
 package compiler.literals;
 
 import compiler.CodePosition;
+import compiler.errorHandling.SyntaxException;
 import compiler.semanticCheck.ReturnableType;
+import compiler.types.BaseType;
 
 public class UnaryOperLiter implements Liter {
+      
+  private final String value;
+  private final CodePosition codePos;
   
-  public UnaryOperLiter() {
-    
+  public UnaryOperLiter(String value, CodePosition codePos) throws SyntaxException {
+    this.value = value;
+    this.codePos = codePos;
+    checkUnaryOper(value);
   }
-
+  
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
   @Override
   public ReturnableType getType() {
-    // TODO Auto-generated method stub
-    return null;
+    switch(value) {
+    case "NOT":
+      return BaseType.typeBool;
+    case "NEGATIVE":
+      return BaseType.typeInt;
+    case "LEN":
+      return BaseType.typeInt;
+    case "ORD":
+      return BaseType.typeInt;
+    case "CHR":
+      return BaseType.typeChar;
+    default:
+      return null;
+    }
   }
 
   @Override
-  public String getValue() {
-    // TODO Auto-generated method stub
-    return null;
+  public String getString() {
+    switch (value) {
+    case "NOT":
+      return "!";
+    case "NEGATIVE":
+      return "-";
+    case "LEN":
+      return "len";
+    case "ORD":
+      return "ord";
+    case "CHR":
+      return "chr";
+    default:
+      return null;
+    }
   }
-
+  
+  private void checkUnaryOper(String value) throws SyntaxException {
+    switch(value) {
+    case "NOT":
+    case "NEGATIVE":
+    case "LEN":
+    case "ORD":
+    case "CHR":
+      break;
+    default:
+      throw new SyntaxException("Invalid unary operator at " + codePos + "."); 
+    }
+  }
+  
 }

@@ -1,30 +1,41 @@
 package compiler.literals;
 
 import compiler.CodePosition;
+import compiler.errorHandling.SyntaxException;
 import compiler.semanticCheck.ReturnableType;
+import compiler.types.BaseType;
 
 public class IntLiter implements Liter {
   
-  public IntLiter() {
-    
+  private final int value;
+  private final CodePosition codePos; 
+  
+  public IntLiter(long value, CodePosition codePos) throws SyntaxException {
+    if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
+      throw new SyntaxException
+        ("Integer too big or too small at " + codePos + '.');
+    }
+    this.value = (int) value;
+    this.codePos = codePos;
   }
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
   @Override
   public ReturnableType getType() {
-    // TODO Auto-generated method stub
-    return null;
+    return BaseType.typeInt;
   }
 
   @Override
-  public String getValue() {
-    // TODO Auto-generated method stub
-    return null;
+  public String getString() {
+    return "" + value;
+  }
+  
+  public int getValue() {
+    return value;
   }
 
 }
