@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
+import compiler.assignables.Param;
+import compiler.assignables.ParamList;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
@@ -158,15 +160,20 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitParam(ParamContext ctx) {
-    // TODO Auto-generated method stub
+  public Param visitParam(ParamContext ctx) {
     return null;
   }
 
   @Override
-  public ReturnableType visitParamList(ParamListContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ParamList visitParamList(ParamListContext ctx) {
+    List<Param> paramList = new LinkedList<>();
+    CodePosition codePos = initialisePosition(ctx);
+    
+    for (ParamContext param: ctx.param()) {
+      paramList.add(visitParam(param));
+    }
+    
+    return new ParamList(paramList, codePos);
   }
 
   @Override

@@ -6,7 +6,6 @@ import compiler.semanticCheck.ReturnableType;
 public class Param implements ReturnableType {
   
   public Param() {
-     
   }
 
   @Override
