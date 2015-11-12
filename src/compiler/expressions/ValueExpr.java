@@ -3,6 +3,7 @@ package compiler.expressions;
 import compiler.CodePosition;
 import compiler.literals.Liter;
 import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public class ValueExpr implements Expr {
   
@@ -15,7 +16,7 @@ public class ValueExpr implements Expr {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     // TODO Auto-generated method stub
     return null;
   }

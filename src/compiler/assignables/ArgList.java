@@ -9,11 +9,11 @@ import compiler.semanticCheck.ReturnableType;
 
 public class ArgList implements ReturnableType, Iterable<Expr> {
   
-  private final List<Expr> expressions;
+  private final List<Expr> arguments;
   private final CodePosition codePos;
   
   public ArgList(List<Expr> expressions, CodePosition codePos) {
-    this.expressions = expressions;
+    this.arguments = expressions;
     this.codePos = codePos;
   }
 
