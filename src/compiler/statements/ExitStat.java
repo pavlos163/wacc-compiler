@@ -1,12 +1,20 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.expressions.Expr;
 
 public class ExitStat extends Stat {
-
-  public ExitStat(CodePosition codePos) {
+  
+  private final Expr expression;
+  
+  public ExitStat(Expr expression, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    this.expression = expression;
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
   }
 
 }

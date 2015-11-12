@@ -1,12 +1,20 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.expressions.Expr;
 
 public class PrintStat extends Stat {
+  
+  private final Expr message;
 
-  public PrintStat(CodePosition codePos) {
+  public PrintStat(Expr message, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    this.message = message;
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
   }
 
 }

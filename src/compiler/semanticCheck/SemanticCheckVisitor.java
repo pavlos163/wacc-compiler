@@ -26,6 +26,14 @@ import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
+import compiler.statements.BeginEndStat;
+import compiler.statements.ExitStat;
+import compiler.statements.FreeStat;
+import compiler.statements.PrintStat;
+import compiler.statements.PrintlnStat;
+import compiler.statements.ReadStat;
+import compiler.statements.SkipStat;
+import compiler.statements.Stat;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
 import compiler.types.PairType;
@@ -325,8 +333,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     return new BinaryOperLiter(value, codePos);
   }
   
-  private ReturnableType visitStat(StatContext ctx) {
-    // TODO Auto-generated method stub
+  private Stat visitStat(StatContext ctx) {
+    if (ctx != null) {
+      return (Stat) ctx.accept(this);
+    }
     return null;
   }
 
@@ -409,20 +419,24 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitBeginStat(BeginStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public BeginEndStat visitBeginStat(BeginStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    // Initialising scope.
+    Stat content = visitStat(ctx.stat());
+    
+    return new BeginEndStat(content, codePos);
   }
 
   @Override
-  public ReturnableType visitReadStat(ReadStatContext ctx) {
+  public ReadStat visitReadStat(ReadStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public ReturnableType visitReturnStat(ReturnStatContext ctx) {
-    // TODO Auto-generated method stub
+    CodePosition codePos = initialisePosition(ctx);
+    // Symbol table stuff.
     return null;
   }
 
@@ -439,33 +453,41 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPrintStat(PrintStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public PrintStat visitPrintStat(PrintStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr message = visitExpr(ctx.expr());
+    
+    return new PrintStat(message, codePos);
   }
 
   @Override
-  public ReturnableType visitFreeStat(FreeStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public FreeStat visitFreeStat(FreeStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr heapItem = visitExpr(ctx.expr());
+    
+    return new FreeStat(heapItem, codePos);
   }
 
   @Override
-  public ReturnableType visitExitStat(ExitStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ExitStat visitExitStat(ExitStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr expression = visitExpr(ctx.expr());
+    
+    return new ExitStat(expression, codePos);
   }
 
   @Override
-  public ReturnableType visitSkipStat(SkipStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public SkipStat visitSkipStat(SkipStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    return new SkipStat(codePos);
   }
 
   @Override
-  public ReturnableType visitPrintlnStat(PrintlnStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public PrintlnStat visitPrintlnStat(PrintlnStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr message = visitExpr(ctx.expr());
+    
+    return new PrintlnStat(message, codePos);
   }
   
   private Expr visitExpr(ExprContext ctx) {

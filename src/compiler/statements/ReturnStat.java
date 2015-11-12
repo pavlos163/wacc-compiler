@@ -1,12 +1,26 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.expressions.Expr;
 
 public class ReturnStat extends Stat {
-
-  public ReturnStat(CodePosition codePos) {
+  
+  private final String method;
+  private final Expr returnedItem;
+  
+  public ReturnStat(String method, Expr returnedItem, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    this.method = method;
+    this.returnedItem = returnedItem;
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
+  }
+  
+  public String getMethod() {
+    return method;
   }
 
 }

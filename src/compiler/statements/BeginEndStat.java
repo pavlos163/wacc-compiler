@@ -3,10 +3,21 @@ package compiler.statements;
 import compiler.CodePosition;
 
 public class BeginEndStat extends Stat {
+  
+  private final Stat content;
 
-  public BeginEndStat(CodePosition codePos) {
+  public BeginEndStat(Stat content, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    this.content = content;
+  }
+  
+  public Stat getContent() {
+    return content;
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
   }
 
 }
