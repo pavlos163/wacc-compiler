@@ -29,7 +29,7 @@ public class ArrayElem implements AssignLHS, Liter {
   }
 
   @Override
-  public String getValue() {
+  public String getString() {
     // TODO Auto-generated method stub
     return null;
   }

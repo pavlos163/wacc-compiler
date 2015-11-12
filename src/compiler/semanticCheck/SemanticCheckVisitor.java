@@ -1,5 +1,6 @@
 package compiler.semanticCheck;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -7,14 +8,17 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
-import compiler.errorHandling.SyntaxException;
 import compiler.expressions.Expr;
+import compiler.expressions.ValueExpr;
 import compiler.literals.ArrayLiter;
+import compiler.literals.BinaryOperLiter;
 import compiler.literals.BoolLiter;
 import compiler.literals.CharLiter;
 import compiler.literals.IntLiter;
+import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
+import compiler.literals.UnaryOperLiter;
 import compiler.types.ArrType;
 
 import antlr.WaccParser.ArgListContext;
@@ -91,25 +95,22 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIntSign(IntSignContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);  
-	String sign = ctx.start.getText(); //am I getting sign here?
-	int value = Integer.parseInt(ctx.getChild(1).getText()); //I need to get 2nd token(number) here
-	if(sign == "-"){
-		value = value * (-1);
-	}
-    return new IntLiter(value,p);
+  public IntLiter visitIntSign(IntSignContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    
+    if (ctx.PLUS() != null) {
+      return new IntLiter(-1, codePos);
+    }
+    return new IntLiter(1, codePos);
   }
 
   @Override
-  public ReturnableType visitCharLiterExpr(CharLiterExprContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);  //duplication
-	String text = ctx.start.getText();
-	return new CharLiter(text,p);
+  public ValueExpr visitCharLiterExpr(CharLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String text = ctx.CHAR_LITER().getText();
+    
+    CharLiter charLtr = new CharLiter(text, codePos);
+    return new ValueExpr(charLtr, codePos);
   }
 
   @Override
@@ -143,12 +144,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitStringLiterExpr(StringLiterExprContext ctx) {
-	int lineNum = ctx.start.getLine();
-    int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	String text = ctx.start.getText();
-	return new StringLiter(text,p);
+  public ValueExpr visitStringLiterExpr(StringLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String text = ctx.STRING_LITER().getText();
+    
+    StringLiter stringLtr = new StringLiter(text, codePos);
+    return new ValueExpr(stringLtr, codePos);
   }
 
   @Override
@@ -164,12 +165,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitBoolLiter(BoolLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	String value = ctx.start.getText();
-	return new BoolLiter(value,p);
+  public BoolLiter visitBoolLiter(BoolLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new BoolLiter(value, codePos);
   }
 
   @Override
@@ -185,19 +185,20 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitBoolLiterExpr(BoolLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitBoolLiterExpr(BoolLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    BoolLiter boolLtr = visitBoolLiter(ctx.boolLiter());
+    
+    return new ValueExpr(boolLtr, codePos);
   }
 
   @Override
-  public ReturnableType visitPairLiter(PairLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	Expr first = (Expr) ctx.getChild(0);
-	Expr second = (Expr) ctx.getChild(1);
-	return new PairLiter(first,second,p);
+  public PairLiter visitPairLiter(PairLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr first = (Expr) ctx.getChild(0);
+    Expr second = (Expr) ctx.getChild(1);
+    
+    return new PairLiter(first, second, codePos);
   }
 
   @Override
@@ -207,12 +208,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIntLiter(IntLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);
-	int value = Integer.parseInt(ctx.start.getText());
-    return new IntLiter(value,p);
+  public IntLiter visitIntLiter(IntLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    
+    IntLiter sign = visitIntSign(ctx.intSign());
+    
+    long value = Long.parseLong(ctx.INTEGER().getText());
+    return new IntLiter(value * sign.getValue(), codePos);
   }
 
   @Override
@@ -228,9 +230,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIntLiterExpr(IntLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitIntLiterExpr(IntLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    IntLiter intLtr = visitIntLiter(ctx.intLiter());
+    
+    return new ValueExpr(intLtr, codePos);
   }
 
   @Override
@@ -252,11 +256,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitBinaryOper(BinaryOperContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new BinaryOperLiter(value, codePos);
   }
-
   
   private ReturnableType visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
@@ -271,8 +276,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitUnaryOper(UnaryOperContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new UnaryOperLiter(value, codePos);
   }
 
   @Override
@@ -295,6 +302,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 	CodePosition p = new CodePosition(lineNum, charNum);
 	int type = ctx.start.getType();
     return new ArrayLiter();*/
+    return null;
   }
 
   @Override
@@ -304,9 +312,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairLiterExpr(PairLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitPairLiterExpr(PairLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    PairLiter pairLtr = visitPairLiter(ctx.pairLiter());
+    
+    return new ValueExpr(pairLtr, codePos);
   }
 
   @Override
@@ -385,6 +395,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ReturnableType visitPrintlnStat(PrintlnStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  private CodePosition initialisePosition(ParserRuleContext ctx) {
+    int lineNum = ctx.start.getLine();
+    int charNum = ctx.start.getCharPositionInLine();
+    CodePosition p = new CodePosition(lineNum, charNum);
+    return p;
   }
   
 }

@@ -1,12 +1,17 @@
 package compiler.expressions;
 
 import compiler.CodePosition;
+import compiler.literals.Liter;
 import compiler.semanticCheck.ReturnableType;
 
-public class UnaryOperExpr implements Expr {
+public class ValueExpr implements Expr {
   
-  public UnaryOperExpr() {
-    
+  private final Liter literal;
+  private final CodePosition codePos;
+  
+  public ValueExpr(Liter literal, CodePosition codePos) {
+    this.literal = literal;
+    this.codePos = codePos;
   }
 
   @Override

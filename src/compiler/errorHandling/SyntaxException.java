@@ -1,6 +1,8 @@
 package compiler.errorHandling;
 
-public class SyntaxException extends Exception {
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
+public class SyntaxException extends ParseCancellationException {
   
   private final String errorMessage;
   

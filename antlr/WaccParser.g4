@@ -95,7 +95,7 @@ arrayElem: IDENT (L_SQ expr R_SQ) PLUS;
 
 intSign: PLUS | MINUS;
 
-intLiter: INTEGER;
+intLiter: intSign? INTEGER;
 
 boolLiter: TRUE | FALSE;
 
