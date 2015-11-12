@@ -2,12 +2,11 @@ package compiler.assignables;
 
 import compiler.CodePosition;
 import compiler.literals.Liter;
-import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public class ArrayElem implements AssignLHS, Liter {
   
   public ArrayElem() {
-    
   }
 
   @Override
@@ -17,7 +16,7 @@ public class ArrayElem implements AssignLHS, Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -29,7 +28,7 @@ public class ArrayElem implements AssignLHS, Liter {
   }
 
   @Override
-  public String getValue() {
+  public String getString() {
     // TODO Auto-generated method stub
     return null;
   }

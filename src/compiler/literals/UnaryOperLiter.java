@@ -4,6 +4,7 @@ import compiler.CodePosition;
 import compiler.errorHandling.SyntaxException;
 import compiler.semanticCheck.ReturnableType;
 import compiler.types.BaseType;
+import compiler.types.Type;
 
 public class UnaryOperLiter implements Liter {
       
@@ -22,7 +23,7 @@ public class UnaryOperLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     switch(value) {
     case "NOT":
       return BaseType.typeBool;

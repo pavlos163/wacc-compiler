@@ -1,12 +1,11 @@
 package compiler.assignables;
 
 import compiler.expressions.Expr;
-import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public class Variable implements AssignLHS, Expr {
   
   public Variable() {
-    
   }
 
   @Override
@@ -16,7 +15,7 @@ public class Variable implements AssignLHS, Expr {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     // TODO Auto-generated method stub
     return null;
   }

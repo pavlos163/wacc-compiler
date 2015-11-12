@@ -27,7 +27,7 @@ public class ArrayLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     return arrayType;
   }
   

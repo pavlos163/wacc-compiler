@@ -1,9 +1,9 @@
 package compiler.literals;
 
 import compiler.CodePosition;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
+import compiler.types.Type;
 
 public class StringLiter implements Liter {
   
@@ -21,7 +21,7 @@ public class StringLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     return new ArrType(BaseType.typeChar);
   }
 

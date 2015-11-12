@@ -1,17 +1,24 @@
 package compiler.assignables;
 
-import compiler.semanticCheck.ReturnableType;
+import compiler.CodePosition;
+import compiler.expressions.Expr;
+import compiler.types.PairType;
+import compiler.types.Type;
 
 public class NewPair implements AssignRHS {
   
-  public NewPair() {
-    
+  private final Expr first,second;
+  private final CodePosition codePos;
+  
+  public NewPair(Expr first, Expr second, CodePosition codePos) {
+    this.first = first;
+    this.second = second;
+    this.codePos = codePos;
   }
 
   @Override
-  public ReturnableType getType() {
-    // TODO Auto-generated method stub
-    return null;
+  public Type getType() {
+    return new PairType(first.getType(), second.getType());
   }
 
 }

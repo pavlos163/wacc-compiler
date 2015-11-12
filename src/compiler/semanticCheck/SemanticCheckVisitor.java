@@ -92,24 +92,25 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitIntSign(IntSignContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);  
-	String sign = ctx.start.getText(); //am I getting sign here?
-	int value = Integer.parseInt(ctx.getChild(1).getText()); //I need to get 2nd token(number) here
-	if(sign == "-"){
-		value = value * (-1);
-	}
+    int lineNum = ctx.start.getLine();
+    int charNum = ctx.start.getCharPositionInLine();
+    CodePosition p = new CodePosition(lineNum, charNum);  
+    String sign = ctx.start.getText(); //am I getting sign here?
+    int value = Integer.parseInt(ctx.getChild(1).getText()); //I need to get 2nd token(number) here
+    if(sign == "-"){
+      value = value * (-1);
+    }
     return new IntLiter(value,p);
   }
 
   @Override
   public ReturnableType visitCharLiterExpr(CharLiterExprContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);  //duplication
-	String text = ctx.start.getText();
-	return new CharLiter(text,p);
+    int lineNum = ctx.start.getLine();
+    int charNum = ctx.start.getCharPositionInLine();
+    CodePosition p = new CodePosition(lineNum, charNum);  //duplication
+    
+    String text = ctx.start.getText();
+    return new CharLiter(text,p);
   }
 
   @Override

@@ -1,18 +1,23 @@
 package compiler.assignables;
 
+import java.util.List;
+
 import compiler.CodePosition;
 import compiler.semanticCheck.ReturnableType;
 
 public class ParamList implements ReturnableType {
   
-  public ParamList() {
-    
+  private final List<Param> parameters;
+  private final CodePosition codePos;
+  
+  public ParamList(List<Param> parameters, CodePosition codePos) {
+    this.parameters = parameters;
+    this.codePos = codePos;
   }
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
 }

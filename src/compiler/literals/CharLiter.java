@@ -2,8 +2,8 @@ package compiler.literals;
 
 import compiler.CodePosition;
 import compiler.errorHandling.SyntaxException;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.BaseType;
+import compiler.types.Type;
 
 public class CharLiter implements Liter {
   
@@ -22,7 +22,7 @@ public class CharLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     return BaseType.typeChar;
   }
 

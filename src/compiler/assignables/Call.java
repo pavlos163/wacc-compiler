@@ -1,16 +1,23 @@
 package compiler.assignables;
 
-import compiler.semanticCheck.ReturnableType;
+import compiler.CodePosition;
+import compiler.types.Type;
 
 public class Call implements AssignRHS {
   
-  public Call() {
-    
+  private final String name;
+  private final ArgList argList;
+  private final CodePosition codePos;
+  
+  public Call(String name, ArgList argList, CodePosition codePos) {
+    this.name = name;
+    this.argList = argList;
+    this.codePos = codePos;
   }
 
+  // It doesn't have a type.
   @Override
-  public ReturnableType getType() {
-    // TODO Auto-generated method stub
+  public Type getType() {
     return null;
   }
 

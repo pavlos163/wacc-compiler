@@ -1,9 +1,9 @@
 package compiler.assignables;
 
-import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public interface AssignRHS {
   
-  public ReturnableType getType();
+  public Type getType();
   
 }
