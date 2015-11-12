@@ -1,12 +1,22 @@
 package compiler.expressions;
 
 import compiler.CodePosition;
+import compiler.literals.BinaryOperLiter;
 import compiler.semanticCheck.ReturnableType;
 
 public class BinaryOperExpr implements Expr {
   
-  public BinaryOperExpr() {
-    
+  private final BinaryOperLiter binOpLtr;
+  private Expr exprLeft;
+  private Expr exprRight;
+  private CodePosition codePos;
+  
+  public BinaryOperExpr(BinaryOperLiter binOpLtr, 
+      Expr exprLeft, Expr exprRight, CodePosition codePos) {
+    this.binOpLtr = binOpLtr;
+    this.exprLeft = exprLeft;
+    this.exprRight = exprRight;
+    this.codePos = codePos;
   }
 
   @Override

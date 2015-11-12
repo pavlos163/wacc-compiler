@@ -8,7 +8,9 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
+import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
+import compiler.expressions.UnaryOperExpr;
 import compiler.expressions.ValueExpr;
 import compiler.literals.ArrayLiter;
 import compiler.literals.BinaryOperLiter;
@@ -20,7 +22,7 @@ import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
 import compiler.types.ArrType;
-
+import compiler.types.BaseType;
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayElemExprContext;
@@ -37,6 +39,7 @@ import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.BoolLiterExprContext;
 import antlr.WaccParser.CharLiterExprContext;
 import antlr.WaccParser.ExitStatContext;
+import antlr.WaccParser.ExprContext;
 import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
@@ -174,14 +177,29 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitBaseType(BaseTypeContext ctx) {
-    // TODO Auto-generated method stub
+    if (ctx.INT() != null) {
+      return BaseType.typeInt;
+    }
+    else if (ctx.CHAR() != null) {
+      return BaseType.typeChar;
+    }
+    else if (ctx.BOOL() != null) {
+      return BaseType.typeBool;
+    }
+    else if (ctx.STRING() != null) {
+      return new ArrType(BaseType.typeChar);
+    }
     return null;
   }
 
   @Override
-  public ReturnableType visitBinaryOperExpr(BinaryOperExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public BinaryOperExpr visitBinaryOperExpr(BinaryOperExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    BinaryOperLiter binOpLtr = visitBinaryOper(ctx.binaryOper());
+    Expr exprLeft = visitExpr(ctx.expr(0));
+    Expr exprRight = visitExpr(ctx.expr(1));
+    
+    return new BinaryOperExpr(binOpLtr, exprLeft, exprRight, codePos);
   }
 
   @Override
@@ -275,7 +293,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitUnaryOper(UnaryOperContext ctx) {
+  public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     String value = ctx.start.getText();
     
@@ -306,9 +324,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitUnaryOperExpr(UnaryOperExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public UnaryOperExpr visitUnaryOperExpr(UnaryOperExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    UnaryOperLiter unOpLtr = visitUnaryOper(ctx.unaryOper());
+    Expr expression = visitExpr(ctx.expr());
+    
+    return new UnaryOperExpr(unOpLtr, expression, codePos);
   }
 
   @Override
@@ -394,6 +415,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnableType visitPrintlnStat(PrintlnStatContext ctx) {
     // TODO Auto-generated method stub
+    return null;
+  }
+  
+  private Expr visitExpr(ExprContext ctx) {
+    if (ctx != null) {
+      return (Expr) ctx.accept(this);
+    }
     return null;
   }
   
