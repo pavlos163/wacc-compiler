@@ -52,7 +52,7 @@ pairElem:
 
 type: 
   baseType                   
-| type L_SQ R_SQ  
+| arrayType 
 | pairType                       
 ;
 
@@ -63,14 +63,18 @@ baseType:
 | STRING        
 ;
 
-arrayType: type L_SQ R_SQ;
+arrayType: 
+  baseType L_SQ R_SQ
+| pairType L_SQ R_SQ
+| arrayType L_SQ R_SQ
+;
 
 pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
 
 pairElemType: 
   baseType
-| type L_SQ R_SQ
-| PAIR
+| arrayType
+| pairType
 ;
 
 expr: 
@@ -95,7 +99,7 @@ arrayElem: IDENT (L_SQ expr R_SQ) PLUS;
 
 intSign: PLUS | MINUS;
 
-intLiter: INTEGER;
+intLiter: intSign? INTEGER;
 
 boolLiter: TRUE | FALSE;
 

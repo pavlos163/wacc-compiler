@@ -1,5 +1,9 @@
 package compiler.semanticCheck;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -7,16 +11,25 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
+import compiler.assignables.ArgList;
 import compiler.errorHandling.SyntaxException;
+import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
+import compiler.expressions.UnaryOperExpr;
+import compiler.expressions.ValueExpr;
 import compiler.literals.ArrayLiter;
+import compiler.literals.BinaryOperLiter;
 import compiler.literals.BoolLiter;
 import compiler.literals.CharLiter;
 import compiler.literals.IntLiter;
+import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
+import compiler.literals.UnaryOperLiter;
 import compiler.types.ArrType;
-
+import compiler.types.BaseType;
+import compiler.types.PairType;
+import compiler.types.Type;
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayElemExprContext;
@@ -33,6 +46,7 @@ import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.BoolLiterExprContext;
 import antlr.WaccParser.CharLiterExprContext;
 import antlr.WaccParser.ExitStatContext;
+import antlr.WaccParser.ExprContext;
 import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
@@ -91,32 +105,36 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIntSign(IntSignContext ctx) {
-    int lineNum = ctx.start.getLine();
-    int charNum = ctx.start.getCharPositionInLine();
-    CodePosition p = new CodePosition(lineNum, charNum);  
-    String sign = ctx.start.getText(); //am I getting sign here?
-    int value = Integer.parseInt(ctx.getChild(1).getText()); //I need to get 2nd token(number) here
-    if(sign == "-"){
-      value = value * (-1);
-    }
-    return new IntLiter(value,p);
-  }
-
-  @Override
-  public ReturnableType visitCharLiterExpr(CharLiterExprContext ctx) {
-    int lineNum = ctx.start.getLine();
-    int charNum = ctx.start.getCharPositionInLine();
-    CodePosition p = new CodePosition(lineNum, charNum);  //duplication
+  public IntLiter visitIntSign(IntSignContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
     
-    String text = ctx.start.getText();
-    return new CharLiter(text,p);
+    if (ctx.PLUS() != null) {
+      return new IntLiter(-1, codePos);
+    }
+    return new IntLiter(1, codePos);
   }
 
   @Override
-  public ReturnableType visitArgList(ArgListContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitCharLiterExpr(CharLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String text = ctx.CHAR_LITER().getText();
+    
+    CharLiter charLtr = new CharLiter(text, codePos);
+    return new ValueExpr(charLtr, codePos);
+  }
+
+  @Override
+  public ArgList visitArgList(ArgListContext ctx) {
+    List<Expr> expressions = new LinkedList<>();
+    CodePosition codePos = initialisePosition(ctx);
+    
+    if (ctx != null) {
+      for (ExprContext ectx : ctx.expr()) {
+        expressions.add(visitExpr(ectx));
+      }
+    }
+    
+    return new ArgList(expressions, codePos);
   }
 
   @Override
@@ -126,9 +144,17 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitArrayType(ArrayTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ArrType visitArrayType(ArrayTypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return new ArrType(visitBaseType(ctx.baseType()));
+    }
+    else if (ctx.arrayType() != null) {
+      return new ArrType(visitArrayType(ctx.arrayType()));
+    }
+    else if (ctx.pairType() != null) {
+      return new ArrType(visitPairType(ctx.pairType()));
+    }
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
@@ -144,12 +170,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitStringLiterExpr(StringLiterExprContext ctx) {
-	int lineNum = ctx.start.getLine();
-    int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	String text = ctx.start.getText();
-	return new StringLiter(text,p);
+  public ValueExpr visitStringLiterExpr(StringLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String text = ctx.STRING_LITER().getText();
+    
+    StringLiter stringLtr = new StringLiter(text, codePos);
+    return new ValueExpr(stringLtr, codePos);
   }
 
   @Override
@@ -159,46 +185,72 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitType(TypeContext ctx) {
-    // TODO Auto-generated method stub
+  public Type visitType(TypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    else if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
+    else if (ctx.pairType() != null) {
+      return visitPairType(ctx.pairType());
+    }
+    else throw new SyntaxException("Error by the compiler!");
+    
+    // POSSIBLE DUPLICATION REPLACEMENT HERE.
+  }
+
+  @Override
+  public BoolLiter visitBoolLiter(BoolLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new BoolLiter(value, codePos);
+  }
+
+  @Override
+  public Type visitBaseType(BaseTypeContext ctx) {
+    if (ctx.INT() != null) {
+      return BaseType.typeInt;
+    }
+    else if (ctx.CHAR() != null) {
+      return BaseType.typeChar;
+    }
+    else if (ctx.BOOL() != null) {
+      return BaseType.typeBool;
+    }
+    else if (ctx.STRING() != null) {
+      return new ArrType(BaseType.typeChar);
+    }
     return null;
   }
 
   @Override
-  public ReturnableType visitBoolLiter(BoolLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	String value = ctx.start.getText();
-	return new BoolLiter(value,p);
+  public BinaryOperExpr visitBinaryOperExpr(BinaryOperExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    BinaryOperLiter binOpLtr = visitBinaryOper(ctx.binaryOper());
+    
+    Expr exprLeft = visitExpr(ctx.expr(0));
+    Expr exprRight = visitExpr(ctx.expr(1));
+    
+    return new BinaryOperExpr(binOpLtr, exprLeft, exprRight, codePos);
   }
 
   @Override
-  public ReturnableType visitBaseType(BaseTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitBoolLiterExpr(BoolLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    BoolLiter boolLtr = visitBoolLiter(ctx.boolLiter());
+    
+    return new ValueExpr(boolLtr, codePos);
   }
 
   @Override
-  public ReturnableType visitBinaryOperExpr(BinaryOperExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ReturnableType visitBoolLiterExpr(BoolLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ReturnableType visitPairLiter(PairLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum); 
-	Expr first = (Expr) ctx.getChild(0);
-	Expr second = (Expr) ctx.getChild(1);
-	return new PairLiter(first,second,p);
+  public PairLiter visitPairLiter(PairLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    Expr first = (Expr) ctx.getChild(0);
+    Expr second = (Expr) ctx.getChild(1);
+    
+    return new PairLiter(first, second, codePos);
   }
 
   @Override
@@ -208,30 +260,43 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIntLiter(IntLiterContext ctx) {
-	int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);
-	int value = Integer.parseInt(ctx.start.getText());
-    return new IntLiter(value,p);
+  public IntLiter visitIntLiter(IntLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    
+    IntLiter sign = visitIntSign(ctx.intSign());
+    
+    long value = Long.parseLong(ctx.INTEGER().getText());
+    return new IntLiter(value * sign.getValue(), codePos);
   }
 
   @Override
-  public ReturnableType visitPairElemType(PairElemTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public Type visitPairElemType(PairElemTypeContext ctx) {
+    if (ctx.pairType() != null) {
+      return visitPairType(ctx.pairType());
+    }
+    else if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    else if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
-  public ReturnableType visitArrayElemExpr(ArrayElemExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitArrayElemExpr(ArrayElemExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    ArrayLiter arrayElem = visitArrayElem(ctx.arrayElem());
+    
+    return new ValueExpr(arrayElem, codePos);
   }
 
   @Override
-  public ReturnableType visitIntLiterExpr(IntLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitIntLiterExpr(IntLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    IntLiter intLtr = visitIntLiter(ctx.intLiter());
+    
+    return new ValueExpr(intLtr, codePos);
   }
 
   @Override
@@ -241,23 +306,24 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairElem(PairElemContext ctx) {
+  public PairLiter visitPairElem(PairElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public ReturnableType visitArrayElem(ArrayElemContext ctx) {
+  public ArrayLiter visitArrayElem(ArrayElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public ReturnableType visitBinaryOper(BinaryOperContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new BinaryOperLiter(value, codePos);
   }
-
   
   private ReturnableType visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
@@ -271,9 +337,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitUnaryOper(UnaryOperContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    String value = ctx.start.getText();
+    
+    return new UnaryOperLiter(value, codePos);
   }
 
   @Override
@@ -284,30 +352,42 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairType(PairTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public PairType visitPairType(PairTypeContext ctx) {
+    if (ctx.PAIR() != null) {
+      Type fst = (Type) visitPairElemType(ctx.pairElemType(0));
+      Type snd = (Type) visitPairElemType(ctx.pairElemType(1));
+      return new PairType(fst, snd);
+    }
+    throw new SyntaxException("The pair must start with the \'pair\' keyword");
   }
 
   @Override
-  public ReturnableType visitArrayLiter(ArrayLiterContext ctx) {
-	/*int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);
-	int type = ctx.start.getType();
-    return new ArrayLiter();*/
+  public ArrayLiter visitArrayLiter(ArrayLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    List<Expr> expressions = new LinkedList<>();
+    
+    for (ExprContext ectx : ctx.argList().expr()) {
+      expressions.add(visitExpr(ectx));
+    }
+    
+    return new ArrayLiter(expressions, codePos);
   }
 
   @Override
-  public ReturnableType visitUnaryOperExpr(UnaryOperExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public UnaryOperExpr visitUnaryOperExpr(UnaryOperExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    UnaryOperLiter unOpLtr = visitUnaryOper(ctx.unaryOper());
+    Expr expression = visitExpr(ctx.expr());
+    
+    return new UnaryOperExpr(unOpLtr, expression, codePos);
   }
 
   @Override
-  public ReturnableType visitPairLiterExpr(PairLiterExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitPairLiterExpr(PairLiterExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    PairLiter pairLtr = visitPairLiter(ctx.pairLiter());
+    
+    return new ValueExpr(pairLtr, codePos);
   }
 
   @Override
@@ -386,6 +466,20 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ReturnableType visitPrintlnStat(PrintlnStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  private Expr visitExpr(ExprContext ctx) {
+    if (ctx != null) {
+      return (Expr) ctx.accept(this);
+    }
+    return null;
+  }
+  
+  private CodePosition initialisePosition(ParserRuleContext ctx) {
+    int lineNum = ctx.start.getLine();
+    int charNum = ctx.start.getCharPositionInLine();
+    CodePosition p = new CodePosition(lineNum, charNum);
+    return p;
   }
   
 }

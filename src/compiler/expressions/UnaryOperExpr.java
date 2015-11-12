@@ -1,6 +1,7 @@
 package compiler.expressions;
 
 import compiler.CodePosition;
+<<<<<<< HEAD
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.literals.UnaryOperLiter;
@@ -40,11 +41,33 @@ public class UnaryOperExpr implements Expr {
     default:
       return false;
     }
+=======
+import compiler.literals.UnaryOperLiter;
+import compiler.semanticCheck.ReturnableType;
+
+public class UnaryOperExpr implements Expr {
+  
+  final private UnaryOperLiter unOpLtr;
+  final private Expr expression;
+  final private CodePosition codePos;
+  
+  public UnaryOperExpr(UnaryOperLiter unOpLtr, 
+      Expr expression, CodePosition codePos) {
+    this.unOpLtr = unOpLtr;
+    this.expression = expression;
+    this.codePos = codePos;
+>>>>>>> semantic-check
   }
 
   @Override
   public Type getType() {
     return this.unaryOp.getType();
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

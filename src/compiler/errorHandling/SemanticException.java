@@ -1,6 +1,8 @@
 package compiler.errorHandling;
 
-public class SemanticException extends Exception {
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
+public class SemanticException extends ParseCancellationException {
   
   private final String errorMessage;
   

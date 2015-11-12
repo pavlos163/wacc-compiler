@@ -68,4 +68,10 @@ public class BinaryOperExpr implements Expr {
     return this.binaryOp.getType();
   }
 
+  @Override
+  public CodePosition getPosition() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
