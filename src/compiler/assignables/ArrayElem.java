@@ -2,7 +2,6 @@ package compiler.assignables;
 
 import compiler.CodePosition;
 import compiler.literals.Liter;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.Type;
 
 public class ArrayElem implements AssignLHS, Liter {

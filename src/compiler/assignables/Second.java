@@ -1,6 +1,6 @@
 package compiler.assignables;
 
-import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public class Second implements AssignLHS {
   
@@ -15,7 +15,7 @@ public class Second implements AssignLHS {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     // TODO Auto-generated method stub
     return null;
   }

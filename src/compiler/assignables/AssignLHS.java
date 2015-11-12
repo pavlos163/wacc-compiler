@@ -1,10 +1,10 @@
 package compiler.assignables;
 
-import compiler.semanticCheck.ReturnableType;
+import compiler.types.Type;
 
 public interface AssignLHS {
   
   public String getName();
     
-  public ReturnableType getType();
+  public Type getType();
 }
