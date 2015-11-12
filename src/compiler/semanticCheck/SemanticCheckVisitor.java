@@ -1,5 +1,8 @@
 package compiler.semanticCheck;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -8,6 +11,8 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
+import compiler.assignables.ArgList;
+import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
 import compiler.expressions.UnaryOperExpr;
@@ -23,6 +28,8 @@ import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
+import compiler.types.PairType;
+import compiler.types.Type;
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayElemExprContext;
@@ -117,9 +124,17 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitArgList(ArgListContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ArgList visitArgList(ArgListContext ctx) {
+    List<Expr> expressions = new LinkedList<>();
+    CodePosition codePos = initialisePosition(ctx);
+    
+    if (ctx != null) {
+      for (ExprContext ectx : ctx.expr()) {
+        expressions.add(visitExpr(ectx));
+      }
+    }
+    
+    return new ArgList(expressions, codePos);
   }
 
   @Override
@@ -129,9 +144,17 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitArrayType(ArrayTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ArrType visitArrayType(ArrayTypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return new ArrType(visitBaseType(ctx.baseType()));
+    }
+    else if (ctx.arrayType() != null) {
+      return new ArrType(visitArrayType(ctx.arrayType()));
+    }
+    else if (ctx.pairType() != null) {
+      return new ArrType(visitPairType(ctx.pairType()));
+    }
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
@@ -162,9 +185,19 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitType(TypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public Type visitType(TypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    else if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
+    else if (ctx.pairType() != null) {
+      return visitPairType(ctx.pairType());
+    }
+    else throw new SyntaxException("Error by the compiler!");
+    
+    // POSSIBLE DUPLICATION REPLACEMENT HERE.
   }
 
   @Override
@@ -176,7 +209,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitBaseType(BaseTypeContext ctx) {
+  public Type visitBaseType(BaseTypeContext ctx) {
     if (ctx.INT() != null) {
       return BaseType.typeInt;
     }
@@ -196,6 +229,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public BinaryOperExpr visitBinaryOperExpr(BinaryOperExprContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     BinaryOperLiter binOpLtr = visitBinaryOper(ctx.binaryOper());
+    
     Expr exprLeft = visitExpr(ctx.expr(0));
     Expr exprRight = visitExpr(ctx.expr(1));
     
@@ -236,15 +270,25 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairElemType(PairElemTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public Type visitPairElemType(PairElemTypeContext ctx) {
+    if (ctx.pairType() != null) {
+      return visitPairType(ctx.pairType());
+    }
+    else if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    else if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
-  public ReturnableType visitArrayElemExpr(ArrayElemExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ValueExpr visitArrayElemExpr(ArrayElemExprContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    ArrayLiter arrayElem = visitArrayElem(ctx.arrayElem());
+    
+    return new ValueExpr(arrayElem, codePos);
   }
 
   @Override
@@ -262,13 +306,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairElem(PairElemContext ctx) {
+  public PairLiter visitPairElem(PairElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public ReturnableType visitArrayElem(ArrayElemContext ctx) {
+  public ArrayLiter visitArrayElem(ArrayElemContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -308,19 +352,25 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitPairType(PairTypeContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public PairType visitPairType(PairTypeContext ctx) {
+    if (ctx.PAIR() != null) {
+      Type fst = (Type) visitPairElemType(ctx.pairElemType(0));
+      Type snd = (Type) visitPairElemType(ctx.pairElemType(1));
+      return new PairType(fst, snd);
+    }
+    throw new SyntaxException("The pair must start with the \'pair\' keyword");
   }
 
   @Override
-  public ReturnableType visitArrayLiter(ArrayLiterContext ctx) {
-	/*int lineNum = ctx.start.getLine();
-	int charNum = ctx.start.getCharPositionInLine();
-	CodePosition p = new CodePosition(lineNum, charNum);
-	int type = ctx.start.getType();
-    return new ArrayLiter();*/
-    return null;
+  public ArrayLiter visitArrayLiter(ArrayLiterContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    List<Expr> expressions = new LinkedList<>();
+    
+    for (ExprContext ectx : ctx.argList().expr()) {
+      expressions.add(visitExpr(ectx));
+    }
+    
+    return new ArrayLiter(expressions, codePos);
   }
 
   @Override
