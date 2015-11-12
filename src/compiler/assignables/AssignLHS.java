@@ -7,5 +7,4 @@ public interface AssignLHS {
   public String getName();
     
   public ReturnableType getType();
-  
 }

@@ -2,8 +2,8 @@ package compiler.literals;
 
 import compiler.CodePosition;
 import compiler.errorHandling.SyntaxException;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.BaseType;
+import compiler.types.Type;
 
 public class BinaryOperLiter implements Liter {
       
@@ -22,7 +22,7 @@ public class BinaryOperLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     switch(value) {
     case "MUL":
       return BaseType.typeBool;

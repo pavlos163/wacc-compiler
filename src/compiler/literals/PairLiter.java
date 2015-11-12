@@ -2,7 +2,6 @@ package compiler.literals;
 
 import compiler.CodePosition;
 import compiler.expressions.Expr;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.PairType;
 import compiler.types.Type;
 
@@ -24,7 +23,7 @@ public class PairLiter implements Liter {
   }
 
   @Override
-  public ReturnableType getType() {
+  public Type getType() {
     return new PairType((Type) fst.getType(), (Type) snd.getType());
   }
 
