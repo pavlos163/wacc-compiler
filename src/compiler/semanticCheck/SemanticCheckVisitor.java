@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
+import compiler.assignables.ArrayElem;
 import compiler.assignables.Function;
 import compiler.assignables.Param;
 import compiler.assignables.ParamList;
@@ -338,7 +339,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ValueExpr visitArrayElemExpr(ArrayElemExprContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    ArrayLiter arrayElem = visitArrayElem(ctx.arrayElem());
+    ArrayElem arrayElem = visitArrayElem(ctx.arrayElem());
     
     return new ValueExpr(arrayElem, codePos);
   }
@@ -364,9 +365,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ArrayLiter visitArrayElem(ArrayElemContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public ArrayElem visitArrayElem(ArrayElemContext ctx) {
+    String ident = ctx.IDENT().getText();
+    CodePosition codePos = initialisePosition(ctx);
+    List<Expr> exprs = new LinkedList<Expr>();
+    
+    for (ExprContext context : ctx.expr()) {
+      exprs.add(visitExpr(context));
+    }
+    
+    return new ArrayElem(ident, exprs, scope, codePos);
   }
 
   @Override

@@ -63,5 +63,9 @@ public class ArrayElem implements AssignLHS, Liter {
   public String getString() {
     return null; // Not needed.
   }
+  
+  public SymbolTable<Identifier> getScope() {
+    return scope;
+  }
 
 }
