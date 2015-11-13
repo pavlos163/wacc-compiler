@@ -11,12 +11,9 @@ public class IntLiter implements Liter {
   private final CodePosition codePos; 
   
   public IntLiter(long value, CodePosition codePos) throws SyntaxException {
-    if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
-      throw new SyntaxException
-        ("Integer too big or too small at " + codePos + '.');
-    }
     this.value = (int) value;
     this.codePos = codePos;
+    checkIntValue(value, codePos);
   }
 
   @Override
@@ -36,6 +33,13 @@ public class IntLiter implements Liter {
   
   public int getValue() {
     return value;
+  }
+  
+  private void checkIntValue(long value, CodePosition codePos) {
+    if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
+      throw new SyntaxException
+        ("Integer too big or too small at " + codePos + '.');
+    }
   }
 
 }

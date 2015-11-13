@@ -5,7 +5,7 @@ import compiler.errorHandling.SemanticException;
 import compiler.expressions.Expr;
 import compiler.types.BaseType;
 
-public class IfThenStat extends Stat {
+public class IfThenStat extends StatWithCond {
   
   private final Expr condition;
   private final Stat ifBody;
@@ -22,11 +22,4 @@ public class IfThenStat extends Stat {
     return codePos;
   }
   
-  private void checkErrors(Expr condition) {
-    if (!condition.getType().equals(BaseType.typeBool)) {
-      throw new SemanticException("Condition must be of type boolean.");
-    }
-  }
-  // POSSIBLE DUPLICATION REPLACEMENT HERE.
-
 }

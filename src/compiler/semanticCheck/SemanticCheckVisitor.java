@@ -211,8 +211,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       return visitPairType(ctx.pairType());
     }
     else throw new SyntaxException("Error by the compiler!");
-    
-    // POSSIBLE DUPLICATION REPLACEMENT HERE.
   }
 
   @Override
