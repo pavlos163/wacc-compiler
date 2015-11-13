@@ -436,6 +436,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     CodePosition codePos = initialisePosition(ctx);
     // Initialising scope.
     Stat content = visitStat(ctx.stat());
+    // Syntax error if no end.
     
     return new BeginEndStat(content, codePos);
   }

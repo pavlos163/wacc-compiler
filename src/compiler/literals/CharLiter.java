@@ -32,7 +32,8 @@ public class CharLiter implements Liter {
   }
   
   private void checkEscapedCharacter(String value) throws SyntaxException {
-    if (value.length() == 1 && value.charAt(0) == '\\') {
+    if (value.length() == 1 && (value.charAt(0) == '\\' 
+        || value.charAt(0) == '\'' || value.charAt(0) == '"')) {
       throw new SyntaxException
         ("Invalid escaped character at " + codePos + '.');
     }

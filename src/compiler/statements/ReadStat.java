@@ -26,7 +26,7 @@ public class ReadStat extends Stat {
         && readItem.getType() != BaseType.typeChar
         && (!isString(readItem))) {
       throw new SemanticException("Item to be read can only be an int,"
-          + " char or string.");
+          + " char or string. Actual type: " + readItem.getType());
     }
   }
   
