@@ -16,14 +16,20 @@ public class ValueExpr implements Expr {
 
   @Override
   public Type getType() {
-    // TODO Auto-generated method stub
-    return null;
+    return literal.getType();
+  }
+  
+  public String getString() {
+    return literal.getString();
   }
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
+  }
+  
+  public Liter getLiter() {
+    return literal;
   }
 
 }
