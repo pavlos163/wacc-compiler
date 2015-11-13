@@ -13,11 +13,11 @@ public class Function implements ReturnableType {
   private final Stat stat;
   private final List<Param> parameters;
   private final CodePosition codePos;
-  private final Type type;
+  private final Type returnType;
   
   public Function(Type type, String ident, List<Param> parameters,
       Stat stat, CodePosition codePos) {
-    this.type = type;
+    this.returnType = type;
     this.ident = ident;
     this.parameters = parameters;
     this.stat = stat;
@@ -27,6 +27,22 @@ public class Function implements ReturnableType {
   @Override
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  public List<Param> getParameters() {
+    return this.parameters;
+  }
+  
+  public Type getReturnType() {
+    return returnType;
+  }
+  
+  public String getIdent() {
+    return ident;
+  }
+  
+  public Stat getStatements() {
+    return stat;
   }
   
 }

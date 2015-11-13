@@ -20,5 +20,8 @@ public class NewPair implements AssignRHS {
   public Type getType() {
     return new PairType(first.getType(), second.getType());
   }
-
+  
+  public CodePosition getPosition() {
+    return this.codePos;
+  }
 }

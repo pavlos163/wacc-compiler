@@ -39,8 +39,8 @@ assignRHS:
   expr                                             
 | arrayLiter                                                 
 | NEWPAIR L_PAR expr COMMA expr R_PAR
-| pairElem                                                   
-| CALL IDENT L_PAR argList? R_PAR     
+| pairElem            
+| CALL IDENT L_PAR argList? R_PAR
 ;
 
 argList: expr (COMMA expr)*;

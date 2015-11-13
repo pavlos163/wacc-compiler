@@ -279,7 +279,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     CodePosition codePos = initialisePosition(ctx);
     List<Param> parameters = new LinkedList<Param>();
     List<Type> typeOfParameters = new LinkedList<Type>();
-    SymbolTable<Identifier> globalScope = scope;
     
     // New scope for the parameters.
     scope = scope.newScope();
