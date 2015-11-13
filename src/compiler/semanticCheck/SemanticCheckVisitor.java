@@ -12,8 +12,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
+import compiler.assignables.Function;
 import compiler.assignables.Param;
 import compiler.assignables.ParamList;
+import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
@@ -28,6 +30,10 @@ import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
+import compiler.statements.Stat;
+import compiler.symbolTable.FunctionIdentifier;
+import compiler.symbolTable.Identifier;
+import compiler.symbolTable.SymbolTable;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
 import compiler.types.PairType;
@@ -81,7 +87,13 @@ import antlr.WaccParser.WhileStatContext;
 import antlr.WaccParserVisitor;
 
 public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
-
+  
+  // Declare symbol table "tree".
+  private SymbolTable<Identifier> scope;
+  private SymbolTable<FunctionIdentifier> functions;
+  // Remember the function that we are currently looking at.
+  private String currFunc;
+  
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
@@ -261,9 +273,43 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitFunc(FuncContext ctx) {
+  public Function visitFunc(FuncContext ctx) {
     System.out.println("I found a function definition!");
-    return null;
+    
+    CodePosition codePos = initialisePosition(ctx);
+    List<Param> parameters = new LinkedList<Param>();
+    List<Type> typeOfParameters = new LinkedList<Type>();
+    SymbolTable<Identifier> globalScope = scope;
+    
+    // New scope for the parameters.
+    scope = scope.newScope();
+    
+    if (ctx.paramList() != null) {
+      parameters = visitParamList(ctx.paramList()).getParameters();
+    }
+    Type returnType = visitType(ctx.type());
+    currFunc = ctx.IDENT().getText();
+    
+    for (Param param: parameters) {
+      typeOfParameters.add(param.getType());
+      scope.add(param.getIdent(), 
+          new Identifier(param.getType(), codePos));
+    }
+    scope = scope.newScope();
+    if (functions.lookUpAll(currFunc) != null) {
+      throw new SemanticException("Function redeclaration at " 
+          + codePos.toString());
+    }
+    functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
+        codePos));
+    
+    Function function = new Function(returnType, currFunc, parameters,
+        visitStat(ctx.stat()), codePos);
+    
+    //TODO check if there is a return statement!!!
+    
+    currFunc = null; // We finished visiting the function.
+    return function;
   }
 
   @Override
@@ -332,7 +378,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     return new BinaryOperLiter(value, codePos);
   }
   
-  private ReturnableType visitStat(StatContext ctx) {
+  private Stat visitStat(StatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }

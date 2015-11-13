@@ -19,5 +19,9 @@ public class ParamList implements ReturnableType {
   public CodePosition getPosition() {
     return codePos;
   }
+  
+  public List<Param> getParameters() {
+    return parameters;
+  }
 
 }
