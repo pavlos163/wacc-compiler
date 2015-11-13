@@ -19,8 +19,7 @@ public class IfThenStat extends Stat {
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
   
   private void checkErrors(Expr condition) {

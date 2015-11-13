@@ -1,12 +1,27 @@
 package compiler.statements;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import compiler.CodePosition;
 
 public class StatList extends Stat {
+  
+  private final List<Stat> statements;
 
-  public StatList(CodePosition codePos) {
+  public StatList(List<Stat> statements, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    if (statements == null) {
+      this.statements = new LinkedList<>();
+    }
+    else {
+      this.statements = statements;
+    }
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
   }
 
 }

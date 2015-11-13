@@ -1,8 +1,9 @@
 package compiler.assignables;
 
+import compiler.semanticCheck.ReturnableType;
 import compiler.types.Type;
 
-public interface AssignLHS {
+public interface AssignLHS extends ReturnableType {
   
   public String getName();
     

@@ -21,4 +21,10 @@ public class Call implements AssignRHS {
     return null;
   }
 
+  @Override
+  public CodePosition getPosition() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

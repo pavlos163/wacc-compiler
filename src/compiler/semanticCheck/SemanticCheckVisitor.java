@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
+import compiler.assignables.AssignLHS;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
@@ -26,14 +27,20 @@ import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
+import compiler.statements.AssignStat;
 import compiler.statements.BeginEndStat;
 import compiler.statements.ExitStat;
 import compiler.statements.FreeStat;
+import compiler.statements.IfThenElseStat;
+import compiler.statements.IfThenStat;
 import compiler.statements.PrintStat;
 import compiler.statements.PrintlnStat;
 import compiler.statements.ReadStat;
+import compiler.statements.ReturnStat;
 import compiler.statements.SkipStat;
 import compiler.statements.Stat;
+import compiler.statements.StatList;
+import compiler.statements.WhileStat;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
 import compiler.types.PairType;
@@ -341,7 +348,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitAssignLHS(AssignLHSContext ctx) {
+  public AssignLHS visitAssignLHS(AssignLHSContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -401,21 +408,29 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitIfThenElseStat(IfThenElseStatContext ctx) {
-    // TODO Auto-generated method stub
+  public IfThenElseStat visitIfThenElseStat(IfThenElseStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    // Symbol table stuff.
     return null;
   }
 
   @Override
-  public ReturnableType visitIfThenStat(IfThenStatContext ctx) {
-    // TODO Auto-generated method stub
+  public IfThenStat visitIfThenStat(IfThenStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    // Symbol table stuff.
     return null;
   }
 
   @Override
-  public ReturnableType visitStatList(StatListContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+  public StatList visitStatList(StatListContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    List<Stat> statements = new LinkedList<>();
+    
+    for (StatContext sctx : ctx.stat()) {
+      statements.add(visitStat(sctx));
+    }
+    
+    return new StatList(statements, codePos);
   }
 
   @Override
@@ -429,26 +444,29 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReadStat visitReadStat(ReadStatContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+    CodePosition codePos = initialisePosition(ctx);
+    AssignLHS readItem = visitAssignLHS(ctx.assignLHS());
+    
+    return new ReadStat(readItem, codePos);
   }
 
   @Override
-  public ReturnableType visitReturnStat(ReturnStatContext ctx) {
+  public ReturnStat visitReturnStat(ReturnStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     // Symbol table stuff.
     return null;
   }
 
   @Override
-  public ReturnableType visitAssignStat(AssignStatContext ctx) {
+  public AssignStat visitAssignStat(AssignStatContext ctx) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public ReturnableType visitWhileStat(WhileStatContext ctx) {
-    // TODO Auto-generated method stub
+  public WhileStat visitWhileStat(WhileStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    // Symbol table stuff.
     return null;
   }
 
@@ -479,6 +497,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public SkipStat visitSkipStat(SkipStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
+    
     return new SkipStat(codePos);
   }
 
@@ -494,14 +513,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx != null) {
       return (Expr) ctx.accept(this);
     }
+    
     return null;
   }
   
   private CodePosition initialisePosition(ParserRuleContext ctx) {
     int lineNum = ctx.start.getLine();
     int charNum = ctx.start.getCharPositionInLine();
-    CodePosition p = new CodePosition(lineNum, charNum);
-    return p;
+    CodePosition codePos = new CodePosition(lineNum, charNum);
+    
+    return codePos;
   }
   
 }

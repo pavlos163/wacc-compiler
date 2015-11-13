@@ -1,12 +1,37 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.assignables.AssignLHS;
+import compiler.errorHandling.SemanticException;
+import compiler.types.ArrType;
+import compiler.types.BaseType;
 
 public class ReadStat extends Stat {
+  
+  private final AssignLHS readItem;
 
-  public ReadStat(CodePosition codePos) {
+  public ReadStat(AssignLHS readItem, CodePosition codePos) {
     super(codePos);
-    // TODO Auto-generated constructor stub
+    this.readItem = readItem;
+    checkErrors(readItem);
+  }
+
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
+  }
+  
+  private void checkErrors(AssignLHS readItem) {
+    if (readItem.getType() != BaseType.typeInt 
+        && readItem.getType() != BaseType.typeChar
+        && (!isString(readItem))) {
+      throw new SemanticException("Item to be read can only be an int,"
+          + " char or string.");
+    }
+  }
+  
+  private boolean isString(AssignLHS readItem) {
+    return readItem.getType().equals(new ArrType(BaseType.typeChar));
   }
 
 }

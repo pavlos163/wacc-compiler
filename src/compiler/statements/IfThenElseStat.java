@@ -21,8 +21,7 @@ public class IfThenElseStat extends Stat {
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
   
   private void checkErrors(Expr condition) {
