@@ -24,9 +24,9 @@ public class FreeStat extends Stat {
   private void checkErrors(Expr heapItem) {
     if (!(heapItem.getType().equals(new ArrType(null))
         || heapItem.getType().equals(new PairType(null, null)))) {
-      throw new SemanticException("Item freed must be heap allocated,"
-          + " therefore it must be a pair or an array. Actual type: "
-          + heapItem.getType());
+      throw new SemanticException("At " + codePos.toString() + 
+          ". Item freed must be heap allocated, therefore it must be a"
+          + " pair or an array. Actual type: " + heapItem.getType());
     }
   }
   

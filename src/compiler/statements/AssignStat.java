@@ -33,8 +33,10 @@ public class AssignStat extends Stat {
   
   private void checkErrors(AssignLHS lhs, AssignRHS rhs) {
     if (!(rhs instanceof Call || lhs.getType().equals(rhs.getType()))) {
-      throw new SemanticException("Types of the assigned and assigner must"
-          + " be the same.");
+      throw new SemanticException("At " + codePos.toString() + 
+          ". Types of the LHS and RHS values must be the same."
+          + " Actual types: (" + lhs.getType() + ", " + 
+          rhs.getType() + ")");
     }
   }
 

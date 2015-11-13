@@ -106,7 +106,8 @@ public class BinaryOperLiter implements Liter {
     case "OR":
       break;
     default:
-      throw new SyntaxException("Invalid binary operator at " + codePos + ".");
+      throw new SyntaxException("At " + codePos.toString() + 
+          ". Invalid binary operator.");
     }
   }
   

@@ -67,7 +67,8 @@ public class UnaryOperLiter implements Liter {
     case "CHR":
       break;
     default:
-      throw new SyntaxException("Invalid unary operator at " + codePos + "."); 
+      throw new SyntaxException("At " + codePos.toString() + ". Invalid "
+          + "unary operator."); 
     }
   }
   

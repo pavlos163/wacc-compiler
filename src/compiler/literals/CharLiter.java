@@ -35,7 +35,7 @@ public class CharLiter implements Liter {
     if (value.length() == 1 && (value.charAt(0) == '\\' 
         || value.charAt(0) == '\'' || value.charAt(0) == '"')) {
       throw new SyntaxException
-        ("Invalid escaped character at " + codePos + '.');
+        ("At " + codePos.toString() + ". Invalid escaped character.");
     }
     else if (value.charAt(0) == '\\') {
       switch (value.charAt(1)) {
@@ -51,7 +51,7 @@ public class CharLiter implements Liter {
         break;
       default:
         throw new SyntaxException
-          ("Invalid escaped character at " + codePos + '.');
+          ("At " + codePos.toString() + ". Invalid escaped character.");
       }
     }
   }

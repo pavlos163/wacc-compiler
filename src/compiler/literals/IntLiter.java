@@ -38,7 +38,8 @@ public class IntLiter implements Liter {
   private void checkIntValue(long value, CodePosition codePos) {
     if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
       throw new SyntaxException
-        ("Integer too big or too small at " + codePos + '.');
+        ("At " + codePos.toString() + ". Integer value too big or "
+            + "too small.");
     }
   }
 

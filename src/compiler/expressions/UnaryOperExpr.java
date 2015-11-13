@@ -49,8 +49,7 @@ public class UnaryOperExpr implements Expr {
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
 }

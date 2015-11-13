@@ -10,7 +10,7 @@ import compiler.types.Type;
 public class BinaryOperExpr implements Expr {
   
   private final BinaryOperLiter binaryOp;
-  private final Expr lhs,rhs;
+  private final Expr lhs, rhs;
   private final CodePosition codePos;
   
   public BinaryOperExpr(BinaryOperLiter binaryOp,Expr lhs, Expr rhs, 
@@ -20,13 +20,20 @@ public class BinaryOperExpr implements Expr {
     this.rhs = rhs;
     this.codePos = codePos;
     
-    // Check whether the lhs and rhs expressions have the same type.
-    // Otherwise throw a semantic exception.
-    if (typeMissMatch()) {
-      throw new SemanticException("Type MissMatch error at " + codePos.toString());
-    }
+    checkErrors(lhs, rhs);
   }
 
+  // Check whether the LHS and RHS expressions have the same type.
+  // If not, throw a semantic exception.
+  private void checkErrors(Expr lhs, Expr rhs) {
+    if (typeMissMatch()) {
+      throw new SemanticException("At " + codePos.toString() + ". Expressions "
+          + "in the operation must be of the same type.  Actual types: ("
+          + lhs.getType() + ", " + rhs.getType() + ")");
+    }
+  }
+  
+  // Returns true if the expressions in the operation have correct types.
   private boolean typeMissMatch() {
     switch (this.binaryOp.getString()) {
     case "*":
@@ -70,8 +77,7 @@ public class BinaryOperExpr implements Expr {
 
   @Override
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
 }
