@@ -399,8 +399,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
-    // TODO Auto-generated method stub
     System.out.println("Who's awake?");
+    scope = new SymbolTable<>();
+    for (FuncContext func: ctx.func()) {
+      func.accept(this);
+    }
+    ctx.stat().accept(this);
     return null;
   }
 
