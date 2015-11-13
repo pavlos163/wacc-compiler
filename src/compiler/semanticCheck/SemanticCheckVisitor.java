@@ -216,9 +216,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BoolLiter visitBoolLiter(BoolLiterContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.start.getText();
-    
-    return new BoolLiter(value, codePos);
+    if (ctx.TRUE() != null) {
+      return new BoolLiter("true", codePos);
+    }
+    return new BoolLiter("false", codePos);
   }
 
   @Override
@@ -320,7 +321,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public PairLiter visitPairElem(PairElemContext ctx) {
-    // TODO Auto-generated method stub
+    CodePosition codePos = initialisePosition(ctx);
+    if (ctx.FIRST() != null) {
+      // return new First(...)
+    }
+    // return new Second(...)
     return null;
   }
 
@@ -333,7 +338,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.start.getText();
+    String value = ctx.getText();
     
     return new BinaryOperLiter(value, codePos);
   }
@@ -354,7 +359,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.start.getText();
+    String value = ctx.getText();
     
     return new UnaryOperLiter(value, codePos);
   }
@@ -458,7 +463,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public AssignStat visitAssignStat(AssignStatContext ctx) {
-    // TODO Auto-generated method stub
+    CodePosition codePos = initialisePosition(ctx);
+    // Symbol table stuff.
     return null;
   }
 
