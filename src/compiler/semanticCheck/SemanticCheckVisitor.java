@@ -429,7 +429,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   private Stat visitStat(StatContext ctx) {
-    
     return null;
   }
 
@@ -549,7 +548,26 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnableType visitAssignStat(AssignStatContext ctx) {
     // TODO Auto-generated method stub
-    return null;
+    CodePosition codePos = initialisePosition(ctx);
+    AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
+    
+    if (ctx.type() != null && ctx.IDENT() != null) {
+      String varName = ctx.IDENT().getText();
+      if (scope.lookUpCurrLevelOnly(varName) == null) {
+        throw new SemanticException("Variable Redeclaration at " + codePos);
+      }
+      //return new AssignStat(); // Not implemented in that branch.
+      return null;
+    }
+    else { // Assign left
+      AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
+      if (scope.lookUpAll(lhs.getName()) == null) {
+        throw new SemanticException("Undeclared variable error at "
+            + codePos);
+      }
+      // return new AssignStat();
+      return null;
+    }
   }
 
   @Override
