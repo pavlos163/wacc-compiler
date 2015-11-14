@@ -13,9 +13,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
 import compiler.assignables.ArrayElem;
+import compiler.assignables.AssignLHS;
+import compiler.assignables.First;
 import compiler.assignables.Function;
 import compiler.assignables.Param;
 import compiler.assignables.ParamList;
+import compiler.assignables.Second;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
@@ -174,7 +177,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public Param visitParam(ParamContext ctx) {
-    return null;
+    String ident = ctx.IDENT().getText();
+    Type type = visitType(ctx.type());
+    CodePosition codePos = initialisePosition(ctx);
+    
+    return new Param(ident, scope, type, codePos);
   }
 
   @Override
@@ -359,8 +366,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public PairLiter visitPairElem(PairElemContext ctx) {
-    // TODO Auto-generated method stub
+  public AssignLHS visitPairElem(PairElemContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    
+    if (ctx.FIRST() != null) {
+      return new First((AssignLHS) visitExpr(ctx.expr()), 
+          codePos, scope);
+    } else if (ctx.SECOND() != null) {
+      return new Second((AssignLHS) visitExpr(ctx.expr()), 
+          scope, codePos);  
+    }
     return null;
   }
 

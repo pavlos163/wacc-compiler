@@ -21,4 +21,9 @@ public class Call implements AssignRHS {
     return null;
   }
 
+  @Override
+  public CodePosition getPosition() {
+    return codePos;
+  }
+
 }
