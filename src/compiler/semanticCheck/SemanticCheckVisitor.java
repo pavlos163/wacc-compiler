@@ -14,11 +14,15 @@ import compiler.CodePosition;
 import compiler.assignables.ArgList;
 import compiler.assignables.ArrayElem;
 import compiler.assignables.AssignLHS;
+import compiler.assignables.AssignRHS;
+import compiler.assignables.Call;
 import compiler.assignables.First;
 import compiler.assignables.Function;
+import compiler.assignables.NewPair;
 import compiler.assignables.Param;
 import compiler.assignables.ParamList;
 import compiler.assignables.Second;
+import compiler.assignables.Variable;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
@@ -206,8 +210,29 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public ReturnableType visitAssignRHS(AssignRHSContext ctx) {
-    // TODO Auto-generated method stub
+  public AssignRHS visitAssignRHS(AssignRHSContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    
+    // Check all case of RHS assignment.
+    if (ctx.pairElem() != null) {
+      return visitPairElem(ctx.pairElem());
+    }
+    else if (ctx.arrayLiter() != null) {
+      return visitArrayLiter(ctx.arrayLiter());
+    }
+    else if (ctx.NEWPAIR() != null) {
+      Expr first = visitExpr(ctx.expr(0));
+      Expr second = visitExpr(ctx.expr(1));
+      return new NewPair(first, second, codePos);
+    }
+    else if (ctx.CALL() != null) {
+      String ident = ctx.IDENT().getText();
+      ArgList argList = visitArgList(ctx.argList());
+      return new Call(ident, argList, codePos);
+    }
+    else {
+      System.out.println("Error AssignRHS");
+    }
     return null;
   }
 
@@ -302,7 +327,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       scope.add(param.getIdent(), 
           new Identifier(param.getType(), codePos));
     }
-    scope = scope.newScope();
     if (functions.lookUpAll(currFunc) != null) {
       throw new SemanticException("Function redeclaration at " 
           + codePos.toString());
@@ -310,12 +334,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
         codePos));
     
+    scope = scope.newScope();
     Function function = new Function(returnType, currFunc, parameters,
         visitStat(ctx.stat()), codePos);
     
     //TODO check if there is a return statement!!!
     
     currFunc = null; // We finished visiting the function.
+    // Return to the global scope.
+    scope = scope.getParentScope();
+    scope = scope.getParentScope();
     return function;
   }
 
@@ -401,13 +429,25 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   private Stat visitStat(StatContext ctx) {
-    // TODO Auto-generated method stub
+    
     return null;
   }
 
   @Override
-  public ReturnableType visitAssignLHS(AssignLHSContext ctx) {
-    // TODO Auto-generated method stub
+  public AssignLHS visitAssignLHS(AssignLHSContext ctx) {
+    if (ctx.IDENT() != null) {
+      return new Variable(ctx.IDENT().getText(), scope,
+          initialisePosition(ctx));
+    }
+    else if (ctx.arrayElem() != null) {
+      return visitArrayElem(ctx.arrayElem());
+    }
+    else if (ctx.pairElem() != null) {
+      return visitPairElem(ctx.pairElem());
+    }
+    else {
+      System.out.print("Error assignLHS doesn't work!");
+    }
     return null;
   }
 
@@ -423,6 +463,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ReturnableType visitProgram(ProgramContext ctx) {
     System.out.println("Who's awake?");
     scope = new SymbolTable<>();
+    functions = new SymbolTable<>();
     for (FuncContext func: ctx.func()) {
       func.accept(this);
     }
