@@ -370,7 +370,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
     // TODO Auto-generated method stub
-    System.out.println("Who's awake?");
+    // System.out.println("Who's awake?");
     return null;
   }
 

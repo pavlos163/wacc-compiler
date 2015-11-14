@@ -30,7 +30,8 @@ public class Compiler {
 	    // TODO visit the AST.
 	  tree.accept(new SemanticCheckVisitor());
 	} catch (Exception e) { // Exception for syntax errors.
- 	    // print to the output the error. Exits the system.
+	    System.exit(200);
+	    // print to the output the error. Exits the system.
 	}
 	  // TODO another catch for the semantical errors.
   }
@@ -42,7 +43,7 @@ public class Compiler {
     //System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
     //System.out.print("Semantic analysis has been completed.\n");
-  
+    System.exit(0);
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
   }
