@@ -12,9 +12,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import compiler.CodePosition;
 import compiler.assignables.ArgList;
-<<<<<<< HEAD
-import compiler.assignables.AssignLHS;
-=======
 import compiler.assignables.ArrayElem;
 import compiler.assignables.AssignLHS;
 import compiler.assignables.AssignRHS;
@@ -27,7 +24,6 @@ import compiler.assignables.ParamList;
 import compiler.assignables.Second;
 import compiler.assignables.Variable;
 import compiler.errorHandling.SemanticException;
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
 import compiler.expressions.Expr;
@@ -42,7 +38,6 @@ import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
-<<<<<<< HEAD
 import compiler.statements.AssignStat;
 import compiler.statements.BeginEndStat;
 import compiler.statements.ExitStat;
@@ -57,11 +52,8 @@ import compiler.statements.SkipStat;
 import compiler.statements.Stat;
 import compiler.statements.StatList;
 import compiler.statements.WhileStat;
-=======
-import compiler.statements.Stat;
 import compiler.symbolTable.FunctionIdentifier;
 import compiler.symbolTable.Identifier;
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
 import compiler.symbolTable.SymbolTable;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
@@ -117,15 +109,11 @@ import antlr.WaccParserVisitor;
 
 public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   
-<<<<<<< HEAD
-  private SymbolTable scope;
-=======
   // Declare symbol table "tree".
   private SymbolTable<Identifier> scope;
   private SymbolTable<FunctionIdentifier> functions;
   // Remember the function that we are currently looking at.
   private String currFunc;
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
   
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
@@ -330,10 +318,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-<<<<<<< HEAD
-  public ReturnableType visitFunc(FuncContext ctx) {
-    return null;
-=======
   public Function visitFunc(FuncContext ctx) {
     System.out.println("I found a function definition!");
     
@@ -373,7 +357,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     scope = scope.getParentScope();
     scope = scope.getParentScope();
     return function;
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
   }
 
   @Override
@@ -421,15 +404,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     return null;
   }
 
-  @Override
-<<<<<<< HEAD
-  public PairLiter visitPairElem(PairElemContext ctx) {
-    CodePosition codePos = initialisePosition(ctx);
-    if (ctx.FIRST() != null) {
-      // return new First(...)
-    }
-    // return new Second(...)
-=======
   public AssignLHS visitPairElem(PairElemContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     
@@ -440,7 +414,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       return new Second((AssignLHS) visitExpr(ctx.expr()), 
           scope, codePos);  
     }
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
     return null;
   }
 
@@ -466,20 +439,14 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   private Stat visitStat(StatContext ctx) {
-<<<<<<< HEAD
     if (ctx != null) {
       return (Stat) ctx.accept(this);
     }
-=======
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
     return null;
   }
 
   @Override
   public AssignLHS visitAssignLHS(AssignLHSContext ctx) {
-<<<<<<< HEAD
-    // TODO Auto-generated method stub
-=======
     if (ctx.IDENT() != null) {
       return new Variable(ctx.IDENT().getText(), scope,
           initialisePosition(ctx));
@@ -493,7 +460,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else {
       System.out.print("Error assignLHS doesn't work!");
     }
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
     return null;
   }
 
@@ -622,14 +588,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-<<<<<<< HEAD
   public AssignStat visitAssignStat(AssignStatContext ctx) {
-    CodePosition codePos = initialisePosition(ctx);
-    // Functions stuff.
-    return null;
-=======
-  public ReturnableType visitAssignStat(AssignStatContext ctx) {
-    // TODO Auto-generated method stub
     CodePosition codePos = initialisePosition(ctx);
     AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
     
@@ -638,8 +597,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       if (scope.lookUpCurrLevelOnly(varName) == null) {
         throw new SemanticException("Variable Redeclaration at " + codePos);
       }
-      //return new AssignStat(); // Not implemented in that branch.
-      return null;
+      Variable var = new Variable(ctx.IDENT().getText(), scope, codePos);
+      
+      return new AssignStat(var, rhs, codePos);
     }
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
@@ -647,10 +607,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
         throw new SemanticException("Undeclared variable error at "
             + codePos);
       }
-      // return new AssignStat();
-      return null;
+      return new AssignStat(lhs, rhs, codePos);
     }
->>>>>>> 8a7ed51f97cef9faa7a691135c7391070bdd9be9
   }
 
   @Override
