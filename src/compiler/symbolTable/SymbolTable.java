@@ -39,5 +39,13 @@ public class SymbolTable {
     return dictionary.get(name);
   }
   
+  public SymbolTable getParentScope() {
+    return parentScope;
+  }
+  
+  public SymbolTable newScope() {
+    return new SymbolTable(this);
+  }
+  
 }
 

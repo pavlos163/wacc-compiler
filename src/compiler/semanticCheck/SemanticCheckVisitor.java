@@ -41,6 +41,7 @@ import compiler.statements.SkipStat;
 import compiler.statements.Stat;
 import compiler.statements.StatList;
 import compiler.statements.WhileStat;
+import compiler.symbolTable.SymbolTable;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
 import compiler.types.PairType;
@@ -94,7 +95,9 @@ import antlr.WaccParser.WhileStatContext;
 import antlr.WaccParserVisitor;
 
 public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
-
+  
+  private SymbolTable scope;
+  
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
@@ -413,15 +416,28 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public IfThenElseStat visitIfThenElseStat(IfThenElseStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Symbol table stuff.
-    return null;
+    scope = scope.newScope();
+    Stat ifBody = visitStat(ctx.stat(0));
+    
+    scope = scope.getParentScope();
+    
+    scope = scope.newScope();
+    Stat elseBody = visitStat(ctx.stat(1));
+    
+    Expr condition = visitExpr(ctx.expr());
+    return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }
 
   @Override
   public IfThenStat visitIfThenStat(IfThenStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Symbol table stuff.
-    return null;
+    scope = scope.newScope();
+    Stat ifBody = visitStat(ctx.stat());
+    
+    scope = scope.getParentScope();
+    
+    Expr condition = visitExpr(ctx.expr());
+    return new IfThenStat(condition, ifBody, codePos);
   }
 
   @Override
@@ -439,10 +455,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BeginEndStat visitBeginStat(BeginStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Initialising scope.
-    Stat content = visitStat(ctx.stat());
-    // Syntax error if no end.
+    scope = scope.newScope();
     
+    Stat content = visitStat(ctx.stat());
+    
+    scope = scope.getParentScope();
     return new BeginEndStat(content, codePos);
   }
 
@@ -457,22 +474,27 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnStat visitReturnStat(ReturnStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Symbol table stuff.
+    // Functions stuff.
     return null;
   }
 
   @Override
   public AssignStat visitAssignStat(AssignStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Symbol table stuff.
+    // Functions stuff.
     return null;
   }
 
   @Override
   public WhileStat visitWhileStat(WhileStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Symbol table stuff.
-    return null;
+    scope = scope.newScope();
+    
+    Expr condition = visitExpr(ctx.expr());
+    Stat whileBody = visitStat(ctx.stat());
+    
+    scope = scope.getParentScope();
+    return new WhileStat(condition, whileBody, codePos);
   }
 
   @Override
