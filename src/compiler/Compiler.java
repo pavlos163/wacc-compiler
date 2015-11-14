@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.semanticCheck.ErrorListener;
 import compiler.semanticCheck.SemanticCheckVisitor;
 
 import antlr.WaccLexer;
@@ -20,19 +21,17 @@ public class Compiler {
   
   public Compiler() {
   }
+  
 	
   private void syntacticAnalysis() {
     this.tree = parser.program();
   }
 	
   private void semanticAnalysis() {
-    try {
 	    // TODO visit the AST.
-	  tree.accept(new SemanticCheckVisitor());
-	} catch (Exception e) { // Exception for syntax errors.
-	    System.exit(100);
-	    // print to the output the error. Exits the system.
-	}
+      SemanticCheckVisitor visitor = new SemanticCheckVisitor();
+	  tree.accept(visitor);
+	  visitor.printExceptionsAndExit();
 	  // TODO another catch for the semantical errors.
   }
 	
@@ -42,6 +41,7 @@ public class Compiler {
     // Prints for debugging purposes.
     //System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
+    
     //System.out.print("Semantic analysis has been completed.\n");
     System.exit(0);
     // If none of the above exited the program then the compiler
@@ -54,6 +54,7 @@ public class Compiler {
     this.lexer = new WaccLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     this.parser = new WaccParser(tokens);
+    parser.addErrorListener(new ErrorListener());
   }
 	
 }
