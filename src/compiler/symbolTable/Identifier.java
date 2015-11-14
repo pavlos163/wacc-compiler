@@ -1,13 +1,23 @@
 package compiler.symbolTable;
 
+import compiler.CodePosition;
+import compiler.types.Type;
+
 public class Identifier {
   
-  // This part of the code is not yet merged to support 
-  // the Type object so I leave it commented to pass the compilation.
+  private final Type identType;
+  private CodePosition codePos;
   
-  // private final Type identType;
+  public Identifier(Type type, CodePosition codePos) {
+     this.identType = type;
+     this.codePos = codePos;
+  }
   
-  // public Identifier(Type type) {
-    // this.identType = type;
-  // }
+  public Type getType() {
+    return identType;
+  }
+  
+  public CodePosition getPosition() {
+    return codePos;
+  }
 }

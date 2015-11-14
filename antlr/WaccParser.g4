@@ -39,8 +39,8 @@ assignRHS:
   expr                                             
 | arrayLiter                                                 
 | NEWPAIR L_PAR expr COMMA expr R_PAR
-| pairElem                                                   
-| CALL IDENT L_PAR argList? R_PAR     
+| pairElem            
+| CALL IDENT L_PAR argList? R_PAR
 ;
 
 argList: expr (COMMA expr)*;
@@ -95,7 +95,7 @@ unaryOper: NOT | NEGATIVE | LEN | ORD | CHR;
 
 binaryOper : MUL | DIV | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 
-arrayElem: IDENT (L_SQ expr R_SQ) PLUS;
+arrayElem: IDENT (L_SQ expr R_SQ)+;
 
 intSign: PLUS | MINUS;
 

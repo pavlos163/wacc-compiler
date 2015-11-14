@@ -20,11 +20,9 @@ public class NewPair implements AssignRHS {
   public Type getType() {
     return new PairType(first.getType(), second.getType());
   }
-
-  @Override
+  
   public CodePosition getPosition() {
-    // TODO Auto-generated method stub
-    return null;
+    return codePos;
   }
 
 }
