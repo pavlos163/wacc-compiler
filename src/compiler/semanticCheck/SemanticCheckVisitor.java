@@ -272,7 +272,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitFunc(FuncContext ctx) {
-    System.out.println("I found a function definition!");
     return null;
   }
 
@@ -312,7 +311,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ValueExpr visitIntLiterExpr(IntLiterExprContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     IntLiter intLtr = visitIntLiter(ctx.intLiter());
-    
     return new ValueExpr(intLtr, codePos);
   }
 
@@ -369,8 +367,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
-    // TODO Auto-generated method stub
-    // System.out.println("Who's awake?");
+    System.out.println("Who's awake?");
     return null;
   }
 

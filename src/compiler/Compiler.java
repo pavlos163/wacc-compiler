@@ -30,7 +30,7 @@ public class Compiler {
 	    // TODO visit the AST.
 	  tree.accept(new SemanticCheckVisitor());
 	} catch (Exception e) { // Exception for syntax errors.
-	    System.exit(200);
+	    System.exit(100);
 	    // print to the output the error. Exits the system.
 	}
 	  // TODO another catch for the semantical errors.
