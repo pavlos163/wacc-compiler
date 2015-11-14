@@ -39,9 +39,9 @@ public class Compiler {
     initializeParserAndLexer(code);
     syntacticAnalysis();
     // Prints for debugging purposes.
-    System.out.print("Syntax analysis has been completed.\n");
+    //System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
-    System.out.print("Semantic analysis has been completed.\n");
+    //System.out.print("Semantic analysis has been completed.\n");
   
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
