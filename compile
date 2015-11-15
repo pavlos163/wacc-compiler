@@ -2,4 +2,4 @@
 
 system "java -cp bin:lib/antlr-4.4-complete.jar compiler.Main #{ARGV[0]}"
 
-puts $?
+#puts $?

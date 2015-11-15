@@ -26,7 +26,7 @@ public class Compiler {
   }
   
 	
-  private void syntacticAnalysis() {
+  private void syntaxAnalysis() {
     try {
       this.tree = parser.program();
     } catch (ParseCancellationException e) {
@@ -47,7 +47,7 @@ public class Compiler {
 	
   public void compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
-    syntacticAnalysis();
+    syntaxAnalysis();
     // Prints for debugging purposes.
     // System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
