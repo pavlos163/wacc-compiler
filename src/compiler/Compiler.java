@@ -3,10 +3,13 @@ package compiler;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.antlr.runtime.RecognitionException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.errorHandling.SemanticException;
+import compiler.errorHandling.SyntaxException;
 import compiler.semanticCheck.SemanticCheckVisitor;
 
 import antlr.WaccLexer;
@@ -22,16 +25,20 @@ public class Compiler {
   }
 	
   private void syntacticAnalysis() {
-    this.tree = parser.program();
+    try {
+      this.tree = parser.program();
+    } catch (Exception e) {
+      System.exit(100);
+    }
   }
 	
   private void semanticAnalysis() {
     try {
-	    // TODO visit the AST.
 	  tree.accept(new SemanticCheckVisitor());
-	} catch (Exception e) { // Exception for syntax errors.
+	} catch (SyntaxException e) { // Exception for syntax errors.
 	    System.exit(100);
-	    // print to the output the error. Exits the system.
+	} catch (SemanticException e) {
+	  System.exit(200);
 	}
 	  // TODO another catch for the semantical errors.
   }

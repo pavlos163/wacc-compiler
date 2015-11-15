@@ -1,5 +1,11 @@
 lexer grammar WaccLexer;
 
+@rulecatch {
+   catch (RecognitionException e) {
+    throw e;
+   }
+}
+
 FILE: [_a-zA-z0-9]* '.wacc';
 
 SEMICOLON: ';';
