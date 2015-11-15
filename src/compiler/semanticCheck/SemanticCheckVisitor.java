@@ -191,7 +191,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return new ArrType(visitPairType(ctx.pairType()));
     }
-    else exceptionList.add(new SyntaxException("Error by the compiler!")) ;
+    else exceptionList.add(new SyntaxException("Error by the compiler!"));
 	return null;
   }
 
@@ -478,7 +478,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
-    System.out.println("Who's awake?");
     scope = new SymbolTable<>();
     functions = new SymbolTable<>();
     for (FuncContext func: ctx.func()) {
