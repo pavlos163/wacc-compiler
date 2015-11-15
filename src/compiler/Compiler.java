@@ -23,6 +23,7 @@ public class Compiler {
   
   public Compiler() {
   }
+  
 	
   private void syntacticAnalysis() {
     try {
@@ -49,6 +50,7 @@ public class Compiler {
     // Prints for debugging purposes.
     //System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
+    
     //System.out.print("Semantic analysis has been completed.\n");
     System.exit(0);
     // If none of the above exited the program then the compiler

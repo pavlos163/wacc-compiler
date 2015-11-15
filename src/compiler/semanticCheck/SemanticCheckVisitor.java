@@ -115,6 +115,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   // Remember the function that we are currently looking at.
   private String currFunc;
   
+  private List<SyntaxException> exceptionList;
+  
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
@@ -189,7 +191,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return new ArrType(visitPairType(ctx.pairType()));
     }
-    else throw new SyntaxException("Error by the compiler!");
+    else exceptionList.add(new SyntaxException("Error by the compiler!")) ;
+	return null;
   }
 
   @Override
@@ -260,7 +263,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return visitPairType(ctx.pairType());
     }
-    else throw new SyntaxException("Error by the compiler!");
+    else exceptionList.add(new SyntaxException("Error by the compiler!"));
+	return null;
   }
 
   @Override
@@ -380,7 +384,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.arrayType() != null) {
       return visitArrayType(ctx.arrayType());
     }
-    else throw new SyntaxException("Error by the compiler!");
+    else exceptionList.add(new SyntaxException("Error by the compiler!"));
+	return null;
   }
 
   @Override
@@ -604,8 +609,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
       if (scope.lookUpAll(lhs.getName()) == null) {
-        throw new SemanticException("Undeclared variable error at "
-            + codePos);
+          exceptionList.add(new SyntaxException("Undeclared variable error at " + codePos));
       }
       return new AssignStat(lhs, rhs, codePos);
     }
@@ -677,5 +681,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     return codePos;
   }
+  public void printExceptionsAndExit() {
+		for (Exception e : exceptionList) {
+			System.err.println(e);
+			System.err.println("#semantics_error#");
+			System.exit(200);
+		}
+	}
   
 }

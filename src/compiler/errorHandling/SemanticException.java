@@ -8,6 +8,7 @@ public class SemanticException extends ParseCancellationException {
   
   public SemanticException(String errorMessage) {
     this.errorMessage = errorMessage;
+    System.exit(200);
   }
   
   @Override
