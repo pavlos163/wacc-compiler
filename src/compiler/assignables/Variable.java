@@ -14,7 +14,6 @@ public class Variable implements AssignLHS, Expr {
   
   public Variable(String name, SymbolTable<Identifier> scope, 
        CodePosition codePos) {
-    System.out.println("Visit Constructor for Variable");
     this.name = name;
     this.scope = scope;
     this.codePos = codePos;

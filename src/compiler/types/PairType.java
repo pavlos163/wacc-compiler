@@ -13,7 +13,7 @@ public class PairType implements Type {
     }
     this.fst = fst;
     if (snd instanceof PairType) {
-      this.snd = snd;
+      this.snd = new PairType();
     }
     this.snd = snd;
   }
@@ -50,7 +50,16 @@ public class PairType implements Type {
       return false;
     }
     PairType rhs = (PairType) obj;
-    return fst.equals(rhs.fst) && snd.equals(rhs.snd);
+    return typeCheck(fst, rhs.fst) && typeCheck(snd, rhs.snd);
+  }
+  
+  private boolean typeCheck(Type lhs, Type rhs) {
+    if (rhs == null || lhs == null) {
+      return true; // When we have a pair the type is null.
+    }
+    else {
+      return lhs.equals(rhs);
+    }
   }
   
   @Override 

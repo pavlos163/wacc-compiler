@@ -1,4 +1,4 @@
 begin 
-  int chr = 5;
-  print chr
+  pair(int, int) p = newpair(1, 1);
+  pair(int, pair) q = newpair(1, null)
 end
