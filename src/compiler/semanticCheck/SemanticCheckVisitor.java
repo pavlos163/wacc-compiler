@@ -642,11 +642,19 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public AssignStat visitAssignStat(AssignStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
-    
+        
     if (ctx.type() != null && ctx.IDENT() != null) {
+      if (rhs.getType().equals(BaseType.typeInt)) {
+        long rhsValue = Long.parseLong(ctx.assignRHS().getText());
+        if (rhsValue > 2147483647 || rhsValue < -2147483648) {
+          throw new SyntaxException("At: " + codePos + ". Integer Overflow"
+              + " at assignment.");
+        }
+      }
       String varName = ctx.IDENT().getText();
       if (scope.lookUpCurrLevelOnly(varName) != null) {
-        throw new SemanticException("Variable Redeclaration at " + codePos);
+        throw new SemanticException("At: " + codePos + ". Variable "
+            + "Redeclaration.");
       }
       scope.add(varName, new Identifier(visitType(ctx.type()), codePos));
       Variable var = new Variable(ctx.IDENT().getText(), scope, codePos);
@@ -655,7 +663,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
       if (scope.lookUpAll(lhs.getName()) == null) {
-          throw new SyntaxException("Undeclared variable error at " + codePos);
+          throw new SyntaxException("At: " + codePos + ". Undeclared variable"
+              + " error.");
       }
       return new AssignStat(lhs, rhs, codePos);
     }
