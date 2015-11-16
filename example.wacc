@@ -1,4 +1,12 @@
-begin 
-  pair(int, int) p = newpair(1, 1);
-  pair(int, pair) q = newpair(1, null)
+# simple array assignment and lookup
+
+# Output:
+# 42
+
+# Program:
+
+begin
+  int[] a = [0] ;
+  a[0] = 42 ;
+  println a[0]
 end

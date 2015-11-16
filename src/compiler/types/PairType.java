@@ -38,18 +38,33 @@ public class PairType implements Type {
   
   @Override
   public String toString() {
-    String first = fst.toString();
-    String second = snd.toString();
+    String first,second;
+    
+    if (fst == null) {
+      first = "unknown";
+    } else first = fst.toString();
+    
+    if (snd == null) {
+      second = "unknown";
+    } else {
+      second = snd.toString();
+    }
         
     return "(" + first + ", " + second + ")";
   }
   
   @Override
   public boolean equals(Object obj) {
+    if (obj instanceof ArrType) {
+      ArrType arrType = (ArrType) obj;
+      obj = arrType.getType();
+    }
     if (!(obj instanceof PairType)) {
+      System.out.print("Problem here" +  "\n");
       return false;
     }
     PairType rhs = (PairType) obj;
+    System.out.println("A minute before the error");
     return typeCheck(fst, rhs.fst) && typeCheck(snd, rhs.snd);
   }
   
