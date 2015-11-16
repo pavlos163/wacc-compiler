@@ -644,13 +644,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
         
     if (ctx.type() != null && ctx.IDENT() != null) {
-      if (rhs.getType().equals(BaseType.typeInt)) {
-        long rhsValue = Long.parseLong(ctx.assignRHS().getText());
-        if (rhsValue > 2147483647 || rhsValue < -2147483648) {
-          throw new SyntaxException("At: " + codePos + ". Integer Overflow"
-              + " at assignment.");
-        }
-      }
+      //if (rhs.getType().equals(BaseType.typeInt)) {
+      //  long rhsValue = Long.parseLong(ctx.assignRHS().getText());
+      //  if (rhsValue > Integer.MAX_VALUE || rhsValue < Integer.MIN_VALUE) {
+      //    throw new SyntaxException("At: " + codePos + ". Integer Overflow"
+      //        + " at assignment.");
+      //  }
+      //}
       String varName = ctx.IDENT().getText();
       if (scope.lookUpCurrLevelOnly(varName) != null) {
         throw new SemanticException("At: " + codePos + ". Variable "
