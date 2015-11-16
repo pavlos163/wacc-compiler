@@ -60,11 +60,9 @@ public class PairType implements Type {
       obj = arrType.getType();
     }
     if (!(obj instanceof PairType)) {
-      System.out.print("Problem here" +  "\n");
       return false;
     }
     PairType rhs = (PairType) obj;
-    System.out.println("A minute before the error");
     return typeCheck(fst, rhs.fst) && typeCheck(snd, rhs.snd);
   }
   

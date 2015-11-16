@@ -6,7 +6,13 @@
 # Program:
 
 begin
-  int[] a = [0] ;
-  a[0] = 42 ;
-  println a[0]
+  int mInt = 5;
+  int mDnt = 6;
+  
+  if mInt <= mDnt && mInt > 4 then 
+    print "ok"
+  else
+    skip
+  fi 
+  
 end

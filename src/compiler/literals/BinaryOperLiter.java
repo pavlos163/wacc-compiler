@@ -25,29 +25,18 @@ public class BinaryOperLiter implements Liter {
   public Type getType() {
     switch(value) {
     case "*":
-      return BaseType.typeInt;
     case "/":
-      return BaseType.typeInt;
     case "%":
-      return BaseType.typeInt;
     case "+":
-      return BaseType.typeInt;
     case "-":
       return BaseType.typeInt;
-    case ">":
-      return BaseType.typeBool;
-    case ">=":
-      return BaseType.typeBool;
-    case "<":
-      return BaseType.typeBool;
-    case "<=":
-      return BaseType.typeBool;
-    case "==":
-      return BaseType.typeBool;
+    case ">":     
+    case ">=":    
+    case "<":     
+    case "<=":   
+    case "==":    
     case "!=":
-      return BaseType.typeBool;
     case "&&":
-      return BaseType.typeBool;
     case "||":
       return BaseType.typeBool;
     default:
