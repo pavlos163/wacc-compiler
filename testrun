@@ -1,0 +1,62 @@
+#!/bin/bash
+echo "Parsing valid programs..."
+find wacc_examples/valid -name "*.wacc" | {
+fails=0
+all=0
+while read line; do
+  ((all++))
+  ./compile "$line" > .tmp.txt 2>&1
+  if [[ -s ".tmp.txt" ]] ; then
+    echo "Failed: $line"
+                if [ "$1" == "-v" ] ; then
+                  cat .tmp.txt
+                fi
+                ((fails++))
+  fi ;
+done
+if [ $fails == 0 ] ; then
+        echo "*********All valid programs are parsed!*********"
+else
+        echo "_______$fails/$all valid programs are not parsed!_______"
+fi ;
+}
+ 
+echo "Parsing invalid programs that should throw syntax errors..."
+find wacc_examples/invalid/syntaxErr -name "*.wacc" | {
+fails=0
+all=0
+while read line; do
+  ((all++))
+  ./compile "$line" > .tmp.txt 2>&1
+  if [[ ! -s ".tmp.txt" ]] ; then
+                echo "Parsed: $line"
+                ((fails++))
+  fi ;
+done
+if [ $fails == 0 ] ; then
+        echo "****All programs with syntactic errors fail!****"
+else
+        echo "_______$fails/$all syntactic errors are parsed!_______"
+fi ;
+}
+ 
+echo "Parsing invalid programs that should throw semantic errors..."
+find wacc_examples/invalid/semanticErr -name "*.wacc" | {
+fails=0
+all=0
+while read line; do
+  ((all++))
+  ./compile "$line" > .tmp.txt 2>&1
+  if [[ ! -s ".tmp.txt" ]] ; then
+    echo "Parsed: $line"
+                ((fails++))
+  fi ;
+done
+if [ $fails == 0 ] ; then
+        echo "*****All programs with semantic error fail!*****"
+else
+        echo "_________$fails/$all semantic errors are parsed!_________"
+fi ;
+}
+rm .tmp.txt
+
