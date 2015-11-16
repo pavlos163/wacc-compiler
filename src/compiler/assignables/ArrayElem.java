@@ -29,19 +29,16 @@ public class ArrayElem implements AssignLHS, Liter {
     Identifier identifier = scope.lookUpAll(ident);
     this.type = identifier.getType();
     
-    if (typeMissMatch()) {
-      throw new SemanticException("Type miss match error at" + 
-          codePos);
-    }
+    checkErrors();
   }
   
-  public boolean typeMissMatch() {
+  public void checkErrors() {
     for (Expr expr : exprs) {
       if (!expr.getType().equals(BaseType.typeInt)) {
-        return true;
+        throw new SemanticException("At: " + codePos + ". Must be of type"
+            + " int. Actual Type: " + expr.getType());
       }
     }
-    return false;
   }
   
   @Override

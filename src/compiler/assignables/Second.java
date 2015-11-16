@@ -18,17 +18,18 @@ public class Second implements AssignLHS {
     this.scope = scope;
     this.codePos = codePos;
     
-    if (!isPair()) {
-      throw new SemanticException("Type mismatch error " + codePos);
+    checkErrors();
+  }
+  
+  public void checkErrors() {
+    if (!(expr.getType() instanceof PairType)) {
+      throw new SemanticException("At " + codePos + ". Must be of type"
+          + " pair. Actual type: " + expr.getType());
     }
   }
 
   public CodePosition getPosition() {
     return codePos;
-  }
-  
-  public boolean isPair() {
-    return expr.getType() instanceof PairType;
   }
   
   @Override
