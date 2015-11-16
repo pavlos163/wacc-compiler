@@ -72,7 +72,7 @@ public class BinaryOperExpr implements Expr {
 
   @Override
   public Type getType() {
-    return this.binaryOp.getType();
+    return binaryOp.getType();
   }
 
   @Override

@@ -32,6 +32,8 @@ public class AssignStat extends Stat {
   }
   
   private void checkErrors(AssignLHS lhs, AssignRHS rhs) {
+    System.out.println(lhs.getType());
+    System.out.println(rhs.getType());
     if (!(rhs instanceof Call 
         || lhs.getType().toString().equals(rhs.getType().toString()))) {
       throw new SemanticException("At " + codePos.toString() + 
