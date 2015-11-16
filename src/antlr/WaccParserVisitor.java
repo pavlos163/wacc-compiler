@@ -214,12 +214,6 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArrayElem(@NotNull WaccParser.ArrayElemContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link WaccParser#binaryOper}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryOper(@NotNull WaccParser.BinaryOperContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code freeStat}
 	 * labeled alternative in {@link WaccParser#stat}.
 	 * @param ctx the parse tree
