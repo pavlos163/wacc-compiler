@@ -174,7 +174,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitIdentExpr(IdentExprContext ctx) {
-    System.out.println("Visit ident");
     CodePosition codePos = initialisePosition(ctx);
     if (scope.lookUpAll(ctx.IDENT().getText()) != null) {
       return new Variable(ctx.IDENT().getText(), scope, codePos);
@@ -230,7 +229,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public AssignRHS visitAssignRHS(AssignRHSContext ctx) {
-    System.out.print("AssignRHS\n");
     CodePosition codePos = initialisePosition(ctx);
     
     // Check all case of RHS assignment.
@@ -282,7 +280,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public Type visitBaseType(BaseTypeContext ctx) {
-    System.out.print("BaseType");
     if (ctx.INT() != null) {
       return BaseType.typeInt;
     }
@@ -561,7 +558,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public StatList visitStatList(StatListContext ctx) {
-    System.out.print("Statlist\n");
     CodePosition codePos = initialisePosition(ctx);
     List<Stat> statements = new LinkedList<Stat>();
     
@@ -603,7 +599,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public AssignStat visitAssignStat(AssignStatContext ctx) {
-    System.out.print("AssignStat\n");
     CodePosition codePos = initialisePosition(ctx);
     AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
     
@@ -657,7 +652,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ExitStat visitExitStat(ExitStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     Expr expression = visitExpr(ctx.expr());
-    System.out.print("Exit stat\n");
     return new ExitStat(expression, codePos);
   }
 
@@ -677,7 +671,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   private Expr visitExpr(ExprContext ctx) {
-    System.out.println("Visit the expression");
     if (ctx != null) {
       return (Expr) ctx.accept(this);
     }
