@@ -680,12 +680,5 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     return codePos;
   }
-  public void printExceptionsAndExit() {
-		for (Exception e : exceptionList) {
-			System.err.println(e);
-			System.err.println("#semantics_error#");
-			System.exit(200);
-		}
-	}
   
 }

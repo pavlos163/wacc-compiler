@@ -24,12 +24,12 @@ public class Compiler {
   
   public Compiler() {
   }
-  
 	
   private void syntaxAnalysis() {
     try {
       this.tree = parser.program();
     } catch (ParseCancellationException e) {
+      System.out.println("#syntax_error#");
       System.out.println(e.getMessage());
       System.exit(100);
     }
@@ -50,10 +50,8 @@ public class Compiler {
     syntaxAnalysis();
     // Prints for debugging purposes.
     // System.out.print("Syntax analysis has been completed.\n");
-    semanticAnalysis();
-    
+    semanticAnalysis();    
     // System.out.print("Semantic analysis has been completed.\n");
-    System.exit(0);
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
   }
