@@ -158,8 +158,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ArgList visitArgList(ArgListContext ctx) {
     List<Expr> expressions = new LinkedList<>();
-    CodePosition codePos = initialisePosition(ctx);
-    
+    CodePosition codePos = new CodePosition(0,0);
+    if (ctx != null)
+      codePos = initialisePosition(ctx);
+   
     if (ctx != null) {
       for (ExprContext ectx : ctx.expr()) {
         expressions.add(visitExpr(ectx));
@@ -528,11 +530,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
     scope = new SymbolTable<Identifier>();
-    functions = new SymbolTable<>();
+    // All the variables from the function must get to another scope.
+    scope = scope.newScope();
+    functions = new SymbolTable<FunctionIdentifier>();
     for (FuncContext func: ctx.func()) {
       func.accept(this);
     }
+    scope = scope.getParentScope();
+    scope = scope.newScope();
     visitStat(ctx.stat());
+    scope = scope.getParentScope();
     return null;
   }
 
