@@ -32,9 +32,9 @@ public class BinaryOperLiter implements Liter {
       return BaseType.typeInt;
     case ">":     
     case ">=":    
-    case "<":     
+    case "<":
     case "<=":   
-    case "==":    
+    case "==":
     case "!=":
     case "&&":
     case "||":
