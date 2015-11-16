@@ -476,6 +476,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.OR() != null) {
       value = "||";
     }
+    else if (ctx.MOD() != null){
+      value = "%";
+    }
     
     return new BinaryOperLiter(value, codePos);
   }
