@@ -1,6 +1,7 @@
 package compiler;
 
 public class CodePosition {
+  
   private int lineNum,charNum;
   
   public CodePosition(int lineNum, int charNum) {
@@ -16,4 +17,5 @@ public class CodePosition {
   public String toString() {
     return lineNum + ":" + charNum;
   }
+  
 }

@@ -2,7 +2,6 @@ package compiler.literals;
 
 import compiler.CodePosition;
 import compiler.errorHandling.SyntaxException;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.BaseType;
 import compiler.types.Type;
 
@@ -25,15 +24,15 @@ public class UnaryOperLiter implements Liter {
   @Override
   public Type getType() {
     switch(value) {
-    case "NOT":
+    case "!":
       return BaseType.typeBool;
-    case "NEGATIVE":
+    case "-":
       return BaseType.typeInt;
-    case "LEN":
+    case "len":
       return BaseType.typeInt;
-    case "ORD":
+    case "ord":
       return BaseType.typeInt;
-    case "CHR":
+    case "chr":
       return BaseType.typeChar;
     default:
       return null;
@@ -42,29 +41,16 @@ public class UnaryOperLiter implements Liter {
 
   @Override
   public String getString() {
-    switch (value) {
-    case "NOT":
-      return "!";
-    case "NEGATIVE":
-      return "-";
-    case "LEN":
-      return "len";
-    case "ORD":
-      return "ord";
-    case "CHR":
-      return "chr";
-    default:
-      return null;
-    }
+    return value;
   }
   
   private void checkUnaryOper(String value) throws SyntaxException {
     switch(value) {
-    case "NOT":
-    case "NEGATIVE":
-    case "LEN":
-    case "ORD":
-    case "CHR":
+    case "!":
+    case "-":
+    case "len":
+    case "ord":
+    case "chr":
       break;
     default:
       throw new SyntaxException("At " + codePos.toString() + ". Invalid "

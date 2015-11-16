@@ -3,11 +3,12 @@ package compiler;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.antlr.runtime.RecognitionException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.errorHandling.ExceptionErrorListener;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.semanticCheck.SemanticCheckVisitor;
@@ -23,35 +24,35 @@ public class Compiler {
   
   public Compiler() {
   }
- 
-  private void syntacticAnalysis() {
+	
+  private void syntaxAnalysis() {
     try {
       this.tree = parser.program();
-    } catch (Exception e) {
+    } catch (ParseCancellationException e) {
+      System.out.println("The exception is catched.");
       System.exit(100);
     }
   }
 	
   private void semanticAnalysis() {
-    
     try {
       tree.accept(new SemanticCheckVisitor());
-      } catch (SyntaxException e) { // Exception for syntax errors.
-        System.err.println(e.getMessage());
-        System.exit(100);
-      } catch (SemanticException e) {
-        System.err.println(e.getMessage());
-        System.exit(200);
-     }
+    } catch (SyntaxException e) { // Exception for syntax errors.
+      System.err.println(e.getMessage());
+      System.exit(100);
+    } catch (SemanticException e) {
+      System.err.println(e.getMessage());
+      System.exit(200);
+    }
   }
 	
   public void compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
-    syntacticAnalysis();
+    syntaxAnalysis();
     // Prints for debugging purposes.
-    System.out.print("Syntax analysis has been completed.\n");
-    semanticAnalysis();
-    System.out.print("Semantic analysis has been completed.\n");
+    // System.out.print("Syntax analysis has been completed.\n");
+    semanticAnalysis();    
+    // System.out.print("Semantic analysis has been completed.\n");
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
     System.exit(0);
@@ -61,8 +62,14 @@ public class Compiler {
 	  throws IOException {
     ANTLRInputStream input = new ANTLRInputStream(code);
     this.lexer = new WaccLexer(input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(ExceptionErrorListener.INSTANCE);
+    
     CommonTokenStream tokens = new CommonTokenStream(lexer);
+    
     this.parser = new WaccParser(tokens);
+    parser.removeErrorListeners();
+    parser.addErrorListener(ExceptionErrorListener.INSTANCE);
   }
 	
 }

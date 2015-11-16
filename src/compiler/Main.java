@@ -1,11 +1,12 @@
 package compiler;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 
 public class Main {
+  
+  /* Implements the whole procedure including handling input and output,
+   * compiling the input file and creating the generated output file. */
   
   public static void main(String[] args) throws Exception {
     String inputFile = null;

@@ -34,7 +34,6 @@ import compiler.literals.BinaryOperLiter;
 import compiler.literals.BoolLiter;
 import compiler.literals.CharLiter;
 import compiler.literals.IntLiter;
-import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
@@ -43,7 +42,6 @@ import compiler.statements.BeginEndStat;
 import compiler.statements.ExitStat;
 import compiler.statements.FreeStat;
 import compiler.statements.IfThenElseStat;
-import compiler.statements.IfThenStat;
 import compiler.statements.PrintStat;
 import compiler.statements.PrintlnStat;
 import compiler.statements.ReadStat;
@@ -80,7 +78,6 @@ import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
 import antlr.WaccParser.IfThenElseStatContext;
-import antlr.WaccParser.IfThenStatContext;
 import antlr.WaccParser.IntLiterContext;
 import antlr.WaccParser.IntLiterExprContext;
 import antlr.WaccParser.IntSignContext;
@@ -252,6 +249,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.expr() != null) {
       return visitExpr(ctx.expr(0));
     }
+    
     return null;
   }
 
@@ -442,7 +440,45 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.getText();
+    
+    String value = null;
+    
+    if (ctx.MUL() != null) {
+      value = "*";
+    }
+    else if (ctx.DIV() != null) {
+      value = "/";
+    }
+    else if (ctx.PLUS() != null) {
+      value = "+";
+    }
+    else if (ctx.MINUS() != null) {
+      value = "-";
+    }
+    else if (ctx.EQUAL() != null) {
+      value = "==";
+    }
+    else if (ctx.NOT_EQUAL() != null) {
+      value = "!=";
+    }
+    else if (ctx.LESS() != null) {
+      value = "<";
+    }
+    else if (ctx.LESS_OR_EQUAL() != null) {
+      value = "<=";
+    }
+    else if (ctx.GREATER() != null) {
+      value = ">";
+    }
+    else if (ctx.GREATER_OR_EQUAL() != null) {
+      value = ">=";
+    }
+    else if (ctx.AND() != null) {
+      value = "&&";
+    }
+    else if (ctx.OR() != null) {
+      value = "||";
+    }
     
     return new BinaryOperLiter(value, codePos);
   }
@@ -475,7 +511,23 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.getText();
+    String value = null;
+    
+    if (ctx.NOT() != null) {
+      value = "!";
+    }
+    else if (ctx.MINUS() != null) {
+      value = "-";
+    }
+    else if (ctx.LEN() != null) {
+      value = "len";
+    }
+    else if (ctx.ORD() != null) {
+      value = "ord";
+    }
+    else if (ctx.CHR() != null) {
+      value = "chr";
+    }
     
     return new UnaryOperLiter(value, codePos);
   }
@@ -543,18 +595,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     Expr condition = visitExpr(ctx.expr());
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
-  }
-
-  @Override
-  public IfThenStat visitIfThenStat(IfThenStatContext ctx) {
-    CodePosition codePos = initialisePosition(ctx);
-    scope = scope.newScope();
-    Stat ifBody = visitStat(ctx.stat());
-    
-    scope = scope.getParentScope();
-    
-    Expr condition = visitExpr(ctx.expr());
-    return new IfThenStat(condition, ifBody, codePos);
   }
 
   @Override

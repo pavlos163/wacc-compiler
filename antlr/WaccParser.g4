@@ -13,20 +13,19 @@ paramList: (param (COMMA param)*)?;
 param: type IDENT;
 
 stat: 
-  SKIP                        # skipStat
-| type IDENT ASSIGN assignRHS # assignStat
-| assignLHS ASSIGN assignRHS  # assignStat   
-| READ assignLHS 			  # readStat	
-| FREE expr 			      # freeStat         
-| RETURN expr                 # returnStat
-| EXIT expr					  # exitStat
-| PRINT expr                  # printStat
-| PRINTLN expr                # printlnStat
-| IF expr THEN stat FI        # ifThenStat 
+  SKIP                           # skipStat
+| type IDENT ASSIGN assignRHS    # assignStat
+| assignLHS ASSIGN assignRHS     # assignStat   
+| READ assignLHS 			     # readStat	
+| FREE expr 			         # freeStat         
+| RETURN expr                    # returnStat
+| EXIT expr					     # exitStat
+| PRINT expr                     # printStat
+| PRINTLN expr                   # printlnStat
 | IF expr THEN stat ELSE stat FI #ifThenElseStat
-| WHILE expr DO stat DONE     # WhileStat
-| BEGIN stat END              # BeginStat   
-| stat SEMICOLON stat         # statList
+| WHILE expr DO stat DONE        # WhileStat
+| BEGIN stat END                 # BeginStat   
+| stat SEMICOLON stat            # statList
 ;
 
 assignLHS: 
@@ -91,7 +90,7 @@ expr:
 ;
 
 
-unaryOper: NOT | NEGATIVE | LEN | ORD | CHR;
+unaryOper: NOT | MINUS | LEN | ORD | CHR;
 
 binaryOper : MUL | DIV | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 

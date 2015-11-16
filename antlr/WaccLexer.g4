@@ -52,7 +52,6 @@ DOUBLE_QUOTE: '"';
 
 // Unary Operators
 NOT: '!';
-NEGATIVE: '-';
 LEN: 'len';
 ORD: 'ord';
 CHR: 'chr';

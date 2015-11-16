@@ -42,7 +42,7 @@ public class BinaryOperLiter implements Liter {
       return BaseType.typeBool;
     case "<=":
       return BaseType.typeBool;
-    case "EQUAL":
+    case "==":
       return BaseType.typeBool;
     case "!=":
       return BaseType.typeBool;

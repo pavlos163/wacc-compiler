@@ -1,0 +1,4 @@
+/usr/lib/ruby/1.9.1/rubygems.rb:30:in `require': Interrupt
+	from /usr/lib/ruby/1.9.1/rubygems.rb:30:in `<top (required)>'
+	from <internal:gem_prelude>:1:in `require'
+	from <internal:gem_prelude>:1:in `<compiled>'
