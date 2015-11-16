@@ -39,5 +39,4 @@ public class AssignStat extends Stat {
           rhs.getType() + ")");
     }
   }
-
 }

@@ -31,6 +31,7 @@ public class SymbolTable<T extends Identifier> {
       if (element != null) {
         return element;
       }
+      currentScope = currentScope.parentScope;
     }
     return null;
   }
@@ -44,7 +45,7 @@ public class SymbolTable<T extends Identifier> {
   }
   
   public SymbolTable<T> newScope() {
-    return new SymbolTable(this);
+    return new SymbolTable<T>(this);
   }
   
 }
