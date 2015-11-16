@@ -2,7 +2,6 @@ package compiler.assignables;
 
 import compiler.CodePosition;
 import compiler.errorHandling.SemanticException;
-import compiler.expressions.Expr;
 import compiler.symbolTable.Identifier;
 import compiler.symbolTable.SymbolTable;
 import compiler.types.PairType;

@@ -64,13 +64,6 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStringLiterExpr(@NotNull WaccParser.StringLiterExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ifThenStat}
-	 * labeled alternative in {@link WaccParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfThenStat(@NotNull WaccParser.IfThenStatContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link WaccParser#paramList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
