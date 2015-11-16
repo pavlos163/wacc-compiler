@@ -19,7 +19,6 @@ public class BinaryOperExpr implements Expr {
     this.lhs = lhs;
     this.rhs = rhs;
     this.codePos = codePos;
-    
     checkErrors(lhs, rhs);
   }
 

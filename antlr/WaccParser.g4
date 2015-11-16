@@ -34,7 +34,7 @@ assignLHS:
 | pairElem       
 ;
 
-assignRHS: 
+assignRHS:
   expr                                             
 | arrayLiter                                                 
 | NEWPAIR L_PAR expr COMMA expr R_PAR
@@ -77,22 +77,32 @@ pairElemType:
 pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
 
 expr: 
-  intLiter              #intLiterExpr
-| boolLiter             #boolLiterExpr
-| CHAR_LITER            #charLiterExpr
-| STRING_LITER          #stringLiterExpr
-| pairLiter             #pairLiterExpr
-| IDENT                 #identExpr
-| arrayElem             #arrayElemExpr
-| unaryOper expr        #unaryOperExpr
-| expr binaryOper expr  #binaryOperExpr
-| L_PAR expr R_PAR      #paranthesesExpr
+  intLiter                     #intLiterExpr
+| boolLiter                    #boolLiterExpr
+| CHAR_LITER                   #charLiterExpr
+| STRING_LITER                 #stringLiterExpr
+| pairLiter                    #pairLiterExpr
+| IDENT                        #identExpr
+| arrayElem                    #arrayElemExpr
+| unaryOper expr               #unaryOperExpr
+| expr MUL expr                #binaryOperExpr
+| expr DIV expr                #binaryOperExpr
+| expr MOD expr                #binaryOperExpr
+| expr PLUS expr               #binaryOperExpr
+| expr MINUS expr              #binaryOperExpr
+| expr GREATER expr            #binaryOperExpr
+| expr GREATER_OR_EQUAL expr   #binaryOperExpr
+| expr LESS expr               #binaryOperExpr
+| expr LESS_OR_EQUAL expr      #binaryOperExpr
+| expr EQUAL expr              #binaryOperExpr
+| expr NOT_EQUAL expr          #binaryOperExpr
+| expr AND expr                #binaryOperExpr
+| expr OR expr                 #binaryOperExpr
+| L_PAR expr R_PAR             #paranthesesExpr
 ;
 
 
 unaryOper: NOT | MINUS | LEN | ORD | CHR;
-
-binaryOper : MUL | DIV | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 
 arrayElem: IDENT (L_SQ expr R_SQ)+;
 
