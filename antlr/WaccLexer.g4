@@ -40,6 +40,13 @@ CHAR: 'char';
 STRING: 'string';
 PAIR: 'pair';
 
+// Bool Values
+TRUE: 'true';
+FALSE: 'false';
+
+// Null
+NULL: 'null';
+
 // Brackets
 L_PAR: '(';
 R_PAR: ')';
@@ -88,12 +95,6 @@ STRING_LITER: '"' (ESC|.)*? '"';
 // Char Literals
 CHAR_LITER: '\'' (ESC|.)*? '\'';
 
-// Bool Values
-TRUE: 'true';
-FALSE: 'false';
-
-// Null
-NULL: 'null';
 
 // Comments and whitespace
 COMMENT: '#' .*? '\n' -> skip;

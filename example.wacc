@@ -1,0 +1,4 @@
+begin 
+  int chr = 5;
+  print chr
+end
