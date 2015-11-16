@@ -179,7 +179,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       return new Variable(ctx.IDENT().getText(), scope, codePos);
     }
     else {
-      throw new SemanticException("At " + codePos + " Undeclared variable found");
+      throw new SemanticException("At " + codePos + 
+          " Undeclared variable found " + ctx.IDENT().getText());
     }
   }
 
