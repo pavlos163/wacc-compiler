@@ -38,9 +38,6 @@ public class Compiler {
   private void semanticAnalysis() {
     try {
       tree.accept(new SemanticCheckVisitor());
-    } catch (SyntaxException e) { // Exception for syntax errors.
-      System.err.println(e.getMessage());
-      System.exit(100);
     } catch (SemanticException e) {
       System.err.println(e.getMessage());
       System.exit(200);

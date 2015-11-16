@@ -13,7 +13,6 @@ public class IntLiter implements Liter {
   public IntLiter(long value, CodePosition codePos) throws SyntaxException {
     this.value = (int) value;
     this.codePos = codePos;
-    checkIntValue(value, codePos);
   }
 
   @Override
@@ -35,12 +34,4 @@ public class IntLiter implements Liter {
     return value;
   }
   
-  private void checkIntValue(long value, CodePosition codePos) {
-    if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
-      throw new SyntaxException
-        ("At " + codePos.toString() + ". Integer value too big or "
-            + "too small.");
-    }
-  }
-
 }
