@@ -655,7 +655,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
       if (scope.lookUpAll(lhs.getName()) == null) {
-          throw new SyntaxException("At: " + codePos + ". Undeclared variable"
+          throw new SemanticException("At: " + codePos + ". Undeclared variable"
               + " error.");
       }
       return new AssignStat(lhs, rhs, codePos);
