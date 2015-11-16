@@ -20,5 +20,5 @@ public enum BaseType implements Type {
     }
     return super.toString().substring(4);
   }
-
+  
 }

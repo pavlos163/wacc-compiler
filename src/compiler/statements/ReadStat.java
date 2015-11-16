@@ -22,8 +22,8 @@ public class ReadStat extends Stat {
   }
   
   private void checkErrors(AssignLHS readItem) {
-    if (!readItem.getType().toString().equals("Int") 
-        && !readItem.getType().toString().equals("Char")
+    if (!readItem.getType().equals(BaseType.typeInt) 
+        && !readItem.getType().equals(BaseType.typeChar)
         && (!isString(readItem))) {
       throw new SemanticException("At " + codePos.toString()  
           + ". Item to be read can only be an int, char or string."

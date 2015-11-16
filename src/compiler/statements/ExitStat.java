@@ -21,7 +21,7 @@ public class ExitStat extends Stat {
   }
   
   private void checkErrors(Expr expression) {
-    if (!expression.getType().toString().equals("Int")) {
+    if (!expression.getType().equals(BaseType.typeInt)) {
       throw new SemanticException("At " + codePos.toString() +
           ". Exit code must be of type Integer. Actual type: "
           + expression.getType());
