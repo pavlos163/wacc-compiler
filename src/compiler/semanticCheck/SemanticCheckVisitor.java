@@ -246,6 +246,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       ArgList argList = visitArgList(ctx.argList());
       return new Call(ident, argList, codePos);
     }
+    else if (ctx.expr() != null) {
+      return visitExpr(ctx.expr(0));
+    }
     else {
       System.out.println("Error AssignRHS");
     }

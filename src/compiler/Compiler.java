@@ -38,8 +38,10 @@ public class Compiler {
     try {
       tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) { // Exception for syntax errors.
+      System.out.println(e.getMessage());
       System.exit(100);
     } catch (SemanticException e) {
+      System.out.println(e.getMessage());
       System.exit(200);
     }
   }
