@@ -49,7 +49,7 @@ public class BinaryOperExpr implements Expr {
       return checkForTypeError(BaseType.typeInt,BaseType.typeChar);
     case "==":
     case "!=":
-      return !this.lhs.getType().equals(this.rhs.getType());
+      return !lhs.getType().toString().equals(rhs.getType().toString());
     case "&&":
     case "||":
       return checkForTypeError(BaseType.typeBool);
