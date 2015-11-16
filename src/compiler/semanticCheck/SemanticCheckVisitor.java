@@ -535,6 +535,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     for (FuncContext func: ctx.func()) {
       func.accept(this);
     }
+    scope = scope.getParentScope();
+    scope = scope.newScope();
     visitStat(ctx.stat());
     scope = scope.getParentScope();
     return null;
