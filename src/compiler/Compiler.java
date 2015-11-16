@@ -29,6 +29,7 @@ public class Compiler {
     try {
       this.tree = parser.program();
     } catch (ParseCancellationException e) {
+      System.err.println(e.getMessage());
       System.out.println("Syntax Error");
       System.exit(100);
     }

@@ -39,15 +39,15 @@ public class WaccParser extends Parser {
 	public static final int
 		RULE_program = 0, RULE_func = 1, RULE_paramList = 2, RULE_param = 3, RULE_stat = 4, 
 		RULE_assignLHS = 5, RULE_assignRHS = 6, RULE_argList = 7, RULE_pairElem = 8, 
-		RULE_type = 9, RULE_baseType = 10, RULE_arrayType = 11, RULE_pairType = 12, 
-		RULE_pairElemType = 13, RULE_expr = 14, RULE_unaryOper = 15, RULE_binaryOper = 16, 
+		RULE_type = 9, RULE_baseType = 10, RULE_arrayType = 11, RULE_pairElemType = 12, 
+		RULE_pairType = 13, RULE_expr = 14, RULE_unaryOper = 15, RULE_binaryOper = 16, 
 		RULE_arrayElem = 17, RULE_intSign = 18, RULE_intLiter = 19, RULE_boolLiter = 20, 
 		RULE_arrayLiter = 21, RULE_pairLiter = 22;
 	public static final String[] ruleNames = {
 		"program", "func", "paramList", "param", "stat", "assignLHS", "assignRHS", 
-		"argList", "pairElem", "type", "baseType", "arrayType", "pairType", "pairElemType", 
-		"expr", "unaryOper", "binaryOper", "arrayElem", "intSign", "intLiter", 
-		"boolLiter", "arrayLiter", "pairLiter"
+		"argList", "pairElem", "type", "baseType", "arrayType", "pairElemType", 
+		"pairType", "expr", "unaryOper", "binaryOper", "arrayElem", "intSign", 
+		"intLiter", "boolLiter", "arrayLiter", "pairLiter"
 	};
 
 	@Override
@@ -1122,6 +1122,62 @@ public class WaccParser extends Parser {
 		return _localctx;
 	}
 
+	public static class PairElemTypeContext extends ParserRuleContext {
+		public TerminalNode PAIR() { return getToken(WaccParser.PAIR, 0); }
+		public ArrayTypeContext arrayType() {
+			return getRuleContext(ArrayTypeContext.class,0);
+		}
+		public BaseTypeContext baseType() {
+			return getRuleContext(BaseTypeContext.class,0);
+		}
+		public PairElemTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_pairElemType; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof WaccParserVisitor ) return ((WaccParserVisitor<? extends T>)visitor).visitPairElemType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final PairElemTypeContext pairElemType() throws RecognitionException {
+		PairElemTypeContext _localctx = new PairElemTypeContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_pairElemType);
+		try {
+			setState(197);
+			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(194); baseType();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(195); arrayType(0);
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(196); match(PAIR);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static class PairTypeContext extends ParserRuleContext {
 		public List<PairElemTypeContext> pairElemType() {
 			return getRuleContexts(PairElemTypeContext.class);
@@ -1146,74 +1202,16 @@ public class WaccParser extends Parser {
 
 	public final PairTypeContext pairType() throws RecognitionException {
 		PairTypeContext _localctx = new PairTypeContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_pairType);
+		enterRule(_localctx, 26, RULE_pairType);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(194); match(PAIR);
-			setState(195); match(L_PAR);
-			setState(196); pairElemType();
-			setState(197); match(COMMA);
-			setState(198); pairElemType();
-			setState(199); match(R_PAR);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class PairElemTypeContext extends ParserRuleContext {
-		public PairTypeContext pairType() {
-			return getRuleContext(PairTypeContext.class,0);
-		}
-		public ArrayTypeContext arrayType() {
-			return getRuleContext(ArrayTypeContext.class,0);
-		}
-		public BaseTypeContext baseType() {
-			return getRuleContext(BaseTypeContext.class,0);
-		}
-		public PairElemTypeContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_pairElemType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof WaccParserVisitor ) return ((WaccParserVisitor<? extends T>)visitor).visitPairElemType(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final PairElemTypeContext pairElemType() throws RecognitionException {
-		PairElemTypeContext _localctx = new PairElemTypeContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_pairElemType);
-		try {
-			setState(204);
-			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(201); baseType();
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(202); arrayType(0);
-				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(203); pairType();
-				}
-				break;
+			setState(199); match(PAIR);
+			setState(200); match(L_PAR);
+			setState(201); pairElemType();
+			setState(202); match(COMMA);
+			setState(203); pairElemType();
+			setState(204); match(R_PAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1893,8 +1891,8 @@ public class WaccParser extends Parser {
 		"\b\3\b\3\b\3\b\3\b\5\b\u0098\n\b\3\b\5\b\u009b\n\b\3\t\3\t\3\t\7\t\u00a0"+
 		"\n\t\f\t\16\t\u00a3\13\t\3\n\3\n\3\n\3\n\5\n\u00a9\n\n\3\13\3\13\3\13"+
 		"\5\13\u00ae\n\13\3\f\3\f\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\5\r\u00bb"+
-		"\n\r\3\r\3\r\3\r\7\r\u00c0\n\r\f\r\16\r\u00c3\13\r\3\16\3\16\3\16\3\16"+
-		"\3\16\3\16\3\16\3\17\3\17\3\17\5\17\u00cf\n\17\3\20\3\20\3\20\3\20\3\20"+
+		"\n\r\3\r\3\r\3\r\7\r\u00c0\n\r\f\r\16\r\u00c3\13\r\3\16\3\16\3\16\5\16"+
+		"\u00c8\n\16\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\20\3\20\3\20\3\20\3\20"+
 		"\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\5\20\u00e0\n\20\3\20"+
 		"\3\20\3\20\3\20\7\20\u00e6\n\20\f\20\16\20\u00e9\13\20\3\21\3\21\3\22"+
 		"\3\22\3\23\3\23\3\23\3\23\3\23\6\23\u00f4\n\23\r\23\16\23\u00f5\3\24\3"+
@@ -1903,7 +1901,7 @@ public class WaccParser extends Parser {
 		"\32\34\36 \"$&(*,.\2\7\3\2\32\35\4\2*-\62\62\3\2.:\3\2\61\62\3\2\37 \u011b"+
 		"\2\60\3\2\2\2\4;\3\2\2\2\6L\3\2\2\2\bN\3\2\2\2\nz\3\2\2\2\f\u0087\3\2"+
 		"\2\2\16\u009a\3\2\2\2\20\u009c\3\2\2\2\22\u00a8\3\2\2\2\24\u00ad\3\2\2"+
-		"\2\26\u00af\3\2\2\2\30\u00ba\3\2\2\2\32\u00c4\3\2\2\2\34\u00ce\3\2\2\2"+
+		"\2\26\u00af\3\2\2\2\30\u00ba\3\2\2\2\32\u00c7\3\2\2\2\34\u00c9\3\2\2\2"+
 		"\36\u00df\3\2\2\2 \u00ea\3\2\2\2\"\u00ec\3\2\2\2$\u00ee\3\2\2\2&\u00f7"+
 		"\3\2\2\2(\u00fa\3\2\2\2*\u00fe\3\2\2\2,\u0100\3\2\2\2.\u0106\3\2\2\2\60"+
 		"\64\7\5\2\2\61\63\5\4\3\2\62\61\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64"+
@@ -1936,18 +1934,18 @@ public class WaccParser extends Parser {
 		"\2\u00a3\u00a1\3\2\2\2\u00a4\u00a5\7\30\2\2\u00a5\u00a9\5\36\20\2\u00a6"+
 		"\u00a7\7\31\2\2\u00a7\u00a9\5\36\20\2\u00a8\u00a4\3\2\2\2\u00a8\u00a6"+
 		"\3\2\2\2\u00a9\23\3\2\2\2\u00aa\u00ae\5\26\f\2\u00ab\u00ae\5\30\r\2\u00ac"+
-		"\u00ae\5\32\16\2\u00ad\u00aa\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3"+
+		"\u00ae\5\34\17\2\u00ad\u00aa\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3"+
 		"\2\2\2\u00ae\25\3\2\2\2\u00af\u00b0\t\2\2\2\u00b0\27\3\2\2\2\u00b1\u00b2"+
 		"\b\r\1\2\u00b2\u00b3\5\26\f\2\u00b3\u00b4\7$\2\2\u00b4\u00b5\7%\2\2\u00b5"+
-		"\u00bb\3\2\2\2\u00b6\u00b7\5\32\16\2\u00b7\u00b8\7$\2\2\u00b8\u00b9\7"+
+		"\u00bb\3\2\2\2\u00b6\u00b7\5\34\17\2\u00b7\u00b8\7$\2\2\u00b8\u00b9\7"+
 		"%\2\2\u00b9\u00bb\3\2\2\2\u00ba\u00b1\3\2\2\2\u00ba\u00b6\3\2\2\2\u00bb"+
 		"\u00c1\3\2\2\2\u00bc\u00bd\f\3\2\2\u00bd\u00be\7$\2\2\u00be\u00c0\7%\2"+
 		"\2\u00bf\u00bc\3\2\2\2\u00c0\u00c3\3\2\2\2\u00c1\u00bf\3\2\2\2\u00c1\u00c2"+
-		"\3\2\2\2\u00c2\31\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c4\u00c5\7\36\2\2\u00c5"+
-		"\u00c6\7\"\2\2\u00c6\u00c7\5\34\17\2\u00c7\u00c8\7&\2\2\u00c8\u00c9\5"+
-		"\34\17\2\u00c9\u00ca\7#\2\2\u00ca\33\3\2\2\2\u00cb\u00cf\5\26\f\2\u00cc"+
-		"\u00cf\5\30\r\2\u00cd\u00cf\5\32\16\2\u00ce\u00cb\3\2\2\2\u00ce\u00cc"+
-		"\3\2\2\2\u00ce\u00cd\3\2\2\2\u00cf\35\3\2\2\2\u00d0\u00d1\b\20\1\2\u00d1"+
+		"\3\2\2\2\u00c2\31\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c4\u00c8\5\26\f\2\u00c5"+
+		"\u00c8\5\30\r\2\u00c6\u00c8\7\36\2\2\u00c7\u00c4\3\2\2\2\u00c7\u00c5\3"+
+		"\2\2\2\u00c7\u00c6\3\2\2\2\u00c8\33\3\2\2\2\u00c9\u00ca\7\36\2\2\u00ca"+
+		"\u00cb\7\"\2\2\u00cb\u00cc\5\32\16\2\u00cc\u00cd\7&\2\2\u00cd\u00ce\5"+
+		"\32\16\2\u00ce\u00cf\7#\2\2\u00cf\35\3\2\2\2\u00d0\u00d1\b\20\1\2\u00d1"+
 		"\u00d2\5 \21\2\u00d2\u00d3\5\36\20\5\u00d3\u00e0\3\2\2\2\u00d4\u00e0\5"+
 		"(\25\2\u00d5\u00e0\5*\26\2\u00d6\u00e0\7>\2\2\u00d7\u00e0\7=\2\2\u00d8"+
 		"\u00e0\5.\30\2\u00d9\u00e0\7;\2\2\u00da\u00e0\5$\23\2\u00db\u00dc\7\""+
@@ -1967,7 +1965,7 @@ public class WaccParser extends Parser {
 		"\u0102\7$\2\2\u0101\u0103\5\20\t\2\u0102\u0101\3\2\2\2\u0102\u0103\3\2"+
 		"\2\2\u0103\u0104\3\2\2\2\u0104\u0105\7%\2\2\u0105-\3\2\2\2\u0106\u0107"+
 		"\7!\2\2\u0107/\3\2\2\2\25\64ILz\u0081\u0087\u0097\u009a\u00a1\u00a8\u00ad"+
-		"\u00ba\u00c1\u00ce\u00df\u00e7\u00f5\u00fa\u0102";
+		"\u00ba\u00c1\u00c7\u00df\u00e7\u00f5\u00fa\u0102";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

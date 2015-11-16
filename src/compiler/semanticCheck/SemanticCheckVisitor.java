@@ -316,10 +316,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public PairLiter visitPairLiter(PairLiterContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    Expr first = (Expr) ctx.getChild(0);
-    Expr second = (Expr) ctx.getChild(1);
-    
-    return new PairLiter(first, second, codePos);
+    return new PairLiter(codePos);
   }
 
   @Override
@@ -378,8 +375,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public Type visitPairElemType(PairElemTypeContext ctx) {
-    if (ctx.pairType() != null) {
-      return visitPairType(ctx.pairType());
+    if (ctx.PAIR() != null) {
+      return new PairType();
     }
     else if (ctx.baseType() != null) {
       return visitBaseType(ctx.baseType());

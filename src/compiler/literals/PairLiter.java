@@ -11,6 +11,12 @@ public class PairLiter implements Liter {
   private final Expr snd;
   private final CodePosition codePos;
   
+  public PairLiter(CodePosition codePos) {
+    this.fst = null;
+    this.snd = null;
+    this.codePos = codePos;
+  }
+  
   public PairLiter(Expr fst, Expr snd, CodePosition codePos) {
     this.fst = fst;
     this.snd = snd;

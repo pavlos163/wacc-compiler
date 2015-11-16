@@ -59,7 +59,7 @@ baseType:
   INT   
 | BOOL          
 | CHAR          
-| STRING        
+| STRING
 ;
 
 arrayType: 
@@ -68,13 +68,13 @@ arrayType:
 | arrayType L_SQ R_SQ
 ;
 
-pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
-
 pairElemType: 
   baseType
 | arrayType
-| pairType
+| PAIR
 ;
+
+pairType: PAIR L_PAR pairElemType COMMA pairElemType R_PAR;
 
 expr: 
   intLiter              #intLiterExpr

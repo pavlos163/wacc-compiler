@@ -4,12 +4,23 @@ import compiler.CodePosition;
 
 public class PairType implements Type {
   
-  private final Type fst;
-  private final Type snd;
+  private Type fst;
+  private Type snd;
   
   public PairType(Type fst, Type snd) {
+    if (fst instanceof PairType) {
+      this.fst = new PairType();
+    }
     this.fst = fst;
+    if (snd instanceof PairType) {
+      this.snd = snd;
+    }
     this.snd = snd;
+  }
+  
+  public PairType() {
+    this.fst = null;
+    this.snd = null;
   }
 
   @Override
@@ -31,6 +42,20 @@ public class PairType implements Type {
     String second = snd.toString();
         
     return "(" + first + ", " + second + ")";
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PairType)) {
+      return false;
+    }
+    PairType rhs = (PairType) obj;
+    return fst.equals(rhs.fst) && snd.equals(rhs.snd);
+  }
+  
+  @Override 
+  public int hashCode() {
+    return 0;
   }
   
 }
