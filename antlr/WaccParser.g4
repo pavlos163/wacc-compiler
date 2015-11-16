@@ -91,7 +91,7 @@ expr:
 ;
 
 
-unaryOper: NOT | NEGATIVE | LEN | ORD | CHR;
+unaryOper: NOT | MINUS | LEN | ORD | CHR;
 
 binaryOper : MUL | DIV | MOD | PLUS | MINUS | GREATER | GREATER_OR_EQUAL | LESS | LESS_OR_EQUAL | EQUAL | NOT_EQUAL | AND | OR;
 

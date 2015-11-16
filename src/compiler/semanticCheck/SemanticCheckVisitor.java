@@ -449,37 +449,37 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       value = "*";
     }
     else if (ctx.DIV() != null) {
-      value = "*";
+      value = "/";
     }
     else if (ctx.PLUS() != null) {
-      value = "*";
+      value = "+";
     }
     else if (ctx.MINUS() != null) {
-      value = "*";
+      value = "-";
     }
     else if (ctx.EQUAL() != null) {
-      value = "*";
+      value = "==";
     }
     else if (ctx.NOT_EQUAL() != null) {
-      value = "*";
+      value = "!=";
     }
     else if (ctx.LESS() != null) {
-      value = "*";
+      value = "<";
     }
     else if (ctx.LESS_OR_EQUAL() != null) {
-      value = "*";
+      value = "<=";
     }
     else if (ctx.GREATER() != null) {
-      value = "*";
+      value = ">";
     }
     else if (ctx.GREATER_OR_EQUAL() != null) {
-      value = "*";
+      value = ">=";
     }
     else if (ctx.AND() != null) {
-      value = "*";
+      value = "&&";
     }
     else if (ctx.OR() != null) {
-      value = "*";
+      value = "||";
     }
     
     return new BinaryOperLiter(value, codePos);
@@ -518,7 +518,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx.NOT() != null) {
       value = "!";
     }
-    else if (ctx.NEGATIVE() != null) {
+    else if (ctx.MINUS() != null) {
       value = "-";
     }
     else if (ctx.LEN() != null) {

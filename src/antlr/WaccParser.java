@@ -17,24 +17,24 @@ public class WaccParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		WHILE=17, DOUBLE_QUOTE=36, MOD=44, GREATER_OR_EQUAL=48, CHAR=26, DO=18, 
-		NOT=37, AND=53, ORD=40, R_SQ=32, IF=13, FREE=8, SINGLE_QUOTE=35, GREATER=47, 
-		THEN=14, NOT_EQUAL=52, COMMA=33, DONE=19, IS=4, PRINTLN=12, EQUAL=51, 
-		BEGIN=3, LESS=49, RETURN=9, CHAR_LITER=58, IDENT=55, PLUS=45, PAIR=28, 
-		COMMENT=62, NEWPAIR=20, INTEGER=56, EXIT=10, STRING_LITER=57, SECOND=23, 
-		LESS_OR_EQUAL=50, NULL=61, NEGATIVE=38, ELSE=15, BOOL=25, WHITESPACE=63, 
-		INT=24, SEMICOLON=2, MINUS=46, FILE=1, TRUE=59, MUL=42, PRINT=11, CHR=41, 
-		FI=16, SKIP=6, READ=7, OR=54, L_SQ=31, ASSIGN=34, LEN=39, CALL=21, L_PAR=29, 
-		DIV=43, END=5, FALSE=60, R_PAR=30, FIRST=22, STRING=27;
+		WHILE=17, DOUBLE_QUOTE=36, MOD=43, GREATER_OR_EQUAL=47, CHAR=26, DO=18, 
+		NOT=37, AND=52, ORD=39, R_SQ=32, IF=13, FREE=8, SINGLE_QUOTE=35, GREATER=46, 
+		THEN=14, NOT_EQUAL=51, COMMA=33, DONE=19, IS=4, PRINTLN=12, EQUAL=50, 
+		BEGIN=3, RETURN=9, LESS=48, CHAR_LITER=57, IDENT=54, PLUS=44, PAIR=28, 
+		COMMENT=61, NEWPAIR=20, INTEGER=55, EXIT=10, STRING_LITER=56, SECOND=23, 
+		LESS_OR_EQUAL=49, NULL=60, ELSE=15, BOOL=25, WHITESPACE=62, INT=24, SEMICOLON=2, 
+		MINUS=45, FILE=1, TRUE=58, MUL=41, PRINT=11, CHR=40, FI=16, SKIP=6, READ=7, 
+		OR=53, L_SQ=31, ASSIGN=34, LEN=38, CALL=21, L_PAR=29, DIV=42, END=5, FALSE=59, 
+		R_PAR=30, FIRST=22, STRING=27;
 	public static final String[] tokenNames = {
 		"<INVALID>", "FILE", "';'", "'begin'", "'is'", "'end'", "'skip'", "'read'", 
 		"'free'", "'return'", "'exit'", "'print'", "'println'", "'if'", "'then'", 
 		"'else'", "'fi'", "'while'", "'do'", "'done'", "'newpair'", "'call'", 
 		"'fst'", "'snd'", "'int'", "'bool'", "'char'", "'string'", "'pair'", "'('", 
-		"')'", "'['", "']'", "','", "'='", "'''", "'\"'", "'!'", "NEGATIVE", "'len'", 
-		"'ord'", "'chr'", "'*'", "'/'", "'%'", "'+'", "MINUS", "'>'", "'>='", 
-		"'<'", "'<='", "'=='", "'!='", "'&&'", "'||'", "IDENT", "INTEGER", "STRING_LITER", 
-		"CHAR_LITER", "'true'", "'false'", "'null'", "COMMENT", "WHITESPACE"
+		"')'", "'['", "']'", "','", "'='", "'''", "'\"'", "'!'", "'len'", "'ord'", 
+		"'chr'", "'*'", "'/'", "'%'", "'+'", "'-'", "'>'", "'>='", "'<'", "'<='", 
+		"'=='", "'!='", "'&&'", "'||'", "IDENT", "INTEGER", "STRING_LITER", "CHAR_LITER", 
+		"'true'", "'false'", "'null'", "COMMENT", "WHITESPACE"
 	};
 	public static final int
 		RULE_program = 0, RULE_func = 1, RULE_paramList = 2, RULE_param = 3, RULE_stat = 4, 
@@ -765,7 +765,6 @@ public class WaccParser extends Parser {
 			switch (_input.LA(1)) {
 			case L_PAR:
 			case NOT:
-			case NEGATIVE:
 			case LEN:
 			case ORD:
 			case CHR:
@@ -815,7 +814,7 @@ public class WaccParser extends Parser {
 				setState(153); match(L_PAR);
 				setState(155);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << L_PAR) | (1L << NOT) | (1L << NEGATIVE) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << PLUS) | (1L << MINUS) | (1L << IDENT) | (1L << INTEGER) | (1L << STRING_LITER) | (1L << CHAR_LITER) | (1L << TRUE) | (1L << FALSE) | (1L << NULL))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << L_PAR) | (1L << NOT) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << PLUS) | (1L << MINUS) | (1L << IDENT) | (1L << INTEGER) | (1L << STRING_LITER) | (1L << CHAR_LITER) | (1L << TRUE) | (1L << FALSE) | (1L << NULL))) != 0)) {
 					{
 					setState(154); argList();
 					}
@@ -1508,10 +1507,10 @@ public class WaccParser extends Parser {
 
 	public static class UnaryOperContext extends ParserRuleContext {
 		public TerminalNode LEN() { return getToken(WaccParser.LEN, 0); }
+		public TerminalNode MINUS() { return getToken(WaccParser.MINUS, 0); }
 		public TerminalNode NOT() { return getToken(WaccParser.NOT, 0); }
 		public TerminalNode CHR() { return getToken(WaccParser.CHR, 0); }
 		public TerminalNode ORD() { return getToken(WaccParser.ORD, 0); }
-		public TerminalNode NEGATIVE() { return getToken(WaccParser.NEGATIVE, 0); }
 		public UnaryOperContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1532,7 +1531,7 @@ public class WaccParser extends Parser {
 			{
 			setState(238);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NOT) | (1L << NEGATIVE) | (1L << LEN) | (1L << ORD) | (1L << CHR))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NOT) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << MINUS))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			consume();
@@ -1821,7 +1820,7 @@ public class WaccParser extends Parser {
 			setState(260); match(L_SQ);
 			setState(262);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << L_PAR) | (1L << NOT) | (1L << NEGATIVE) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << PLUS) | (1L << MINUS) | (1L << IDENT) | (1L << INTEGER) | (1L << STRING_LITER) | (1L << CHAR_LITER) | (1L << TRUE) | (1L << FALSE) | (1L << NULL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << L_PAR) | (1L << NOT) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << PLUS) | (1L << MINUS) | (1L << IDENT) | (1L << INTEGER) | (1L << STRING_LITER) | (1L << CHAR_LITER) | (1L << TRUE) | (1L << FALSE) | (1L << NULL))) != 0)) {
 				{
 				setState(261); argList();
 				}
@@ -1902,7 +1901,7 @@ public class WaccParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3A\u010f\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3@\u010f\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\3\2\3\2\7"+
@@ -1922,19 +1921,19 @@ public class WaccParser extends Parser {
 		"\13\20\3\21\3\21\3\22\3\22\3\23\3\23\3\23\3\23\3\23\6\23\u00fa\n\23\r"+
 		"\23\16\23\u00fb\3\24\3\24\3\25\5\25\u0101\n\25\3\25\3\25\3\26\3\26\3\27"+
 		"\3\27\5\27\u0109\n\27\3\27\3\27\3\30\3\30\3\30\2\5\n\30\36\31\2\4\6\b"+
-		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\2\7\3\2\32\35\3\2\'+\3\2,8\3"+
-		"\2/\60\3\2=>\u0122\2\60\3\2\2\2\4;\3\2\2\2\6L\3\2\2\2\bN\3\2\2\2\n\u0080"+
+		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\2\7\3\2\32\35\4\2\'*//\3\2+\67"+
+		"\3\2./\3\2<=\u0122\2\60\3\2\2\2\4;\3\2\2\2\6L\3\2\2\2\bN\3\2\2\2\n\u0080"+
 		"\3\2\2\2\f\u008d\3\2\2\2\16\u00a0\3\2\2\2\20\u00a2\3\2\2\2\22\u00ae\3"+
 		"\2\2\2\24\u00b3\3\2\2\2\26\u00b5\3\2\2\2\30\u00c0\3\2\2\2\32\u00ca\3\2"+
 		"\2\2\34\u00d4\3\2\2\2\36\u00e5\3\2\2\2 \u00f0\3\2\2\2\"\u00f2\3\2\2\2"+
 		"$\u00f4\3\2\2\2&\u00fd\3\2\2\2(\u0100\3\2\2\2*\u0104\3\2\2\2,\u0106\3"+
 		"\2\2\2.\u010c\3\2\2\2\60\64\7\5\2\2\61\63\5\4\3\2\62\61\3\2\2\2\63\66"+
 		"\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3\2\2\2\66\64\3\2\2\2\678\5"+
-		"\n\6\289\7\7\2\29:\7\2\2\3:\3\3\2\2\2;<\5\24\13\2<=\79\2\2=>\7\37\2\2"+
+		"\n\6\289\7\7\2\29:\7\2\2\3:\3\3\2\2\2;<\5\24\13\2<=\78\2\2=>\7\37\2\2"+
 		">?\5\6\4\2?@\7 \2\2@A\7\6\2\2AB\5\n\6\2BC\7\7\2\2C\5\3\2\2\2DI\5\b\5\2"+
 		"EF\7#\2\2FH\5\b\5\2GE\3\2\2\2HK\3\2\2\2IG\3\2\2\2IJ\3\2\2\2JM\3\2\2\2"+
-		"KI\3\2\2\2LD\3\2\2\2LM\3\2\2\2M\7\3\2\2\2NO\5\24\13\2OP\79\2\2P\t\3\2"+
-		"\2\2QR\b\6\1\2R\u0081\7\b\2\2ST\5\24\13\2TU\79\2\2UV\7$\2\2VW\5\16\b\2"+
+		"KI\3\2\2\2LD\3\2\2\2LM\3\2\2\2M\7\3\2\2\2NO\5\24\13\2OP\78\2\2P\t\3\2"+
+		"\2\2QR\b\6\1\2R\u0081\7\b\2\2ST\5\24\13\2TU\78\2\2UV\7$\2\2VW\5\16\b\2"+
 		"W\u0081\3\2\2\2XY\5\f\7\2YZ\7$\2\2Z[\5\16\b\2[\u0081\3\2\2\2\\]\7\t\2"+
 		"\2]\u0081\5\f\7\2^_\7\n\2\2_\u0081\5\36\20\2`a\7\13\2\2a\u0081\5\36\20"+
 		"\2bc\7\f\2\2c\u0081\5\36\20\2de\7\r\2\2e\u0081\5\36\20\2fg\7\16\2\2g\u0081"+
@@ -1947,13 +1946,13 @@ public class WaccParser extends Parser {
 		"\2\2\2\u0080h\3\2\2\2\u0080n\3\2\2\2\u0080v\3\2\2\2\u0080|\3\2\2\2\u0081"+
 		"\u0087\3\2\2\2\u0082\u0083\f\3\2\2\u0083\u0084\7\4\2\2\u0084\u0086\5\n"+
 		"\6\4\u0085\u0082\3\2\2\2\u0086\u0089\3\2\2\2\u0087\u0085\3\2\2\2\u0087"+
-		"\u0088\3\2\2\2\u0088\13\3\2\2\2\u0089\u0087\3\2\2\2\u008a\u008e\79\2\2"+
+		"\u0088\3\2\2\2\u0088\13\3\2\2\2\u0089\u0087\3\2\2\2\u008a\u008e\78\2\2"+
 		"\u008b\u008e\5$\23\2\u008c\u008e\5\22\n\2\u008d\u008a\3\2\2\2\u008d\u008b"+
 		"\3\2\2\2\u008d\u008c\3\2\2\2\u008e\r\3\2\2\2\u008f\u00a1\5\36\20\2\u0090"+
 		"\u00a1\5,\27\2\u0091\u0092\7\26\2\2\u0092\u0093\7\37\2\2\u0093\u0094\5"+
 		"\36\20\2\u0094\u0095\7#\2\2\u0095\u0096\5\36\20\2\u0096\u0097\7 \2\2\u0097"+
 		"\u00a1\3\2\2\2\u0098\u00a1\5\22\n\2\u0099\u009a\7\27\2\2\u009a\u009b\7"+
-		"9\2\2\u009b\u009d\7\37\2\2\u009c\u009e\5\20\t\2\u009d\u009c\3\2\2\2\u009d"+
+		"8\2\2\u009b\u009d\7\37\2\2\u009c\u009e\5\20\t\2\u009d\u009c\3\2\2\2\u009d"+
 		"\u009e\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a1\7 \2\2\u00a0\u008f\3\2"+
 		"\2\2\u00a0\u0090\3\2\2\2\u00a0\u0091\3\2\2\2\u00a0\u0098\3\2\2\2\u00a0"+
 		"\u0099\3\2\2\2\u00a1\17\3\2\2\2\u00a2\u00a7\5\36\20\2\u00a3\u00a4\7#\2"+
@@ -1975,8 +1974,8 @@ public class WaccParser extends Parser {
 		"\2\u00d3\u00d5\5\32\16\2\u00d4\u00d1\3\2\2\2\u00d4\u00d2\3\2\2\2\u00d4"+
 		"\u00d3\3\2\2\2\u00d5\35\3\2\2\2\u00d6\u00d7\b\20\1\2\u00d7\u00d8\5 \21"+
 		"\2\u00d8\u00d9\5\36\20\5\u00d9\u00e6\3\2\2\2\u00da\u00e6\5(\25\2\u00db"+
-		"\u00e6\5*\26\2\u00dc\u00e6\7<\2\2\u00dd\u00e6\7;\2\2\u00de\u00e6\5.\30"+
-		"\2\u00df\u00e6\79\2\2\u00e0\u00e6\5$\23\2\u00e1\u00e2\7\37\2\2\u00e2\u00e3"+
+		"\u00e6\5*\26\2\u00dc\u00e6\7;\2\2\u00dd\u00e6\7:\2\2\u00de\u00e6\5.\30"+
+		"\2\u00df\u00e6\78\2\2\u00e0\u00e6\5$\23\2\u00e1\u00e2\7\37\2\2\u00e2\u00e3"+
 		"\5\36\20\2\u00e3\u00e4\7 \2\2\u00e4\u00e6\3\2\2\2\u00e5\u00d6\3\2\2\2"+
 		"\u00e5\u00da\3\2\2\2\u00e5\u00db\3\2\2\2\u00e5\u00dc\3\2\2\2\u00e5\u00dd"+
 		"\3\2\2\2\u00e5\u00de\3\2\2\2\u00e5\u00df\3\2\2\2\u00e5\u00e0\3\2\2\2\u00e5"+
@@ -1984,14 +1983,14 @@ public class WaccParser extends Parser {
 		"\22\2\u00e9\u00ea\5\36\20\5\u00ea\u00ec\3\2\2\2\u00eb\u00e7\3\2\2\2\u00ec"+
 		"\u00ef\3\2\2\2\u00ed\u00eb\3\2\2\2\u00ed\u00ee\3\2\2\2\u00ee\37\3\2\2"+
 		"\2\u00ef\u00ed\3\2\2\2\u00f0\u00f1\t\3\2\2\u00f1!\3\2\2\2\u00f2\u00f3"+
-		"\t\4\2\2\u00f3#\3\2\2\2\u00f4\u00f9\79\2\2\u00f5\u00f6\7!\2\2\u00f6\u00f7"+
+		"\t\4\2\2\u00f3#\3\2\2\2\u00f4\u00f9\78\2\2\u00f5\u00f6\7!\2\2\u00f6\u00f7"+
 		"\5\36\20\2\u00f7\u00f8\7\"\2\2\u00f8\u00fa\3\2\2\2\u00f9\u00f5\3\2\2\2"+
 		"\u00fa\u00fb\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fc%\3"+
 		"\2\2\2\u00fd\u00fe\t\5\2\2\u00fe\'\3\2\2\2\u00ff\u0101\5&\24\2\u0100\u00ff"+
-		"\3\2\2\2\u0100\u0101\3\2\2\2\u0101\u0102\3\2\2\2\u0102\u0103\7:\2\2\u0103"+
+		"\3\2\2\2\u0100\u0101\3\2\2\2\u0101\u0102\3\2\2\2\u0102\u0103\79\2\2\u0103"+
 		")\3\2\2\2\u0104\u0105\t\6\2\2\u0105+\3\2\2\2\u0106\u0108\7!\2\2\u0107"+
 		"\u0109\5\20\t\2\u0108\u0107\3\2\2\2\u0108\u0109\3\2\2\2\u0109\u010a\3"+
-		"\2\2\2\u010a\u010b\7\"\2\2\u010b-\3\2\2\2\u010c\u010d\7?\2\2\u010d/\3"+
+		"\2\2\2\u010a\u010b\7\"\2\2\u010b-\3\2\2\2\u010c\u010d\7>\2\2\u010d/\3"+
 		"\2\2\2\25\64IL\u0080\u0087\u008d\u009d\u00a0\u00a7\u00ae\u00b3\u00c0\u00c7"+
 		"\u00d4\u00e5\u00ed\u00fb\u0100\u0108";
 	public static final ATN _ATN =
