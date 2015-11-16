@@ -9,7 +9,7 @@ public class Main {
   
   public static void main(String[] args) throws Exception {
     String inputFile = null;
-    String outputFile = null;
+    // String outputFile = null;
     Compiler compiler = new Compiler();
     
     if (args.length != 1) {
@@ -22,13 +22,13 @@ public class Main {
     if (!isExtension(inputFile, ".wacc")) {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
-    outputFile = replaceExtension(inputFile, ".s");
+    // outputFile = replaceExtension(inputFile, ".s");
     
     InputStream input = new FileInputStream(inputFile);
-    PrintStream output = new PrintStream(new File(outputFile));
+    // PrintStream output = new PrintStream(new File(outputFile));
     
     compiler.compile(input);
-    output.close();
+    // output.close();
     
     System.exit(0);
   }

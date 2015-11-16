@@ -248,8 +248,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       ArgList argList = visitArgList(ctx.argList());
       return new Call(ident, argList, codePos);
     }
-    else {
-      System.out.println("Error AssignRHS");
+    else if (ctx.expr() != null) {
+      return visitExpr(ctx.expr(0));
     }
     return null;
   }
@@ -604,11 +604,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     if (ctx.type() != null && ctx.IDENT() != null) {
       String varName = ctx.IDENT().getText();
-      if (scope.lookUpCurrLevelOnly(varName) == null) {
+      if (scope.lookUpCurrLevelOnly(varName) != null) {
         throw new SemanticException("Variable Redeclaration at " + codePos);
       }
       Variable var = new Variable(ctx.IDENT().getText(), scope, codePos);
-      
       return new AssignStat(var, rhs, codePos);
     }
     else { // Assign left
@@ -675,7 +674,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx != null) {
       return (Expr) ctx.accept(this);
     }
-    
     return null;
   }
   
