@@ -67,7 +67,6 @@ import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignStatContext;
 import antlr.WaccParser.BaseTypeContext;
 import antlr.WaccParser.BeginStatContext;
-import antlr.WaccParser.BinaryOperContext;
 import antlr.WaccParser.BinaryOperExprContext;
 import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.BoolLiterExprContext;
@@ -297,8 +296,50 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BinaryOperExpr visitBinaryOperExpr(BinaryOperExprContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    BinaryOperLiter binOpLtr = visitBinaryOper(ctx.binaryOper());
     
+    String value = null;
+    
+    if (ctx.MUL() != null) {
+      value = "*";
+    }
+    else if (ctx.DIV() != null) {
+      value = "/";
+    }
+    else if (ctx.PLUS() != null) {
+      value = "+";
+    }
+    else if (ctx.MINUS() != null) {
+      value = "-";
+    }
+    else if (ctx.EQUAL() != null) {
+      value = "==";
+    }
+    else if (ctx.NOT_EQUAL() != null) {
+      value = "!=";
+    }
+    else if (ctx.LESS() != null) {
+      value = "<";
+    }
+    else if (ctx.LESS_OR_EQUAL() != null) {
+      value = "<=";
+    }
+    else if (ctx.GREATER() != null) {
+      value = ">";
+    }
+    else if (ctx.GREATER_OR_EQUAL() != null) {
+      value = ">=";
+    }
+    else if (ctx.AND() != null) {
+      value = "&&";
+    }
+    else if (ctx.OR() != null) {
+      value = "||";
+    }
+    else if (ctx.MOD() != null) {
+      value = "%";
+    }
+    
+    BinaryOperLiter binOpLtr = new BinaryOperLiter(value, codePos);
     Expr exprLeft = visitExpr(ctx.expr(0));
     Expr exprRight = visitExpr(ctx.expr(1));
     
@@ -432,55 +473,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     }
     
     return new ArrayElem(ident, exprs, scope, codePos);
-  }
-
-  @Override
-  public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
-    CodePosition codePos = initialisePosition(ctx);
-    
-    String value = null;
-    
-    if (ctx.MUL() != null) {
-      value = "*";
-    }
-    else if (ctx.DIV() != null) {
-      value = "/";
-    }
-    else if (ctx.PLUS() != null) {
-      value = "+";
-    }
-    else if (ctx.MINUS() != null) {
-      value = "-";
-    }
-    else if (ctx.EQUAL() != null) {
-      value = "==";
-    }
-    else if (ctx.NOT_EQUAL() != null) {
-      value = "!=";
-    }
-    else if (ctx.LESS() != null) {
-      value = "<";
-    }
-    else if (ctx.LESS_OR_EQUAL() != null) {
-      value = "<=";
-    }
-    else if (ctx.GREATER() != null) {
-      value = ">";
-    }
-    else if (ctx.GREATER_OR_EQUAL() != null) {
-      value = ">=";
-    }
-    else if (ctx.AND() != null) {
-      value = "&&";
-    }
-    else if (ctx.OR() != null) {
-      value = "||";
-    }
-    else if (ctx.MOD() != null) {
-      value = "%";
-    }
-    
-    return new BinaryOperLiter(value, codePos);
   }
   
   private Stat visitStat(StatContext ctx) {
