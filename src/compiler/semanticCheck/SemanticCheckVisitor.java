@@ -438,7 +438,45 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BinaryOperLiter visitBinaryOper(BinaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.getText();
+    
+    String value = null;
+    
+    if (ctx.MUL() != null) {
+      value = "*";
+    }
+    else if (ctx.DIV() != null) {
+      value = "*";
+    }
+    else if (ctx.PLUS() != null) {
+      value = "*";
+    }
+    else if (ctx.MINUS() != null) {
+      value = "*";
+    }
+    else if (ctx.EQUAL() != null) {
+      value = "*";
+    }
+    else if (ctx.NOT_EQUAL() != null) {
+      value = "*";
+    }
+    else if (ctx.LESS() != null) {
+      value = "*";
+    }
+    else if (ctx.LESS_OR_EQUAL() != null) {
+      value = "*";
+    }
+    else if (ctx.GREATER() != null) {
+      value = "*";
+    }
+    else if (ctx.GREATER_OR_EQUAL() != null) {
+      value = "*";
+    }
+    else if (ctx.AND() != null) {
+      value = "*";
+    }
+    else if (ctx.OR() != null) {
+      value = "*";
+    }
     
     return new BinaryOperLiter(value, codePos);
   }
@@ -471,7 +509,23 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    String value = ctx.getText();
+    String value = null;
+    
+    if (ctx.NOT() != null) {
+      value = "!";
+    }
+    else if (ctx.NEGATIVE() != null) {
+      value = "-";
+    }
+    else if (ctx.LEN() != null) {
+      value = "len";
+    }
+    else if (ctx.ORD() != null) {
+      value = "ord";
+    }
+    else if (ctx.CHR() != null) {
+      value = "chr";
+    }
     
     return new UnaryOperLiter(value, codePos);
   }

@@ -7,6 +7,9 @@ import java.io.PrintStream;
 
 public class Main {
   
+  /* Implements the whole procedure including handling input and output,
+   * compiling the input file and creating the generated output file. */
+  
   public static void main(String[] args) throws Exception {
     String inputFile = null;
     String outputFile = null;
