@@ -38,10 +38,10 @@ public class Compiler {
     try {
       tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) { // Exception for syntax errors.
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
       System.exit(100);
     } catch (SemanticException e) {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
       System.exit(200);
     }
   }
@@ -55,6 +55,7 @@ public class Compiler {
     // System.out.print("Semantic analysis has been completed.\n");
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
+    System.exit(0);
   }
 	
   public void initializeParserAndLexer(InputStream code) 

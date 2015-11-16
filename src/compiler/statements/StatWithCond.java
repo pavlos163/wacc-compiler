@@ -18,5 +18,4 @@ public abstract class StatWithCond extends Stat {
           + " Actual type: " + condition.getType());
     }
   }
-  
 }

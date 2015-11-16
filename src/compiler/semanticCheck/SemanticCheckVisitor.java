@@ -115,8 +115,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   // Remember the function that we are currently looking at.
   private String currFunc;
   
-  private List<SyntaxException> exceptionList;
-  
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
     // TODO Auto-generated method stub
@@ -176,8 +174,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitIdentExpr(IdentExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+    CodePosition codePos = initialisePosition(ctx);
+    if (scope.lookUpAll(ctx.IDENT().getText()) != null) {
+      return new Variable(ctx.IDENT().getText(), scope, codePos);
+    }
+    else {
+      throw new SemanticException("At " + codePos + " Undeclared variable found");
+    }
   }
 
   @Override
@@ -191,8 +194,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return new ArrType(visitPairType(ctx.pairType()));
     }
-    else exceptionList.add(new SyntaxException("Error by the compiler!"));
-	return null;
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
@@ -249,9 +251,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.expr() != null) {
       return visitExpr(ctx.expr(0));
     }
-    else {
-      System.out.println("Error AssignRHS");
-    }
+    
     return null;
   }
 
@@ -266,8 +266,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return visitPairType(ctx.pairType());
     }
-    else exceptionList.add(new SyntaxException("Error by the compiler!"));
-	return null;
+    else new SyntaxException("Error by the compiler!");
+    return null;
   }
 
   @Override
@@ -326,8 +326,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public Function visitFunc(FuncContext ctx) {
-    System.out.println("I found a function definition!");
-    
     CodePosition codePos = initialisePosition(ctx);
     List<Param> parameters = new LinkedList<Param>();
     List<Type> typeOfParameters = new LinkedList<Type>();
@@ -370,7 +368,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public IntLiter visitIntLiter(IntLiterContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     
-    IntLiter sign = visitIntSign(ctx.intSign());
+    // Initialize to sign to be positive.
+    IntLiter sign = new IntLiter(1, codePos);
+    if (ctx.intSign() != null) {
+      sign = visitIntSign(ctx.intSign());
+    }
     
     long value = Long.parseLong(ctx.INTEGER().getText());
     return new IntLiter(value * sign.getValue(), codePos);
@@ -387,8 +389,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.arrayType() != null) {
       return visitArrayType(ctx.arrayType());
     }
-    else exceptionList.add(new SyntaxException("Error by the compiler!"));
-	return null;
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
@@ -535,7 +536,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
-    scope = new SymbolTable<>();
+    scope = new SymbolTable<Identifier>();
     functions = new SymbolTable<>();
     for (FuncContext func: ctx.func()) {
       func.accept(this);
@@ -644,8 +645,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ReturnStat visitReturnStat(ReturnStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    // Functions stuff.
-    return null;
+    Expr expr = visitExpr(ctx.expr());
+    if (currFunc == null) {
+      throw new SemanticException("Illegal operation at " + codePos);
+    }
+    return new ReturnStat(currFunc, expr, codePos);
   }
 
   @Override
@@ -655,17 +659,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     if (ctx.type() != null && ctx.IDENT() != null) {
       String varName = ctx.IDENT().getText();
-      if (scope.lookUpCurrLevelOnly(varName) == null) {
+      if (scope.lookUpCurrLevelOnly(varName) != null) {
         throw new SemanticException("Variable Redeclaration at " + codePos);
       }
       Variable var = new Variable(ctx.IDENT().getText(), scope, codePos);
-      
       return new AssignStat(var, rhs, codePos);
     }
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
       if (scope.lookUpAll(lhs.getName()) == null) {
-          exceptionList.add(new SyntaxException("Undeclared variable error at " + codePos));
+          throw new SyntaxException("Undeclared variable error at " + codePos);
       }
       return new AssignStat(lhs, rhs, codePos);
     }
@@ -726,7 +729,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx != null) {
       return (Expr) ctx.accept(this);
     }
-    
     return null;
   }
   
