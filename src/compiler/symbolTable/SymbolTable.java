@@ -39,11 +39,11 @@ public class SymbolTable<T extends Identifier> {
     return dictionary.get(name);
   }
   
-  public SymbolTable getParentScope() {
+  public SymbolTable<T> getParentScope() {
     return parentScope;
   }
   
-  public SymbolTable newScope() {
+  public SymbolTable<T> newScope() {
     return new SymbolTable(this);
   }
   

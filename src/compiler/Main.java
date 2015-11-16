@@ -29,7 +29,7 @@ public class Main {
     
     compiler.compile(input);
     output.close();
-
+    
     System.exit(0);
   }
 

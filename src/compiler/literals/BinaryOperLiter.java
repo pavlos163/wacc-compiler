@@ -24,31 +24,31 @@ public class BinaryOperLiter implements Liter {
   @Override
   public Type getType() {
     switch(value) {
-    case "MUL":
+    case "*":
       return BaseType.typeBool;
-    case "DIV":
+    case "/":
       return BaseType.typeInt;
-    case "MOD":
+    case "%":
       return BaseType.typeInt;
-    case "PLUS":
+    case "+":
       return BaseType.typeInt;
-    case "MINUS":
+    case "-":
       return BaseType.typeInt;
-    case "GREATER":
+    case ">":
       return BaseType.typeBool;
-    case "GREATER_OR_EQUAL":
+    case ">=":
       return BaseType.typeBool;
-    case "LESS":
+    case "<":
       return BaseType.typeBool;
-    case "LESS_OR_EQUAL":
+    case "<=":
       return BaseType.typeBool;
     case "EQUAL":
       return BaseType.typeBool;
-    case "NOT_EQUAL":
+    case "!=":
       return BaseType.typeBool;
-    case "AND":
+    case "&&":
       return BaseType.typeBool;
-    case "OR":
+    case "||":
       return BaseType.typeBool;
     default:
       return null;
@@ -57,58 +57,28 @@ public class BinaryOperLiter implements Liter {
 
   @Override
   public String getString() {
-    switch(value) {
-    case "MUL":
-      return "*";
-    case "DIV":
-      return "/";
-    case "MOD":
-      return "%";
-    case "PLUS":
-      return "+";
-    case "MINUS":
-      return "-";
-    case "GREATER":
-      return ">";
-    case "GREATER_OR_EQUAL":
-      return ">=";
-    case "LESS":
-      return "<";
-    case "LESS_OR_EQUAL":
-      return "<=";
-    case "EQUAL":
-      return "==";
-    case "NOT_EQUAL":
-      return "!=";
-    case "AND":
-      return "&&";
-    case "OR":
-      return "||";
-    default:
-      return null;
-    }
+    return value;
   }
   
   private void checkBinaryOper(String value) throws SyntaxException {
     switch(value) {
-    case "MUL":
-    case "DIV":
-    case "MOD":
-    case "PLUS":
-    case "MINUS":
-    case "GREATER":
-    case "GREATER_OR_EQUAL":
-    case "LESS":
-    case "LESS_OR_EQUAL":
-    case "EQUAL":
-    case "NOT_EQUAL":
-    case "AND":
-    case "OR":
+    case "*":
+    case "/":
+    case "%":
+    case "+":
+    case "-":
+    case ">":
+    case ">=":
+    case "<":
+    case "<=":
+    case "==":
+    case "!=":
+    case "&&":
+    case "||":
       break;
     default:
       throw new SyntaxException("At " + codePos.toString() + 
           ". Invalid binary operator.");
     }
   }
-  
 }

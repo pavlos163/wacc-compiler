@@ -23,8 +23,7 @@ public class Compiler {
   
   public Compiler() {
   }
-  
-	
+ 
   private void syntacticAnalysis() {
     try {
       this.tree = parser.program();
@@ -34,27 +33,28 @@ public class Compiler {
   }
 	
   private void semanticAnalysis() {
+    
     try {
-	  tree.accept(new SemanticCheckVisitor());
-	} catch (SyntaxException e) { // Exception for syntax errors.
-	    System.exit(100);
-	} catch (SemanticException e) {
-	  System.exit(200);
-	}
-	  // TODO another catch for the semantical errors.
+      tree.accept(new SemanticCheckVisitor());
+      } catch (SyntaxException e) { // Exception for syntax errors.
+        System.out.println(e.getMessage());
+        System.exit(100);
+      } catch (SemanticException e) {
+        System.out.println(e.getMessage());
+        System.exit(200);
+     }
   }
 	
   public void compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
     syntacticAnalysis();
     // Prints for debugging purposes.
-    //System.out.print("Syntax analysis has been completed.\n");
+    System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();
-    
-    //System.out.print("Semantic analysis has been completed.\n");
-    System.exit(0);
+    System.out.print("Semantic analysis has been completed.\n");
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
+    System.exit(0);
   }
 	
   public void initializeParserAndLexer(InputStream code) 
