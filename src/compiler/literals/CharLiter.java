@@ -11,7 +11,7 @@ public class CharLiter implements Liter {
   private final CodePosition codePos;
   
   public CharLiter(String value, CodePosition codePos) throws SyntaxException {
-    this.value = value.substring(1, value.length() - 1);
+    this.value = value;
     this.codePos = codePos;
     checkEscapedCharacter(value);
   }
@@ -32,13 +32,13 @@ public class CharLiter implements Liter {
   }
   
   private void checkEscapedCharacter(String value) throws SyntaxException {
-    if (value.length() == 1 && (value.charAt(0) == '\\' 
-        || value.charAt(0) == '\'' || value.charAt(0) == '"')) {
+    if (value.length() == 3 && (value.charAt(1) == '\\' 
+        || value.charAt(1) == '\'' || value.charAt(1) == '"')) {
       throw new SyntaxException
-        ("At " + codePos.toString() + ". Invalid escaped character.");
+        ("At " + codePos.toString() + ". This character should be escaped.");
     }
-    else if (value.charAt(0) == '\\') {
-      switch (value.charAt(1)) {
+    else if (value.charAt(1) == '\\') {
+      switch (value.charAt(2)) {
       case ('0'):
       case ('b'):
       case ('t'):

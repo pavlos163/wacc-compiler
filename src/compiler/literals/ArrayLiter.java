@@ -5,9 +5,7 @@ import java.util.List;
 import compiler.CodePosition;
 import compiler.assignables.AssignRHS;
 import compiler.expressions.Expr;
-import compiler.semanticCheck.ReturnableType;
 import compiler.types.ArrType;
-import compiler.types.BaseType;
 import compiler.types.Type;
 
 public class ArrayLiter implements Liter, AssignRHS {

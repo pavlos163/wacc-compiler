@@ -34,7 +34,6 @@ import compiler.literals.BinaryOperLiter;
 import compiler.literals.BoolLiter;
 import compiler.literals.CharLiter;
 import compiler.literals.IntLiter;
-import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
@@ -43,7 +42,6 @@ import compiler.statements.BeginEndStat;
 import compiler.statements.ExitStat;
 import compiler.statements.FreeStat;
 import compiler.statements.IfThenElseStat;
-import compiler.statements.IfThenStat;
 import compiler.statements.PrintStat;
 import compiler.statements.PrintlnStat;
 import compiler.statements.ReadStat;
@@ -80,7 +78,6 @@ import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
 import antlr.WaccParser.IfThenElseStatContext;
-import antlr.WaccParser.IfThenStatContext;
 import antlr.WaccParser.IntLiterContext;
 import antlr.WaccParser.IntLiterExprContext;
 import antlr.WaccParser.IntSignContext;
@@ -600,18 +597,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     Expr condition = visitExpr(ctx.expr());
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
-  }
-
-  @Override
-  public IfThenStat visitIfThenStat(IfThenStatContext ctx) {
-    CodePosition codePos = initialisePosition(ctx);
-    scope = scope.newScope();
-    Stat ifBody = visitStat(ctx.stat());
-    
-    scope = scope.getParentScope();
-    
-    Expr condition = visitExpr(ctx.expr());
-    return new IfThenStat(condition, ifBody, codePos);
   }
 
   @Override

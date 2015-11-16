@@ -7,8 +7,11 @@ import compiler.types.BaseType;
 
 public abstract class StatWithCond extends Stat {
   
-  public StatWithCond(CodePosition codePos) {
+  private final Expr condition;
+  
+  public StatWithCond(Expr condition, CodePosition codePos) {
     super(codePos);
+    this.condition = condition;
   }
 
   protected void checkErrors(Expr condition) {
@@ -18,4 +21,9 @@ public abstract class StatWithCond extends Stat {
           + " Actual type: " + condition.getType());
     }
   }
+  
+  public Expr getCondition() {
+    return condition;
+  }
+  
 }
