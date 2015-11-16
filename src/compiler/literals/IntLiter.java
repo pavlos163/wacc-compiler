@@ -1,6 +1,7 @@
 package compiler.literals;
 
 import compiler.CodePosition;
+import compiler.errorHandling.SyntaxException;
 import compiler.types.BaseType;
 import compiler.types.Type;
 
@@ -12,6 +13,9 @@ public class IntLiter implements Liter {
   public IntLiter(long value, CodePosition codePos) {
     this.value = (int) value;
     this.codePos = codePos;
+    if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
+      throw new SyntaxException("Integer Overflow");
+    }
   }
 
   @Override

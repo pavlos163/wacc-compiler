@@ -34,6 +34,7 @@ import compiler.literals.BinaryOperLiter;
 import compiler.literals.BoolLiter;
 import compiler.literals.CharLiter;
 import compiler.literals.IntLiter;
+import compiler.literals.Liter;
 import compiler.literals.PairLiter;
 import compiler.literals.StringLiter;
 import compiler.literals.UnaryOperLiter;
@@ -634,15 +635,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public AssignStat visitAssignStat(AssignStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     AssignRHS rhs = visitAssignRHS(ctx.assignRHS());
-        
     if (ctx.type() != null && ctx.IDENT() != null) {
-      //if (rhs.getType().equals(BaseType.typeInt)) {
-      //  long rhsValue = Long.parseLong(ctx.assignRHS().getText());
-      //  if (rhsValue > Integer.MAX_VALUE || rhsValue < Integer.MIN_VALUE) {
-      //    throw new SyntaxException("At: " + codePos + ". Integer Overflow"
-      //        + " at assignment.");
-      //  }
-      //}
       String varName = ctx.IDENT().getText();
       if (scope.lookUpCurrLevelOnly(varName) != null) {
         throw new SemanticException("At: " + codePos + ". Variable "
@@ -660,6 +653,16 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       }
       return new AssignStat(lhs, rhs, codePos);
     }
+  }
+  
+  private boolean isNumeric(String str) {
+    boolean isNum = true;
+    try {
+      Long.parseLong(str);
+    } catch (NumberFormatException e) {
+      isNum = false;
+    }
+    return isNum;
   }
 
   @Override
