@@ -101,14 +101,13 @@ expr:
 | L_PAR expr R_PAR             #paranthesesExpr
 ;
 
+intLiter: intSign? INTEGER;
+
+intSign: PLUS | MINUS;
 
 unaryOper: NOT | MINUS | LEN | ORD | CHR;
 
 arrayElem: IDENT (L_SQ expr R_SQ)+;
-
-intSign: PLUS | MINUS;
-
-intLiter: intSign? INTEGER;
 
 boolLiter: TRUE | FALSE;
 

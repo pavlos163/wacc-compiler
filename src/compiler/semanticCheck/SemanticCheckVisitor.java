@@ -139,8 +139,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public IntLiter visitIntSign(IntSignContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    
-    if (ctx.PLUS() != null) {
+    if (ctx.MINUS() != null) {
       return new IntLiter(-1, codePos);
     }
     return new IntLiter(1, codePos);
@@ -506,7 +505,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public UnaryOperLiter visitUnaryOper(UnaryOperContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     String value = null;
-    
     if (ctx.NOT() != null) {
       value = "!";
     }

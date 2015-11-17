@@ -84,7 +84,7 @@ IDENT: [_a-zA-Z][_a-zA-Z0-9]*;
 fragment DIGIT: '0'..'9';
 
 // Integer Literals
-INTEGER: DIGIT+;
+INTEGER: ('-' | '+')? DIGIT+;
 
 // Escaped Characters
 fragment ESC: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\"' | '\\\'' | '\\\\';
