@@ -395,7 +395,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
         visitStat(ctx.stat()), codePos);
     
     if (!functionHasReturn) {
-      throw new SyntaxException("Function doesn't have an return statement");
+      throw new SyntaxException("Function doesn't have an return statement " + codePos);
     }
     
     currFunc = null; // We finished visiting the function.
@@ -717,6 +717,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ExitStat visitExitStat(ExitStatContext ctx) {
+    functionHasReturn = true;
     CodePosition codePos = initialisePosition(ctx);
     Expr expression = visitExpr(ctx.expr());
     return new ExitStat(expression, codePos);
