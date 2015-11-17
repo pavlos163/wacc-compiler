@@ -366,7 +366,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public Function visitFunc(FuncContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     List<Param> parameters = new LinkedList<Param>();
-    List<Type> typeOfParameters = new LinkedList<Type>();
     
     // New scope for the parameters.
     scope = scope.newScope();
@@ -379,17 +378,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     functionHasReturn = false;
     
     for (Param param: parameters) {
-      typeOfParameters.add(param.getType());
       scope.add(param.getIdent(), 
           new Identifier(param.getType(), codePos));
     }
-    if (functions.lookUpAll(currFunc) != null) {
-      throw new SemanticException("At: " + codePos + " function "
-          + "was declared again above at " + 
-          functions.lookUpAll(currFunc).getPosition());
-    }
-    functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
-        codePos));
     
     Function function = new Function(returnType, currFunc, parameters,
         visitStat(ctx.stat()), codePos);
@@ -526,8 +517,31 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   private void declareFunction(FuncContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    List<Param> parameters = new LinkedList<Param>();
+    List<Type> typeOfParameters = new LinkedList<Type>();
     
+    if (ctx.paramList() != null) {
+      parameters = visitParamList(ctx.paramList()).getParameters();
+    }
+    Type returnType = visitType(ctx.type());
+    currFunc = ctx.IDENT().getText();
+    
+    for (Param param: parameters) {
+      typeOfParameters.add(param.getType());
+    }
+    
+    if (functions.lookUpAll(currFunc) != null) {
+      throw new SemanticException("At: " + codePos + " function "
+          + "was declared again above at " + 
+          functions.lookUpAll(currFunc).getPosition());
+    }
+    functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
+        codePos));
+    
+    currFunc = null;
   }
+
   
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
@@ -535,6 +549,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     // All the variables from the function must get to another scope.
     scope = scope.newScope();
     functions = new SymbolTable<FunctionIdentifier>();
+    // First pass to declare all the functions.
+    for (FuncContext func: ctx.func()) {
+      declareFunction(func);
+    }
+    // Second pass to visit all the functions.
     for (FuncContext func: ctx.func()) {
       func.accept(this);
     }
