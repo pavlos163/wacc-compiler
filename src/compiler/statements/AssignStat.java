@@ -34,8 +34,7 @@ public class AssignStat extends Stat {
   }
   
   private void checkErrors(AssignLHS lhs, AssignRHS rhs) {
-    if (!(rhs instanceof Call
-        || rhs.getType().equals(lhs.getType()))) {
+    if (!rhs.getType().equals(lhs.getType())) {
       throw new SemanticException("At " + codePos.toString() + 
           ". Types of the LHS and RHS values must be the same."
           + " Actual types: (" + lhs.getType() + ", " + 

@@ -26,5 +26,12 @@ public class ArgList implements ReturnableType, Iterable<Expr> {
   public Iterator<Expr> iterator() {
     return arguments.iterator();
   }
-
+  
+  public int numberOfArguments() {
+    return arguments.size();
+  }
+  
+  public List<Expr> getArguments() {
+    return arguments;
+  }
 }

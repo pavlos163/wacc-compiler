@@ -245,7 +245,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.CALL() != null) {
       String ident = ctx.IDENT().getText();
       ArgList argList = visitArgList(ctx.argList());
-      return new Call(ident, argList, codePos);
+      return new Call(ident, argList, functions,codePos);
     }
     else if (ctx.expr() != null) {
       return visitExpr(ctx.expr(0));
@@ -633,6 +633,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     Expr expr = visitExpr(ctx.expr());
     if (currFunc == null) {
       throw new SemanticException("Illegal operation at " + codePos);
+    }
+    if (!expr.getType().equals(functions.lookUpAll(currFunc).getType())) {
+      throw new SemanticException("Type mismatch");
     }
     return new ReturnStat(currFunc, expr, codePos);
   }
