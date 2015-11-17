@@ -14,7 +14,8 @@ public class IntLiter implements Liter {
     this.value = (int) value;
     this.codePos = codePos;
     if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
-      throw new SyntaxException("Integer Overflow " + value);
+      throw new SyntaxException("At: " + codePos + " integer "
+          + "overflow: " + value);
     }
   }
 

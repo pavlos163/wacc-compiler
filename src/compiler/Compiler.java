@@ -30,7 +30,6 @@ public class Compiler {
       this.tree = parser.program();
     } catch (ParseCancellationException e) {
       System.err.println(e.getMessage());
-      System.out.println("Syntax Error");
       System.exit(100);
     }
   }
@@ -51,10 +50,7 @@ public class Compiler {
   public void compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
     syntaxAnalysis();
-    // Prints for debugging purposes.
-    // System.out.print("Syntax analysis has been completed.\n");
     semanticAnalysis();    
-    // System.out.print("Semantic analysis has been completed.\n");
     // If none of the above exited the program then the compiler
     // proceeds to code generation.
     System.exit(0);

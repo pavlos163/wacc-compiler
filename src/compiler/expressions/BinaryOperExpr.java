@@ -26,7 +26,7 @@ public class BinaryOperExpr implements Expr {
   // If not, throw a semantic exception.
   private void checkErrors(Expr lhs, Expr rhs) {
     if (typeMissMatch()) {
-      throw new SemanticException("At " + codePos.toString() + ". Expressions "
+      throw new SemanticException("At " + codePos + " expressions "
           + "in the operation must be of the same type.  Actual types: ("
           + lhs.getType() + ", " + rhs.getType() + ")");
     }

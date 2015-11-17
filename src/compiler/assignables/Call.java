@@ -26,14 +26,17 @@ public class Call implements AssignRHS {
     // Do proper checks.
     if (lessNumOfArgs()) {
       throw new SemanticException
-        ("The number of arguments is smaller than expected");
+        ("At: " + codePos + " the number of arguments is smaller "
+            + "than expected");
     }
     if (moreNumOfArgs()) {
       throw new SemanticException
-        ("The number of arguments is bigger than expected");
+        ("At: " + codePos + " the number of arguments is bigger "
+            + "than expected");
     }
     if (incorrectTypes()) {
-      throw new SemanticException("The types of parameters don't match");
+      throw new SemanticException("At: " + codePos + " the types of "
+          + "parameters don't match");
     }
   }
   

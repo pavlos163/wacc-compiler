@@ -39,7 +39,7 @@ public class AssignStat extends Stat {
     }
     if (!rhs.getType().equals(lhs.getType())) {
       throw new SemanticException("At " + codePos.toString() + 
-          ". Types of the LHS and RHS values must be the same."
+          " types of the LHS and RHS values must be the same."
           + " Actual types: (" + lhs.getType() + ", " + 
           rhs.getType() + ")");
     }

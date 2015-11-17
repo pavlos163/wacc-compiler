@@ -36,8 +36,8 @@ public class ArrayElem implements AssignLHS, Liter {
   public void checkErrors() {
     for (Expr expr : exprs) {
       if (!expr.getType().equals(BaseType.typeInt)) {
-        throw new SemanticException("At: " + codePos + ". Must be of type"
-            + " int. Actual Type: " + expr.getType());
+        throw new SemanticException("At: " + codePos + " element must be of "
+            + " type int. Actual type: " + expr.getType());
       }
     }
   }

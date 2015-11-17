@@ -30,7 +30,7 @@ public class PairLiter implements Liter {
 
   @Override
   public Type getType() {
-    return new PairType( checkType(fst), (Type) checkType(snd));
+    return new PairType(checkType(fst), (Type) checkType(snd));
   }
   
   // What if the expr is null? That happens when we 

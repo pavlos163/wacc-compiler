@@ -178,7 +178,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     }
     else {
       throw new SemanticException("At " + codePos + 
-          " Undeclared variable found " + ctx.IDENT().getText());
+          " undeclared variable found: " + ctx.IDENT().getText());
     }
   }
 
@@ -383,8 +383,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
           new Identifier(param.getType(), codePos));
     }
     if (functions.lookUpAll(currFunc) != null) {
-      throw new SemanticException("Function redeclaration at " 
-          + codePos.toString());
+      throw new SemanticException("At: " + codePos + " function "
+          + "was declared again above at " + 
+          functions.lookUpAll(currFunc).getPosition());
     }
     functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
         codePos));
@@ -632,10 +633,12 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     CodePosition codePos = initialisePosition(ctx);
     Expr expr = visitExpr(ctx.expr());
     if (currFunc == null) {
-      throw new SemanticException("Illegal operation at " + codePos);
+      throw new SemanticException("At: " + codePos + " illegal operation");
     }
     if (!expr.getType().equals(functions.lookUpAll(currFunc).getType())) {
-      throw new SemanticException("Type mismatch");
+      throw new SemanticException("At: " + codePos + " invalid return type"
+          + ". Actual type: " + expr.getType() + ". Expected type: "
+          + functions.lookUpAll(currFunc).getType());
     }
     return new ReturnStat(currFunc, expr, codePos);
   }
@@ -647,8 +650,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx.type() != null && ctx.IDENT() != null) {
       String varName = ctx.IDENT().getText();
       if (scope.lookUpCurrLevelOnly(varName) != null) {
-        throw new SemanticException("At: " + codePos + ". Variable "
-            + "Redeclaration.");
+        throw new SemanticException("At: " + codePos + " variable "
+            + "was redeclared in the same scope at " +
+            scope.lookUpCurrLevelOnly(varName).getPosition());
       }
       scope.add(varName, new Identifier(visitType(ctx.type()), codePos));
       Variable var = new Variable(ctx.IDENT().getText(), scope, codePos);
@@ -657,23 +661,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else { // Assign left
       AssignLHS lhs = visitAssignLHS(ctx.assignLHS());
       if (scope.lookUpAll(lhs.getName()) == null) {
-          throw new SemanticException("At: " + codePos + ". Undeclared variable"
-              + " error.");
+          throw new SemanticException("At: " + codePos + " undeclared "
+              + "variable error: " + lhs.getName());
       }
       return new AssignStat(lhs, rhs, codePos);
     }
   }
   
-  private boolean isNumeric(String str) {
-    boolean isNum = true;
-    try {
-      Long.parseLong(str);
-    } catch (NumberFormatException e) {
-      isNum = false;
-    }
-    return isNum;
-  }
-
   @Override
   public WhileStat visitWhileStat(WhileStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);

@@ -20,8 +20,13 @@ public class UnaryOperExpr implements Expr {
     this.codePos = codePos;
     this.expr = expr;
     
+    checkErrors(expr);
+  }
+  
+  private void checkErrors(Expr expr) {
     if (!typeMatch()) {
-      throw new SemanticException("Type MissMatch error at " + codePos.toString());
+      throw new SemanticException("At: " + codePos + " type mismatch error. "
+          + "Actual: " + expr.getType() + ", Expected: " + getCorrectType());
     }
   }
 
@@ -39,6 +44,23 @@ public class UnaryOperExpr implements Expr {
       return expr.getType().equals(BaseType.typeInt);
     default:
       return false;
+    }
+  }
+  
+  private String getCorrectType() {
+    switch (this.unaryOp.getString()) {
+    case "!":
+      return "bool";
+    case "-":
+      return "int";
+    case "len":
+      return "array";
+    case "ord":
+      return "char";
+    case "chr":
+      return "int";
+    default:
+      return null;
     }
   }
 
