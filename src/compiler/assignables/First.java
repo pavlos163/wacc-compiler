@@ -23,7 +23,7 @@ public class First implements AssignLHS {
   
   public void checkErrors() {
     if (!(expr.getType() instanceof PairType)) {
-      throw new SemanticException("At " + codePos + " expression must be"
+      throw new SemanticException("At: " + codePos + " expression must be"
           + " of type pair. Actual type: " + expr.getType());
     }
   }

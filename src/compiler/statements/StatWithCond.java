@@ -16,7 +16,7 @@ public abstract class StatWithCond extends Stat {
 
   protected void checkErrors(Expr condition) {
     if (!condition.getType().equals(BaseType.typeBool)) {
-      throw new SemanticException("At " + codePos.toString()
+      throw new SemanticException("At: " + codePos.toString()
           + " condition must be of type boolean."
           + " Actual type: " + condition.getType());
     }

@@ -178,7 +178,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       return new Variable(ctx.IDENT().getText(), scope, codePos);
     }
     else {
-      throw new SemanticException("At " + codePos + 
+      throw new SemanticException("At: " + codePos + 
           " undeclared variable found: " + ctx.IDENT().getText());
     }
   }
@@ -396,7 +396,8 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
         visitStat(ctx.stat()), codePos);
     
     if (!functionHasReturn) {
-      throw new SyntaxException("Function doesn't have an return statement " + codePos);
+      throw new SyntaxException("At: " + codePos + " function doesn't have a "
+          + "return statement");
     }
     
     currFunc = null; // We finished visiting the function.

@@ -66,7 +66,7 @@ public class BinaryOperLiter implements Liter {
     case "||":
       break;
     default:
-      throw new SyntaxException("At " + codePos + 
+      throw new SyntaxException("At: " + codePos + 
           " invalid binary operator");
     }
   }
