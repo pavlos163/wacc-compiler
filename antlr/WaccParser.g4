@@ -31,11 +31,11 @@ stat:
 assignLHS: 
   IDENT 
 | arrayElem      
-| pairElem       
+| pairElem   
 ;
 
 assignRHS:
-  expr                                             
+  expr                  
 | arrayLiter                                                 
 | NEWPAIR L_PAR expr COMMA expr R_PAR
 | pairElem            

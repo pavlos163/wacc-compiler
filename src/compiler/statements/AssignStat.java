@@ -5,6 +5,7 @@ import compiler.assignables.AssignLHS;
 import compiler.assignables.AssignRHS;
 import compiler.assignables.Call;
 import compiler.errorHandling.SemanticException;
+import compiler.types.ArrType;
 import compiler.types.BaseType;
 
 public class AssignStat extends Stat {

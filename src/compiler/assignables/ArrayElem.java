@@ -8,6 +8,7 @@ import compiler.expressions.Expr;
 import compiler.literals.Liter;
 import compiler.symbolTable.Identifier;
 import compiler.symbolTable.SymbolTable;
+import compiler.types.ArrType;
 import compiler.types.BaseType;
 import compiler.types.Type;
 
@@ -27,8 +28,8 @@ public class ArrayElem implements AssignLHS, Liter {
     this.codePos = codePos;
     
     Identifier identifier = scope.lookUpAll(ident);
-    this.type = identifier.getType();
-    
+    ArrType arrayType = (ArrType) identifier.getType();
+    this.type = arrayType.getType();
     checkErrors();
   }
   

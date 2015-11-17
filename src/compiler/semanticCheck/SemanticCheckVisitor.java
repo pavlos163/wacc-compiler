@@ -434,7 +434,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ValueExpr visitArrayElemExpr(ArrayElemExprContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     ArrayElem arrayElem = visitArrayElem(ctx.arrayElem());
-    
     return new ValueExpr(arrayElem, codePos);
   }
 

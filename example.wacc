@@ -1,14 +1,5 @@
-# simple array assignment and lookup
-
-# Output:
-# 42
-
-# Program:
-
 begin
-int f() is 
-pair(int, int) p = newpair(1,1);
-return 0
-end 
-pair(int, int) p = newpair(1,1)
+int x = 5;
+int[] a = [1,2,3,4];
+x = a[1]
 end

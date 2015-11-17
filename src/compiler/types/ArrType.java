@@ -21,22 +21,16 @@ public class ArrType implements Type {
   
   @Override 
   public boolean equals(Object obj) {
-    if (obj == null) {
+    if (! (obj instanceof ArrType)) {
+      return false;
+    }
+    if (type == null) {
       return true;
     }
-    if (obj instanceof ArrType) {
-      ArrType arrType = (ArrType) obj;
-      if (arrType.getType() == null) { // We assign an array to another array.
-        return true;
-      }
-      return type == null || type.equals(arrType.getType());
-    } else if (obj instanceof PairType) {
-      PairType pairType = (PairType) obj;
-      return pairType == null || type.equals(pairType);
-    } else {
-      BaseType baseType = (BaseType) obj;
-      return type.equals(baseType);
-    }
+    ArrType arrType = (ArrType) obj;
+    if (arrType.getType() == null || type.equals(arrType.type))
+      return true;
+    return false;
   }
   
   @Override
