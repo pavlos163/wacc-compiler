@@ -246,7 +246,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.CALL() != null) {
       String ident = ctx.IDENT().getText();
       ArgList argList = visitArgList(ctx.argList());
-      return new Call(ident, argList, functions,codePos);
+      return new Call(ident, argList, functions, codePos);
     }
     else if (ctx.expr() != null) {
       return visitExpr(ctx.expr(0));
@@ -391,7 +391,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     functions.add(currFunc,new FunctionIdentifier(returnType, typeOfParameters,
         codePos));
     
-    scope = scope.newScope();
     Function function = new Function(returnType, currFunc, parameters,
         visitStat(ctx.stat()), codePos);
     
@@ -402,7 +401,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     currFunc = null; // We finished visiting the function.
     // Return to the global scope.
-    scope = scope.getParentScope();
     scope = scope.getParentScope();
     return function;
   }
@@ -472,7 +470,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     String ident = ctx.IDENT().getText();
     CodePosition codePos = initialisePosition(ctx);
     List<Expr> exprs = new LinkedList<Expr>();
-    
     for (ExprContext context : ctx.expr()) {
       exprs.add(visitExpr(context));
     }
@@ -527,7 +524,11 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     
     return new UnaryOperLiter(value, codePos);
   }
-
+  
+  private void declareFunction(FuncContext ctx) {
+    
+  }
+  
   @Override
   public ReturnableType visitProgram(ProgramContext ctx) {
     scope = new SymbolTable<Identifier>();
