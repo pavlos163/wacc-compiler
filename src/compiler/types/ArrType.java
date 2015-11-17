@@ -35,6 +35,8 @@ public class ArrType implements Type {
       return pairType == null || type.equals(pairType);
     } else {
       BaseType baseType = (BaseType) obj;
+      // System.out.println(baseType);
+      // System.out.println(type);
       return type.equals(baseType);
     }
   }
