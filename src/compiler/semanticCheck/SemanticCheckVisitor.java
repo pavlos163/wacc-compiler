@@ -448,8 +448,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
 
   @Override
   public ReturnableType visitParanthesesExpr(ParanthesesExprContext ctx) {
-    // TODO Auto-generated method stub
-    return null;
+    return visitExpr(ctx.expr());
   }
 
   public AssignLHS visitPairElem(PairElemContext ctx) {
