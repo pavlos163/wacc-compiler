@@ -39,6 +39,9 @@ public class Call implements AssignRHS {
   
   private boolean lessNumOfArgs() {
     FunctionIdentifier fIdent = giveIdentifier();
+    if (fIdent == null) {
+      return false;
+    }
     if (fIdent.getParamTypes().size() > argList.numberOfArguments()) {
       return true;
     }
@@ -47,6 +50,9 @@ public class Call implements AssignRHS {
   
   private boolean moreNumOfArgs() {
     FunctionIdentifier fIdent = giveIdentifier();
+    if (fIdent == null) {
+      return false;
+    }
     if (fIdent.getParamTypes().size() < argList.numberOfArguments()) {
       return true;
     }
@@ -55,6 +61,9 @@ public class Call implements AssignRHS {
   
   private boolean incorrectTypes() {
     FunctionIdentifier fIdent = giveIdentifier();
+    if (fIdent == null) {
+      return false;
+    }
     Iterator<Expr> i = argList.iterator();
     Iterator<Type> j = fIdent.getParamTypes().iterator();
     
@@ -78,6 +87,9 @@ public class Call implements AssignRHS {
   @Override
   public Type getType() {
     FunctionIdentifier fIdent = giveIdentifier();
+    if (fIdent == null) {
+      return null;
+    }
     return fIdent.getType();
   }
 
