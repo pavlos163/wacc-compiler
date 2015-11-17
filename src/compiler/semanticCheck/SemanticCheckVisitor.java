@@ -552,14 +552,13 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public ArrayLiter visitArrayLiter(ArrayLiterContext ctx) {
     // If the array is empty.
-    if (ctx.argList() == null) {
-      return null;
-    }
     CodePosition codePos = initialisePosition(ctx);
     List<Expr> expressions = new LinkedList<>();
     
-    for (ExprContext ectx : ctx.argList().expr()) {
-      expressions.add(visitExpr(ectx));
+    if (ctx.argList() != null) {
+      for (ExprContext ectx : ctx.argList().expr()) {
+        expressions.add(visitExpr(ectx));
+      }
     }
     
     return new ArrayLiter(expressions, codePos);
