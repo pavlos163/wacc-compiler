@@ -111,6 +111,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   private SymbolTable<FunctionIdentifier> functions;
   // Remember the function that we are currently looking at.
   private String currFunc;
+  private boolean functionHasReturn;
   
   @Override
   public ReturnableType visit(@NotNull ParseTree arg0) {
@@ -265,8 +266,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     else if (ctx.pairType() != null) {
       return visitPairType(ctx.pairType());
     }
-    else new SyntaxException("Error by the compiler!");
-    return null;
+    else throw new SyntaxException("Error by the compiler!");
   }
 
   @Override
@@ -376,6 +376,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     }
     Type returnType = visitType(ctx.type());
     currFunc = ctx.IDENT().getText();
+    functionHasReturn = false;
     
     for (Param param: parameters) {
       typeOfParameters.add(param.getType());
@@ -393,7 +394,9 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     Function function = new Function(returnType, currFunc, parameters,
         visitStat(ctx.stat()), codePos);
     
-    //TODO check if there is a return statement!!!
+    if (!functionHasReturn) {
+      throw new SyntaxException("Function doesn't have an return statement");
+    }
     
     currFunc = null; // We finished visiting the function.
     // Return to the global scope.
@@ -585,13 +588,20 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public IfThenElseStat visitIfThenElseStat(IfThenElseStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     scope = scope.newScope();
+    boolean initialReturn = functionHasReturn;
     Stat ifBody = visitStat(ctx.stat(0));
-    
+    boolean ifRet = functionHasReturn;
     scope = scope.getParentScope();
-    
+    functionHasReturn = initialReturn;
     scope = scope.newScope();
     Stat elseBody = visitStat(ctx.stat(1));
-    
+    boolean elseRet = functionHasReturn;
+    if (currFunc != null) {
+      if (elseRet && ifRet) {
+        functionHasReturn = true;
+      }
+    }
+    functionHasReturn = initialReturn;
     Expr condition = visitExpr(ctx.expr());
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }
@@ -631,6 +641,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   public ReturnStat visitReturnStat(ReturnStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     Expr expr = visitExpr(ctx.expr());
+    functionHasReturn = true;
     if (currFunc == null) {
       throw new SemanticException("Illegal operation at " + codePos);
     }
