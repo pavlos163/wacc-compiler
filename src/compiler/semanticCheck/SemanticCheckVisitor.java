@@ -600,8 +600,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       if (elseRet && ifRet) {
         functionHasReturn = true;
       }
+      else {
+        functionHasReturn = initialReturn;
+      }
     }
-    functionHasReturn = initialReturn;
     Expr condition = visitExpr(ctx.expr());
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }
