@@ -1,4 +1,4 @@
-package instructionVisit;
+package compiler.instructionVisit;
 
 public class Register {
   private String name;

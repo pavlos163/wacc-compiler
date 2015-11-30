@@ -1,4 +1,4 @@
-package instructionVisit;
+package compiler.instructionVisit;
 
 import java.util.ArrayList;
 import java.util.List;

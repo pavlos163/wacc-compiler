@@ -1,4 +1,4 @@
-package instructionVisit;
+package compiler.instructionVisit;
 
 public class Instruction {
   private String operator;
@@ -8,6 +8,6 @@ public class Instruction {
   public Instruction(String operator, String arg1, String arg2) {
 	  this.operator = operator;
 	  this.arg1 = arg1;
-      this.arg2 = arg2;
+    this.arg2 = arg2;
   }
 }
