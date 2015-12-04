@@ -2,7 +2,7 @@ package compiler.backEnd.instructions;
 
 import compiler.backEnd.operands.Operand;
 
-public abstract class Instruction {
+public abstract class Instruction implements Token {
   
   protected Cond cond = null;
   

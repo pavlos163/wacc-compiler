@@ -1,8 +1,6 @@
 package compiler.backEnd.instructions;
 
-import compiler.backEnd.operands.Label;
-
-public class BranchLink {
+public class BranchLink implements Token {
   
   private final Cond cond;
   private final Label label;

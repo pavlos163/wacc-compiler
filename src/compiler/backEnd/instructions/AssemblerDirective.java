@@ -1,6 +1,6 @@
 package compiler.backEnd.instructions;
 
-public class AssemblerDirective {
+public class AssemblerDirective implements Token {
   
   private final String value;
   

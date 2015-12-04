@@ -1,6 +1,8 @@
-package compiler.backEnd.operands;
+package compiler.backEnd.instructions;
 
-public class Label implements Operand {
+import compiler.backEnd.operands.Operand;
+
+public class Label implements Operand, Token {
   
   private final String label;
   
