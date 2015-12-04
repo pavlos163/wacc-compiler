@@ -56,6 +56,7 @@ import antlr.WaccParser.UnaryOperExprContext;
 import antlr.WaccParser.WhileStatContext;
 import antlr.WaccParserVisitor;
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.ProgramNode;
 import compiler.frontEnd.assignables.ArgList;
 import compiler.frontEnd.assignables.ArrayElem;
 import compiler.frontEnd.assignables.AssignLHS;
@@ -548,19 +549,22 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     // All the variables from the function must get to another scope.
     scope = scope.newScope();
     functions = new SymbolTable<FunctionIdentifier>();
+    List<Function> funcList = new LinkedList();
+    CodePosition codePos = initialisePosition(ctx);
     // First pass to declare all the functions.
     for (FuncContext func: ctx.func()) {
       declareFunction(func);
     }
     // Second pass to visit all the functions.
     for (FuncContext func: ctx.func()) {
-      func.accept(this);
+      funcList.add(visitFunc(func));
     }
     scope = scope.getParentScope();
     scope = scope.newScope();
-    visitStat(ctx.stat());
+    ProgramNode programNode = new ProgramNode
+        (funcList, visitStat(ctx.stat()), codePos);
     scope = scope.getParentScope();
-    return null;
+    return programNode;
   }
 
   @Override

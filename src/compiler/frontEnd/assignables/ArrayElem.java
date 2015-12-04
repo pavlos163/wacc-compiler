@@ -3,6 +3,7 @@ package compiler.frontEnd.assignables;
 import java.util.List;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.errorHandling.SemanticException;
 import compiler.frontEnd.expressions.Expr;
 import compiler.frontEnd.literals.Liter;
@@ -64,6 +65,11 @@ public class ArrayElem implements AssignLHS, Liter {
   
   public SymbolTable<Identifier> getScope() {
     return scope;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

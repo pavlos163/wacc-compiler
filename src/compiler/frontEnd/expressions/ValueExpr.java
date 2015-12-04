@@ -1,6 +1,7 @@
 package compiler.frontEnd.expressions;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.literals.Liter;
 import compiler.frontEnd.types.Type;
 
@@ -31,5 +32,9 @@ public class ValueExpr implements Expr {
   public Liter getLiter() {
     return literal;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

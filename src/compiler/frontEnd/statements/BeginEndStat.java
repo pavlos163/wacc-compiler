@@ -1,6 +1,7 @@
 package compiler.frontEnd.statements;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 
 public class BeginEndStat extends Stat {
   
@@ -19,5 +20,9 @@ public class BeginEndStat extends Stat {
   public CodePosition getPosition() {
     return codePos;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

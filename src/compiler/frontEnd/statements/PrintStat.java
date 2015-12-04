@@ -1,6 +1,7 @@
 package compiler.frontEnd.statements;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.expressions.Expr;
 
 public class PrintStat extends Stat {
@@ -16,5 +17,9 @@ public class PrintStat extends Stat {
   public CodePosition getPosition() {
     return codePos;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

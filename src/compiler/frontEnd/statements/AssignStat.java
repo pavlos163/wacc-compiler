@@ -1,6 +1,7 @@
 package compiler.frontEnd.statements;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.assignables.AssignLHS;
 import compiler.frontEnd.assignables.AssignRHS;
 import compiler.frontEnd.errorHandling.SemanticException;
@@ -37,5 +38,10 @@ public class AssignStat extends Stat {
           + " Actual types: (" + lhs.getType() + ", " + 
           rhs.getType() + ")");
     }
+  }
+
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

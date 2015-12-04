@@ -1,9 +1,9 @@
 package compiler.frontEnd.statements;
 
 import compiler.CodePosition;
-import compiler.frontEnd.semanticCheck.ReturnableType;
+import compiler.backEnd.codeGeneration.ASTNode;
 
-public abstract class Stat implements ReturnableType {
+public abstract class Stat implements ASTNode {
   
   protected final CodePosition codePos;
   

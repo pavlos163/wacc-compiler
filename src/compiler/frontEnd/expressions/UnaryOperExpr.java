@@ -1,6 +1,7 @@
 package compiler.frontEnd.expressions;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.errorHandling.SemanticException;
 import compiler.frontEnd.errorHandling.SyntaxException;
 import compiler.frontEnd.literals.UnaryOperLiter;
@@ -74,4 +75,8 @@ public class UnaryOperExpr implements Expr {
     return codePos;
   }
 
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

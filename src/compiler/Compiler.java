@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import antlr.WaccLexer;
 import antlr.WaccParser;
+import compiler.backEnd.codeGeneration.ASTNode;
+import compiler.backEnd.codeGeneration.CodeGenerator;
 import compiler.frontEnd.errorHandling.ExceptionErrorListener;
 import compiler.frontEnd.errorHandling.SemanticException;
 import compiler.frontEnd.errorHandling.SyntaxException;
@@ -33,9 +35,10 @@ public class Compiler {
     }
   }
 	
-  private void semanticAnalysis() {
+  private ASTNode semanticAnalysis() {
+    ASTNode astree = null;
     try {
-      tree.accept(new SemanticCheckVisitor());
+      astree = (ASTNode) tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) {
       System.err.println(e.getMessage());
       System.exit(100);
@@ -44,15 +47,17 @@ public class Compiler {
       System.err.println(e.getMessage());
       System.exit(200);
     }
+    return astree;
   }
 	
-  public void compile(InputStream code) throws IOException {
+  public String compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
+    // Perform syntax and semantic analysis.
     syntaxAnalysis();
-    semanticAnalysis();    
-    // If none of the above exited the program then the compiler
-    // proceeds to code generation.
-    System.exit(0);
+    ASTNode ast = semanticAnalysis();
+    // If there is no error proceed to code generation.
+    
+    return new CodeGenerator(ast).generateCode();
   }
 	
   public void initializeParserAndLexer(InputStream code) 

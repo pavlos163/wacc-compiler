@@ -1,9 +1,9 @@
 package compiler.frontEnd.assignables;
 
-import compiler.frontEnd.semanticCheck.ReturnableType;
+import compiler.backEnd.codeGeneration.ASTNode;
 import compiler.frontEnd.types.Type;
 
-public interface AssignRHS extends ReturnableType {
+public interface AssignRHS extends ASTNode {
   
   public Type getType();
   

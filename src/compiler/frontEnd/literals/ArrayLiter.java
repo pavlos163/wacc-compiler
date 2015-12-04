@@ -3,6 +3,7 @@ package compiler.frontEnd.literals;
 import java.util.List;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.assignables.AssignRHS;
 import compiler.frontEnd.expressions.Expr;
 import compiler.frontEnd.types.ArrType;
@@ -53,6 +54,11 @@ public class ArrayLiter implements Liter, AssignRHS {
       }
       return new ArrType(type);
     }
+  }
+
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }
