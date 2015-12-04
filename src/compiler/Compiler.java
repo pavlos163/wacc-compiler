@@ -8,15 +8,14 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import compiler.codeGeneration.ASTNode;
-import compiler.codeGeneration.CodeGenerator;
-import compiler.errorHandling.ExceptionErrorListener;
-import compiler.errorHandling.SemanticException;
-import compiler.errorHandling.SyntaxException;
-import compiler.semanticCheck.SemanticCheckVisitor;
-
 import antlr.WaccLexer;
 import antlr.WaccParser;
+import compiler.backEnd.codeGeneration.ASTNode;
+import compiler.backEnd.codeGeneration.CodeGenerator;
+import compiler.frontEnd.errorHandling.ExceptionErrorListener;
+import compiler.frontEnd.errorHandling.SemanticException;
+import compiler.frontEnd.errorHandling.SyntaxException;
+import compiler.frontEnd.semanticCheck.SemanticCheckVisitor;
 
 public class Compiler {
   
@@ -37,9 +36,9 @@ public class Compiler {
   }
 	
   private ASTNode semanticAnalysis() {
-    ASTNode astree = null;
+    ASTNode ast = null;
     try {
-      astree = (ASTNode) tree.accept(new SemanticCheckVisitor());
+      ast = (ASTNode) tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) {
       System.err.println(e.getMessage());
       System.exit(100);
@@ -48,7 +47,7 @@ public class Compiler {
       System.err.println(e.getMessage());
       System.exit(200);
     }
-    return astree;
+    return ast;
   }
 	
   public String compile(InputStream code) throws IOException {
