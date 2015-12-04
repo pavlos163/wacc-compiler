@@ -33,6 +33,6 @@ public class ProgramNode implements ASTNode {
 
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
-    return visitor.accept(this);
+    return visitor.visit(this);
   }
 }
