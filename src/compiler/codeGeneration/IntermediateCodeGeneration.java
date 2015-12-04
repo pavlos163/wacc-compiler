@@ -25,7 +25,13 @@ import compiler.statements.StatList;
 import compiler.statements.WhileStat;
 
 public class IntermediateCodeGeneration<T> implements AbstractSyntaxTreeVisitor<T> {
-
+  
+  @Override
+  public T accept(ProgramNode programNode) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   @Override
   public T visit(Function func) {
     // TODO Auto-generated method stub

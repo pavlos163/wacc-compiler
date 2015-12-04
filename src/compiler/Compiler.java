@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.codeGeneration.ASTNode;
 import compiler.codeGeneration.CodeGenerator;
 import compiler.errorHandling.ExceptionErrorListener;
 import compiler.errorHandling.SemanticException;
@@ -35,9 +36,10 @@ public class Compiler {
     }
   }
 	
-  private void semanticAnalysis() {
+  private ASTNode semanticAnalysis() {
+    ASTNode astree = null;
     try {
-      tree.accept(new SemanticCheckVisitor());
+      astree = (ASTNode) tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) {
       System.err.println(e.getMessage());
       System.exit(100);
@@ -46,15 +48,17 @@ public class Compiler {
       System.err.println(e.getMessage());
       System.exit(200);
     }
+    return astree;
   }
 	
   public String compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
     // Perform syntax and semantic analysis.
     syntaxAnalysis();
-    semanticAnalysis();
+    ASTNode ast = semanticAnalysis();
     // If there is no error proceed to code generation.
-    return new CodeGenerator().generateCode();
+    
+    return new CodeGenerator(ast).generateCode();
   }
 	
   public void initializeParserAndLexer(InputStream code) 

@@ -54,6 +54,8 @@ public interface AbstractSyntaxTreeVisitor<T> {
   T visit(StatList statList);
   
   T visit(WhileStat whileStat);
+
+  T accept(ProgramNode programNode);
   
 }
 

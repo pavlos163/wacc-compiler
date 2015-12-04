@@ -1,11 +1,21 @@
 package compiler.codeGeneration;
 
 public class CodeGenerator {
-  
-  public CodeGenerator() {
-  }
 
+  private ASTNode ast;
+  public CodeGenerator(ASTNode ast) {
+    this.ast = (ProgramNode) ast;
+  }
+  
   public String generateCode() {
-    return "";
+    IntermediateCodeGeneration visitor = 
+        new IntermediateCodeGeneration();
+    
+    // This should return a structure with the 
+    // the assembly instructions of the program.
+    
+    // ast.accept(visitor);
+    
+    return null;
   }
 }

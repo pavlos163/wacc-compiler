@@ -23,6 +23,7 @@ import compiler.assignables.Param;
 import compiler.assignables.ParamList;
 import compiler.assignables.Second;
 import compiler.assignables.Variable;
+import compiler.codeGeneration.ProgramNode;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.expressions.BinaryOperExpr;
@@ -549,19 +550,22 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     // All the variables from the function must get to another scope.
     scope = scope.newScope();
     functions = new SymbolTable<FunctionIdentifier>();
+    List<Function> funcList = new LinkedList();
+    CodePosition codePos = initialisePosition(ctx);
     // First pass to declare all the functions.
     for (FuncContext func: ctx.func()) {
       declareFunction(func);
     }
     // Second pass to visit all the functions.
     for (FuncContext func: ctx.func()) {
-      func.accept(this);
+      funcList.add(visitFunc(func));
     }
     scope = scope.getParentScope();
     scope = scope.newScope();
-    visitStat(ctx.stat());
+    ProgramNode programNode = new ProgramNode
+        (funcList, visitStat(ctx.stat()), codePos);
     scope = scope.getParentScope();
-    return null;
+    return programNode;
   }
 
   @Override
