@@ -74,7 +74,7 @@ public interface AbstractSyntaxTreeVisitor<T> {
   
   T visit(WhileStat whileStat);
 
-  T accept(ProgramNode programNode);
+  T visit(ProgramNode programNode);
   
 }
 

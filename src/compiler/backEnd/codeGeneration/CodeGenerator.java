@@ -4,7 +4,7 @@ public class CodeGenerator {
 
   private ASTNode ast;
   public CodeGenerator(ASTNode ast) {
-    this.ast = (ProgramNode) ast;
+    this.ast = ast;
   }
   
   public String generateCode() {
@@ -16,6 +16,7 @@ public class CodeGenerator {
     
     // ast.accept(visitor);
     
+    // generateAssemblyCode();
     return null;
   }
 }

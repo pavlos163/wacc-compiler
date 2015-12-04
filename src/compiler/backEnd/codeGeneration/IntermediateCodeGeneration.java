@@ -27,7 +27,7 @@ import compiler.frontEnd.statements.WhileStat;
 public class IntermediateCodeGeneration<T> implements AbstractSyntaxTreeVisitor<T> {
   
   @Override
-  public T accept(ProgramNode programNode) {
+  public T visit(ProgramNode programNode) {
     // TODO Auto-generated method stub
     return null;
   }

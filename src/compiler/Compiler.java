@@ -36,9 +36,9 @@ public class Compiler {
   }
 	
   private ASTNode semanticAnalysis() {
-    ASTNode astree = null;
+    ASTNode ast = null;
     try {
-      astree = (ASTNode) tree.accept(new SemanticCheckVisitor());
+      ast = (ASTNode) tree.accept(new SemanticCheckVisitor());
     } catch (SyntaxException e) {
       System.err.println(e.getMessage());
       System.exit(100);
@@ -47,7 +47,7 @@ public class Compiler {
       System.err.println(e.getMessage());
       System.exit(200);
     }
-    return astree;
+    return ast;
   }
 	
   public String compile(InputStream code) throws IOException {
