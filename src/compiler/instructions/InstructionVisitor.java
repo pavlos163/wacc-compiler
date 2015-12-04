@@ -16,14 +16,10 @@ public interface InstructionVisitor<T> {
   //T visit(Label label);
     
   T visit(Ldr ldr);
-  
-  //T visit(LdrB ldrB);
-  
+    
   //T visit(Str str);
-  
-  //T visit(StrB strB);
-  
-  //T visit(B b);
+    
+  //T visit(Branch b);
   
   //T visit(Bl bl);
   

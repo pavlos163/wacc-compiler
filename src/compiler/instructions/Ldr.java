@@ -10,7 +10,7 @@ public class Ldr extends Instruction {
   
   @Override
   public String toString() {
-    return "LDR " + destination + " " + source;
+    return "LDR " + destination + " " + primarySource;
   }
 
 }
