@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compiler.codeGeneration.CodeGenerator;
 import compiler.errorHandling.ExceptionErrorListener;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
@@ -47,13 +48,13 @@ public class Compiler {
     }
   }
 	
-  public void compile(InputStream code) throws IOException {
+  public String compile(InputStream code) throws IOException {
     initializeParserAndLexer(code);
+    // Perform syntax and semantic analysis.
     syntaxAnalysis();
-    semanticAnalysis();    
-    // If none of the above exited the program then the compiler
-    // proceeds to code generation.
-    System.exit(0);
+    semanticAnalysis();
+    // If there is no error proceed to code generation.
+    return new CodeGenerator().generateCode();
   }
 	
   public void initializeParserAndLexer(InputStream code) 

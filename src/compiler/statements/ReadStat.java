@@ -2,6 +2,7 @@ package compiler.statements;
 
 import compiler.CodePosition;
 import compiler.assignables.AssignLHS;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
@@ -34,5 +35,9 @@ public class ReadStat extends Stat {
   private boolean isString(AssignLHS readItem) {
     return readItem.getType().equals(new ArrType(BaseType.typeChar));
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

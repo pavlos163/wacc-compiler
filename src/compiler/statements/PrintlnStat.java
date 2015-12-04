@@ -1,6 +1,7 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 
 public class PrintlnStat extends Stat {
@@ -16,5 +17,9 @@ public class PrintlnStat extends Stat {
   public CodePosition getPosition() {
     return codePos;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

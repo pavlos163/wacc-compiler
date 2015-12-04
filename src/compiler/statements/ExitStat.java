@@ -1,6 +1,7 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.expressions.Expr;
 import compiler.types.BaseType;
@@ -27,5 +28,9 @@ public class ExitStat extends Stat {
           + expression.getType());
     }
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

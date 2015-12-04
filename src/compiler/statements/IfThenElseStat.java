@@ -1,6 +1,7 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 
 public class IfThenElseStat extends StatWithCond {
@@ -19,5 +20,9 @@ public class IfThenElseStat extends StatWithCond {
   public CodePosition getPosition() {
     return codePos;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

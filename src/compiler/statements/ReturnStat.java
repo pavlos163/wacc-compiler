@@ -1,6 +1,7 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 
 public class ReturnStat extends Stat {
@@ -22,5 +23,9 @@ public class ReturnStat extends Stat {
   public String getMethod() {
     return method;
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

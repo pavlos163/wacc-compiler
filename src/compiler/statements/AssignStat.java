@@ -4,6 +4,7 @@ import compiler.CodePosition;
 import compiler.assignables.AssignLHS;
 import compiler.assignables.AssignRHS;
 import compiler.assignables.Call;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.types.ArrType;
 import compiler.types.BaseType;
@@ -40,5 +41,10 @@ public class AssignStat extends Stat {
           + " Actual types: (" + lhs.getType() + ", " + 
           rhs.getType() + ")");
     }
+  }
+
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

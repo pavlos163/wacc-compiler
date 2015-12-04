@@ -1,6 +1,7 @@
 package compiler.statements;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.expressions.Expr;
 import compiler.types.ArrType;
@@ -30,4 +31,8 @@ public class FreeStat extends Stat {
     }
   }
   
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }
