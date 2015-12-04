@@ -12,4 +12,10 @@ public class Cmp extends Instruction {
     super(destination, source);
   }
   
+  @Override
+  public String toString() {
+    return "CMP" + getCond() + " " + getDestination() + ", " +
+        getPrimarySource();
+  }
+  
 }

@@ -10,7 +10,7 @@ public class Push extends Instruction {
   
   @Override
   public String toString() {
-    return "PUSH " + destination;
+    return "PUSH " + " " + destination;
   }
   
 }

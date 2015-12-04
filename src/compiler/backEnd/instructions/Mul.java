@@ -14,4 +14,10 @@ public class Mul extends Instruction {
     super(destination, primarySource, secondarySource);
   }
   
+  @Override
+  public String toString() {
+    return "MUL" + getCond() + " " + getDestination() + ", " + 
+        getPrimarySource() + ", " + getSecondarySource();
+  }
+  
 }

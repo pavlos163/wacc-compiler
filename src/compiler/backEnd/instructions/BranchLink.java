@@ -2,17 +2,17 @@ package compiler.backEnd.instructions;
 
 import compiler.backEnd.operands.Label;
 
-public class Branch {
+public class BranchLink {
   
   private final Cond cond;
   private final Label label;
   
-  public Branch(Cond cond, Label label) {
+  public BranchLink(Cond cond, Label label) {
     this.cond = cond;
     this.label = label;
   }
   
-  public Branch(Label label) {
+  public BranchLink(Label label) {
     this.cond = Cond.AL;
     this.label = label;
   }
@@ -27,7 +27,7 @@ public class Branch {
   
   @Override
   public String toString() {
-    return "B" + getCond() + " " + getLabel();
+    return "BL" + getCond() + " " + getLabel();
   }
   
 }

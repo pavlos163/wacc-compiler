@@ -12,4 +12,9 @@ public class AssemblerDirective {
     return value;
   }
   
+  @Override
+  public String toString() {
+    return getValue();
+  }
+  
 }

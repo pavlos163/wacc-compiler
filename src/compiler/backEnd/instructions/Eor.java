@@ -14,4 +14,10 @@ public class Eor extends Instruction {
     super(destination, primarySource, secondarySource);
   }
   
+  @Override
+  public String toString() {
+    return "EOR" + getCond() + " " + getDestination() + ", " + 
+        getPrimarySource() + ", " + getSecondarySource();
+  }
+  
 }

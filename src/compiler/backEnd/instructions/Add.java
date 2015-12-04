@@ -14,4 +14,10 @@ public class Add extends Instruction {
     super(destination, primarySource, secondarySource);
   }
   
+  @Override
+  public String toString() {
+    return "ADD" + getCond() + " " + getDestination() + ", " + 
+        getPrimarySource() + ", " + getSecondarySource();
+  }
+  
 }

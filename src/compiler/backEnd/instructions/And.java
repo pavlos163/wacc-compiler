@@ -14,4 +14,10 @@ public class And extends Instruction {
     super(destination, primarySource, secondarySource);
   }
   
+  @Override
+  public String toString() {
+    return "AND" + getCond() + " " + getDestination() + ", " + 
+        getPrimarySource() + ", " + getSecondarySource();
+  }
+  
 }

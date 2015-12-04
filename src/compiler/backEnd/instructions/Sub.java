@@ -18,4 +18,14 @@ public class Sub extends Instruction {
     super(destination, source);
   }
   
+  @Override
+  public String toString() {
+    String str = "SUB" + getCond() + " " + getDestination() + 
+        ", " + getPrimarySource();
+    if (getSecondarySource() != null) {
+      str += ", " + getSecondarySource();
+    }
+    return str;
+  }
+  
 }

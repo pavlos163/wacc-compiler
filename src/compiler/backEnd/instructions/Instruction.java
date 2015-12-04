@@ -48,7 +48,7 @@ public abstract class Instruction {
     return cond;
   }
   
-  public Operand getSource() {
+  public Operand getPrimarySource() {
     return primarySource;
   }
   

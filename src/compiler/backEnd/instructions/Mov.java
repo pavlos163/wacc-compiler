@@ -12,4 +12,10 @@ public class Mov extends Instruction {
     super(destination, source);
   }
   
+  @Override
+  public String toString() {
+    return "MOV" + getCond() + " " + getDestination() + ", " + 
+        getPrimarySource();
+  }
+  
 }
