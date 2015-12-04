@@ -1,6 +1,7 @@
 package compiler.assignables;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.symbolTable.Identifier;
 import compiler.symbolTable.SymbolTable;
@@ -41,6 +42,11 @@ public class First implements AssignLHS {
   @Override
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

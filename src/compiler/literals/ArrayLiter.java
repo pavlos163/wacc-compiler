@@ -4,6 +4,7 @@ import java.util.List;
 
 import compiler.CodePosition;
 import compiler.assignables.AssignRHS;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 import compiler.types.ArrType;
 import compiler.types.Type;
@@ -53,6 +54,11 @@ public class ArrayLiter implements Liter, AssignRHS {
       }
       return new ArrType(type);
     }
+  }
+
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

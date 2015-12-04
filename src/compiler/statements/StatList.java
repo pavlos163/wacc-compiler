@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.ASTNode;
 import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 
 public class StatList extends Stat {
@@ -28,5 +29,11 @@ public class StatList extends Stat {
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
+  }
+  
+  public List<ASTNode> getChildren() {
+    List<ASTNode> children = new LinkedList<ASTNode>();
+    children.addAll(statements);
+    return children;
   }
 }

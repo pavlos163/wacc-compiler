@@ -1,6 +1,7 @@
 package compiler.assignables;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.symbolTable.Identifier;
 import compiler.symbolTable.SymbolTable;
@@ -41,5 +42,9 @@ public class Second implements AssignLHS {
   public Type getType() {
     return ((PairType) scope.lookUpAll(getName()).getType()).getSnd();
   }
-
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

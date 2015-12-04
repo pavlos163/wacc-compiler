@@ -1,6 +1,7 @@
 package compiler.assignables;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 import compiler.symbolTable.Identifier;
 import compiler.symbolTable.SymbolTable;
@@ -36,6 +37,11 @@ public class Variable implements AssignLHS, Expr {
   
   public SymbolTable<Identifier> getScope() {
     return scope;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

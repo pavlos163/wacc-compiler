@@ -1,6 +1,7 @@
 package compiler.expressions;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.errorHandling.SyntaxException;
 import compiler.literals.BinaryOperLiter;
@@ -77,6 +78,11 @@ public class BinaryOperExpr implements Expr {
   @Override
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

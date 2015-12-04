@@ -1,6 +1,7 @@
 package compiler.assignables;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.expressions.Expr;
 import compiler.types.PairType;
 import compiler.types.Type;
@@ -23,6 +24,11 @@ public class NewPair implements AssignRHS {
   
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }

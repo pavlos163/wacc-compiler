@@ -3,6 +3,7 @@ package compiler.assignables;
 import java.util.Iterator;
 
 import compiler.CodePosition;
+import compiler.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.errorHandling.SemanticException;
 import compiler.expressions.Expr;
 import compiler.symbolTable.FunctionIdentifier;
@@ -99,6 +100,11 @@ public class Call implements AssignRHS {
   @Override
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }
