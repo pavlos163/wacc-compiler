@@ -55,10 +55,6 @@ public class PairType implements Type {
   
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ArrType) {
-      ArrType arrType = (ArrType) obj;
-      obj = arrType.getType();
-    }
     if (!(obj instanceof PairType)) {
       return false;
     }
