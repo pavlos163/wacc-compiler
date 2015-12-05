@@ -1,6 +1,7 @@
 package compiler.backEnd.instructions;
 
 import compiler.backEnd.operands.Operand;
+import compiler.backEnd.operands.Register;
 
 public abstract class Instruction implements Token {
   

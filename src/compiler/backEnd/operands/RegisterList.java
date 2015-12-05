@@ -25,11 +25,17 @@ public class RegisterList {
   }
   
   public Register getReturnRegister() {
-    return getRegister(MIN_RETURN_REG, MAX_RETURN_REG);
+    Register reg = getRegister(MIN_RETURN_REG, MAX_RETURN_REG);
+    usedRegisters.add(reg);
+    
+    return reg;
   }
   
   public Register getGeneralRegister() {
-    return getRegister(MIN_GENERAL_REG, MAX_GENERAL_REG);
+    Register reg = getRegister(MIN_GENERAL_REG, MAX_GENERAL_REG);
+    usedRegisters.add(reg);
+    
+    return reg;
   }
   
   public Register getRegister(int minRegister, int maxRegister) {
@@ -49,6 +55,10 @@ public class RegisterList {
   
   public void freeRegister(Register reg) {
     usedRegisters.remove(reg);
+  }
+  
+  public Set<Register> getUsedRegisters() {
+    return usedRegisters;
   }
   
 }

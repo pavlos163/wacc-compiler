@@ -145,7 +145,6 @@ public class IntermediateCodeGeneration implements
       String literal = valueExpr.getLiter().getString();
       // Find a register to store the value in.
       Register reg = registers.getGeneralRegister();
-      
       ImmediateValue val = new ImmediateValue(literal);
       val.setPrefix("=");
       
@@ -186,7 +185,11 @@ public class IntermediateCodeGeneration implements
     Expr expression = exitStat.getExpr();    
 
     statementList.addAll(expression.accept(this));
-    statementList.add(new Mov(Register.r0, returnedRegister));
+    statementList.add(new Mov(registers.getReturnRegister(), 
+        returnedRegister));
+    
+    registers.freeRegister(returnedRegister);
+    registers.freeRegister(Register.r0);
     statementList.add(new BranchLink(new Label("exit")));
     
     return statementList;
