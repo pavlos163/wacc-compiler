@@ -22,4 +22,8 @@ public class PrintlnStat extends Stat {
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
   }
+
+  public Expr getExpr() {
+    return message;
+  }
 }

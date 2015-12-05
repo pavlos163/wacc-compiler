@@ -3,6 +3,7 @@ package compiler.backEnd.codeGeneration;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.AssemblerDirective;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Label;
@@ -11,6 +12,7 @@ import compiler.backEnd.instructions.Mov;
 import compiler.backEnd.instructions.Pop;
 import compiler.backEnd.instructions.Push;
 import compiler.backEnd.instructions.Token;
+import compiler.backEnd.codeGeneration.ArmCodeState;
 import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
@@ -38,30 +40,32 @@ import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
+import compiler.frontEnd.types.Type;
 
 public class IntermediateCodeGeneration implements 
     AbstractSyntaxTreeVisitor<Deque<Token>> {
   
-  RegisterList registers = new RegisterList();
-  Register returnedRegister = null;
-
+  private RegisterList registers = new RegisterList();
+  private Register returnedRegister = null;
+  private ArmCodeState codeState = new ArmCodeState();
+  
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
     Deque<Token> tokens = new LinkedList<Token>();
     try {
       // First we visit the functions and generate the code.
-      IntermediateCodeGeneration codeGen = 
-          new IntermediateCodeGeneration();
+      
       for (Function func : programNode.getFunctions()) {
-        tokens.addAll(func.accept(codeGen));
+        tokens.addAll(func.accept(this));
       }
-                  
+      
       tokens.add(new AssemblerDirective(".text"));
       tokens.add(new AssemblerDirective(".global main"));
       
       Deque<Token> bodyStatements = 
-          programNode.getStatements().accept(codeGen);
+          programNode.getStatements().accept(this);
       
       // TODO: Handle stack.
             
@@ -76,8 +80,8 @@ public class IntermediateCodeGeneration implements
       tokens.add(new Ldr(Register.r0, value));
       tokens.add(new Pop(Register.pc));
       tokens.add(new AssemblerDirective(".ltorg"));
-      
-      // TODO: Add compiler defined functions
+      // After main label code.
+      tokens.addAll(codeState.getAfterMainLabelCode());
       
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -160,6 +164,13 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
       
     }
+    else if (valueExpr.getType().equals(new ArrType(BaseType.typeChar))) {
+      Register reg = registers.getGeneralRegister();
+      ImmediateValue val = new ImmediateValue("string");
+      val.setPrefix("=");
+      statementList.add(new Ldr(reg, val));
+      returnedRegister = reg;
+    }
     return statementList;
   }
 
@@ -214,14 +225,32 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(PrintlnStat printlnStat) {
-    // TODO Auto-generated method stub
-    return null;
+    return  visitPrint(printlnStat.getExpr().accept(this), 
+        returnedRegister, printlnStat.getExpr().getType(), true);
   }
 
   @Override
   public Deque<Token> visit(PrintStat printStat) {
-    // TODO Auto-generated method stub
-    return null;
+    return visitPrint(printStat.getExpr().accept(this), 
+        returnedRegister, printStat.getExpr().getType(), false);
+  }
+  
+  private Deque<Token> visitPrint(Deque<Token> tokens, 
+      Register register, Type type, Boolean isLn) {
+    
+    // String.
+    if (type.equals(new ArrType(BaseType.typeChar))) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_STRING)));
+      codeState.usePrintString();
+    }
+    
+    if (isLn) {
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_LN)));
+      codeState.usePrintln();
+    }
+    
+    return tokens;
   }
 
   @Override
