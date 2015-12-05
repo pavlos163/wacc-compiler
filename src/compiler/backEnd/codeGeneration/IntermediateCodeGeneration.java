@@ -19,6 +19,8 @@ import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
 import compiler.frontEnd.assignables.ArrayElem;
+import compiler.frontEnd.assignables.AssignLHS;
+import compiler.frontEnd.assignables.AssignRHS;
 import compiler.frontEnd.assignables.Call;
 import compiler.frontEnd.assignables.First;
 import compiler.frontEnd.assignables.Function;
@@ -41,10 +43,8 @@ import compiler.frontEnd.statements.PrintlnStat;
 import compiler.frontEnd.statements.ReadStat;
 import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
-import compiler.frontEnd.statements.Stat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
-import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.BaseType;
 
 public class IntermediateCodeGeneration implements 
@@ -201,24 +201,34 @@ public class IntermediateCodeGeneration implements
     Deque<Token> statementList = new LinkedList<Token>();
     
     // For now (if we suppose all LHS to be just variables.
-    String lhsName = assignStat.getLhs().getName();
-    Variable lhsVar = (Variable) assignStat.getLhs();
-    lhsVar.accept(this);
-    Identifier lhsIdent = lhsVar.getScope().lookUpAll(lhsName);
     
-    Expr rhs = (Expr) assignStat.getRhs();
-    
+    AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
     
-    Register regRHS = returnedRegister;
-    Address assignAddress = new Address(Register.sp);
-    if (isByte(lhsVar)) {
-      statementList.add(new Str(regRHS, assignAddress, true));
+    AssignLHS lhs = assignStat.getLhs();
+    
+    if (lhs instanceof First) {
+      
+    }
+    else if (lhs instanceof Second) {
+      
+    }
+    else if (lhs instanceof ArrayElem) {
+      
     }
     else {
-      statementList.add(new Str(regRHS, assignAddress));
+      Register regRHS = registers.getGeneralRegister();
+      Address assignAddress = new Address(Register.sp);
+      
+      if (isByte((Variable) lhs)) {
+        statementList.add(new Str(regRHS, assignAddress, true));
+      }
+      else {
+        statementList.add(new Str(regRHS, assignAddress));
+      }
+      
+      registers.freeRegister(regRHS);
     }
-    registers.freeRegister(regRHS);
     
     return statementList;
   }
@@ -238,7 +248,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(ExitStat exitStat) {
     Deque<Token> statementList = new LinkedList<Token>();
 
-    Expr expression = exitStat.getExpr();    
+    Expr expression = exitStat.getExpr();
 
     statementList.addAll(expression.accept(this));
 
