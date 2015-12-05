@@ -4,11 +4,16 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import compiler.backEnd.instructions.Add;
+import compiler.backEnd.instructions.And;
 import compiler.backEnd.instructions.AssemblerDirective;
 import compiler.backEnd.instructions.BranchLink;
+import compiler.backEnd.instructions.Cmp;
+import compiler.backEnd.instructions.Cond;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
 import compiler.backEnd.instructions.Mov;
+import compiler.backEnd.instructions.Mul;
+import compiler.backEnd.instructions.Orr;
 import compiler.backEnd.instructions.Pop;
 import compiler.backEnd.instructions.Push;
 import compiler.backEnd.instructions.Str;
@@ -144,9 +149,72 @@ public class IntermediateCodeGeneration implements
   }
 
   @Override
-  public Deque<Token> visit(BinaryOperExpr binExpr) {
-    // TODO Auto-generated method stub
-    return null;
+  public Deque<Token> visit(BinaryOperExpr binExpr) {    
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Expr lhs = binExpr.getLHS();
+    statementList.addAll(lhs.accept(this));
+    Register regLHS = registers.getGeneralRegister();
+    
+    Expr rhs = binExpr.getRHS();
+    statementList.addAll(rhs.accept(this));
+    Register regRHS = registers.getGeneralRegister();
+    
+    registers.freeRegister(regLHS);
+    registers.freeRegister(regRHS);
+    
+    Register destination = registers.getGeneralRegister();
+    
+    ImmediateValue exprTrue = new ImmediateValue("1");
+    ImmediateValue exprFalse = new ImmediateValue("0");
+    
+    switch(binExpr.getBinOp().getString()) {
+    case "*":
+      statementList.add(new Mul(destination, regLHS, regRHS));
+    case "/":
+      
+    case "%":
+      
+    case "+":
+      statementList.add(new Add(destination, regLHS, regRHS));
+    case "-":
+      statementList.add(new Sub(destination, regLHS, regRHS));
+    case ">":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.GT, destination, exprTrue));
+      statementList.add(new Mov(Cond.LE, destination, exprFalse));
+    case ">=":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.GE, destination, exprTrue));
+      statementList.add(new Mov(Cond.LT, destination, exprFalse));
+    case "<":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.LT, destination, exprTrue));
+      statementList.add(new Mov(Cond.GE, destination, exprFalse));
+    case "<=":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.LE, destination, exprTrue));
+      statementList.add(new Mov(Cond.GT, destination, exprFalse));
+    case "==":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.EQ, destination, exprTrue));
+      statementList.add(new Mov(Cond.NE, destination, exprFalse));
+    case "!=":
+      statementList.add(new Cmp(regLHS, regRHS));
+      
+      statementList.add(new Mov(Cond.NE, destination, exprTrue));
+      statementList.add(new Mov(Cond.EQ, destination, exprFalse));
+    case "&&":
+      statementList.add(new And(destination, regLHS, regRHS));
+    case "||":
+      statementList.add(new Orr(destination, regLHS, regRHS));
+    }
+    return statementList;
   }
 
   @Override

@@ -80,6 +80,18 @@ public class BinaryOperExpr implements Expr {
     return codePos;
   }
   
+  public BinaryOperLiter getBinOp() {
+    return binaryOp;
+  }
+  
+  public Expr getLHS() {
+    return lhs;
+  }
+  
+  public Expr getRHS() {
+    return rhs;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
