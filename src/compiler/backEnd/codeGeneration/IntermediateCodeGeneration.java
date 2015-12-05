@@ -41,6 +41,7 @@ import compiler.frontEnd.statements.PrintlnStat;
 import compiler.frontEnd.statements.ReadStat;
 import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
+import compiler.frontEnd.statements.Stat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
 import compiler.frontEnd.symbolTable.Identifier;
@@ -68,7 +69,7 @@ public class IntermediateCodeGeneration implements
       
       Deque<Token> bodyStatements = 
           programNode.getStatements().accept(codeGen);
-      
+            
       // TODO: Handle stack.
             
       tokens.add(new Label("main:"));
@@ -81,9 +82,9 @@ public class IntermediateCodeGeneration implements
       if (stackOffset > 0) {
         tokens.add(new Sub(Register.sp, Register.sp, val));
       }
-            
-      tokens.addAll(bodyStatements);
       
+      tokens.addAll(bodyStatements);
+
       if (stackOffset > 0) {
         tokens.add(new Add(Register.sp, Register.sp, val));
       }
@@ -157,12 +158,12 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ValueExpr valueExpr) {
     Deque<Token> statementList = new LinkedList<Token>();
-    
+
     if (valueExpr.getType().equals(BaseType.typeInt)) {
-      String literal = valueExpr.getLiter().getString();
+      String intValue = valueExpr.getLiter().getString();
       // Find a register to store the value in.
       Register reg = registers.getGeneralRegister();
-      ImmediateValue val = new ImmediateValue(literal);
+      ImmediateValue val = new ImmediateValue(intValue);
       val.setPrefix("=");
       
       statementList.add(new Ldr(reg, val));
@@ -177,7 +178,12 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
+      String charValue = valueExpr.getString();
+      Register reg = registers.getGeneralRegister();
+      char c = removeEscapeSlash(charValue);
       
+      ImmediateValue val = new ImmediateValue(charValue);
+      statementList.add(new Mov(reg, val));
     }
     return statementList;
   }
@@ -206,11 +212,20 @@ public class IntermediateCodeGeneration implements
     
     Register regRHS = returnedRegister;
     Address assignAddress = new Address(Register.sp);
-    
-    statementList.add(new Str(regRHS, assignAddress));
+    if (isByte(lhsVar)) {
+      statementList.add(new Str(regRHS, assignAddress, true));
+    }
+    else {
+      statementList.add(new Str(regRHS, assignAddress));
+    }
     registers.freeRegister(regRHS);
     
     return statementList;
+  }
+  
+  private boolean isByte(Variable var) {
+    return var.getType().equals(BaseType.typeBool) || 
+        var.getType().equals(BaseType.typeChar);
   }
 
   @Override
@@ -226,6 +241,7 @@ public class IntermediateCodeGeneration implements
     Expr expression = exitStat.getExpr();    
 
     statementList.addAll(expression.accept(this));
+
     statementList.add(new Mov(registers.getReturnRegister(), 
         returnedRegister));
     
@@ -279,14 +295,30 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(StatList statList) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    for (ASTNode statement : statList.getChildren()) {
+      statementList.addAll(statement.accept(this));
+    }
+    return statementList;
   }
 
   @Override
   public Deque<Token> visit(WhileStat whileStat) {
     // TODO Auto-generated method stub
     return null;
-  }  
+  }
+  
+  private char removeEscapeSlash(String charValue) {
+    charValue.replace("\\0", "\0");
+    charValue.replace("\\b", "\b");
+    charValue.replace("\\n", "\n");
+    charValue.replace("\\f", "\f");
+    charValue.replace("\\r", "\r");
+    charValue.replace("\\\"", "\"");
+    charValue.replace("\\'", "'");
+    charValue.replace("\\\\", "\\");
+    return charValue.charAt(1);
+  }
 
 }

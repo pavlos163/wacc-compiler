@@ -3,7 +3,14 @@ package compiler.backEnd.instructions;
 import compiler.backEnd.operands.Operand;
 
 public class Str extends Instruction {
-
+  
+  boolean isByte = false;
+  
+  public Str(Cond cond, Operand destination, Operand source, boolean isByte) {
+    super(cond, destination, source);
+    this.isByte = true;
+  }
+  
   public Str(Cond cond, Operand destination, Operand source) {
     super(cond, destination, source);
   }
@@ -12,9 +19,21 @@ public class Str extends Instruction {
     super(destination, source);
   }
   
+  public Str(Operand destination, Operand source, boolean isByte) {
+    super(destination, source);
+    this.isByte = true;
+  }
+  
   @Override
   public String toString() {
-    return "STR" + getCond() + " " + getDestination()
+    String s = "";
+    if (isByte) {
+      s += "STRB";
+    }
+    else {
+      s += "STR";
+    }
+    return s + getCond() + " " + getDestination()
         + ", " + getPrimarySource();
   }
 
