@@ -77,6 +77,8 @@ public class IntermediateCodeGeneration implements
       tokens.add(new Pop(Register.pc));
       tokens.add(new AssemblerDirective(".ltorg"));
       
+      // TODO: Add compiler defined functions
+      
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -235,8 +237,13 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(StatList statList) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> tokens = new LinkedList<Token>();
+    
+    for (ASTNode stat: statList.getChildren()) {
+      tokens.addAll(stat.accept(this));
+    }
+    
+    return tokens;
   }
 
   @Override
