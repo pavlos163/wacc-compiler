@@ -16,7 +16,12 @@ public class Label implements Operand, Token {
   
   @Override
   public String toString() {
-    return label;
+    return label + ":";
+  }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
   }
   
 }

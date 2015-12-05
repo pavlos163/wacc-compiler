@@ -4,7 +4,7 @@ import compiler.backEnd.operands.Operand;
 
 public abstract class Instruction implements Token {
   
-  protected Cond cond = null;
+  protected Cond cond = Cond.AL;
   
   protected final Operand destination;
   protected final Operand primarySource;

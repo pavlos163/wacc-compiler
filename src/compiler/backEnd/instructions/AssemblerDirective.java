@@ -16,5 +16,10 @@ public class AssemblerDirective implements Token {
   public String toString() {
     return getValue();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

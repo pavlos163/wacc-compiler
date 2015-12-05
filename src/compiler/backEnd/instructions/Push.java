@@ -10,7 +10,12 @@ public class Push extends Instruction {
   
   @Override
   public String toString() {
-    return "PUSH " + " " + getDestination();
+    return "PUSH " + "{" + getDestination() + "}";
+  }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
   }
   
 }

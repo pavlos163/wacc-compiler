@@ -25,5 +25,10 @@ public class ImmediateValue implements Operand {
   public void setPrefix(String newPrefix) {
     prefix = newPrefix;
   }
+  
+  @Override
+  public String toString() {
+    return getValue();
+  }
 
 }

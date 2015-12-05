@@ -21,6 +21,7 @@ import compiler.frontEnd.assignables.NewPair;
 import compiler.frontEnd.assignables.Second;
 import compiler.frontEnd.assignables.Variable;
 import compiler.frontEnd.expressions.BinaryOperExpr;
+import compiler.frontEnd.expressions.Expr;
 import compiler.frontEnd.expressions.UnaryOperExpr;
 import compiler.frontEnd.expressions.ValueExpr;
 import compiler.frontEnd.literals.ArrayLiter;
@@ -34,6 +35,7 @@ import compiler.frontEnd.statements.PrintlnStat;
 import compiler.frontEnd.statements.ReadStat;
 import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
+import compiler.frontEnd.statements.Stat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
 
@@ -50,7 +52,7 @@ public class IntermediateCodeGeneration implements
       for (Function func : programNode.getFunctions()) {
         tokens.addAll(func.accept(codeGen));
       }
-      
+                  
       tokens.add(new AssemblerDirective(".text"));
       tokens.add(new AssemblerDirective(".global main"));
       
@@ -58,17 +60,18 @@ public class IntermediateCodeGeneration implements
           programNode.getStatements().accept(codeGen);
       
       // TODO: Handle stack.
-      
+            
       tokens.add(new Label("main"));
       tokens.add(new Push(Register.lr));
-      
+                        
       tokens.addAll(bodyStatements);
-      
+            
       ImmediateValue value = new ImmediateValue("0");
       value.setPrefix("=");
       
       tokens.add(new Ldr(Register.r0, value));
       tokens.add(new Pop(Register.pc));
+      tokens.add(new AssemblerDirective(".ltorg"));
       
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -156,8 +159,13 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ExitStat exitStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+
+    Expr expression = exitStat.getExpr();
+        
+    statementList.addAll(expression.accept(this));
+    
+    return statementList;
   }
 
   @Override

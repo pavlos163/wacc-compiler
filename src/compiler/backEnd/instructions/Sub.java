@@ -27,5 +27,10 @@ public class Sub extends Instruction {
     }
     return str;
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

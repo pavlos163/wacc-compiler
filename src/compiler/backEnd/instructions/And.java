@@ -19,5 +19,10 @@ public class And extends Instruction {
     return "AND" + getCond() + " " + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

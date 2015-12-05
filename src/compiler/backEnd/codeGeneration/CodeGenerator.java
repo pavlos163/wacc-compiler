@@ -18,7 +18,6 @@ public class CodeGenerator {
     IntermediateCodeGeneration visitor = 
         new IntermediateCodeGeneration();
     
-    Deque<Token> tokenList = new LinkedList<Token>();
     // This should return a structure with the 
     // the assembly instructions of the program.
     
@@ -33,7 +32,7 @@ public class CodeGenerator {
     PrintingInstrVisitor printer = new PrintingInstrVisitor();
     
     for (Token token : finalCode) {
-      //assemblyCode += printer.visit(token);
+      assemblyCode += token.accept(printer);
     }
     
     return assemblyCode;

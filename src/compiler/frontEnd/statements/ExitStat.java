@@ -29,6 +29,10 @@ public class ExitStat extends Stat {
     }
   }
   
+  public Expr getExpr() {
+    return expression;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);

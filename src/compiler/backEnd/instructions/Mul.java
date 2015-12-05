@@ -19,5 +19,10 @@ public class Mul extends Instruction {
     return "MUL" + getCond() + " " + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

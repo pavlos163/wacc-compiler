@@ -17,5 +17,10 @@ public class Str extends Instruction {
     return "STR" + getCond() + " " + getDestination()
         + ", " + getPrimarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

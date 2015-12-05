@@ -14,8 +14,13 @@ public class Ldr extends Instruction {
   
   @Override
   public String toString() {
-    return "LDR " + getCond() + " " + getDestination() + 
+    return "LDR " + getCond() + getDestination() + 
         ", " + getPrimarySource();
+  }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
   }
   
 }

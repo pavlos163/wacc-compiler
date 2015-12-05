@@ -17,5 +17,10 @@ public class Cmp extends Instruction {
     return "CMP" + getCond() + " " + getDestination() + ", " +
         getPrimarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

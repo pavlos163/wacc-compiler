@@ -19,5 +19,10 @@ public class Add extends Instruction {
     return "ADD" + getCond() + " " + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

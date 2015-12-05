@@ -27,5 +27,10 @@ public class BranchLink implements Token {
   public String toString() {
     return "BL" + getCond() + " " + getLabel();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

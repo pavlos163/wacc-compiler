@@ -19,5 +19,10 @@ public class Eor extends Instruction {
     return "EOR" + getCond() + " " + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
   
 }

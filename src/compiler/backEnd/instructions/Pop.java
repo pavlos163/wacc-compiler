@@ -10,7 +10,12 @@ public class Pop extends Instruction {
 
   @Override
   public String toString() {
-    return "POP " + " " + getDestination();
+    return "POP " + "{" + getDestination() + "}";
+  }
+
+  @Override
+  public <T> T accept(InstructionVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
 }
