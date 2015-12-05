@@ -28,5 +28,12 @@ public class BoolLiter implements Liter {
   public String getString() {
     return value;
   }
+  
+  public int getValue() {
+    if (value.equals("true")) {
+      return 1;
+    }
+    return 0;
+  }
 
 }

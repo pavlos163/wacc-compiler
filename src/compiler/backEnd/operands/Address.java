@@ -25,9 +25,9 @@ public class Address implements Operand {
   
   @Override
   public String toString() {
-    String str = "[" + reg + ", ";
+    String str = "[" + reg;
     if (offset != 0) {
-      str += offset;
+      str += ", " + offset;
     }
     str += "]";
     return str;
