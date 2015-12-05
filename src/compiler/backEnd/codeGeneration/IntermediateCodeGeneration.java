@@ -1,18 +1,19 @@
 package compiler.backEnd.codeGeneration;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 
 import compiler.backEnd.instructions.AssemblerDirective;
-import compiler.backEnd.instructions.Instruction;
+import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
+import compiler.backEnd.instructions.Mov;
 import compiler.backEnd.instructions.Pop;
 import compiler.backEnd.instructions.Push;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Register;
+import compiler.backEnd.operands.RegisterList;
 import compiler.frontEnd.assignables.ArrayElem;
 import compiler.frontEnd.assignables.Call;
 import compiler.frontEnd.assignables.First;
@@ -35,12 +36,15 @@ import compiler.frontEnd.statements.PrintlnStat;
 import compiler.frontEnd.statements.ReadStat;
 import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
-import compiler.frontEnd.statements.Stat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.types.BaseType;
 
 public class IntermediateCodeGeneration implements 
     AbstractSyntaxTreeVisitor<Deque<Token>> {
+  
+  RegisterList registers = new RegisterList();
+  Register returnedRegister = null;
 
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
@@ -61,7 +65,7 @@ public class IntermediateCodeGeneration implements
       
       // TODO: Handle stack.
             
-      tokens.add(new Label("main"));
+      tokens.add(new Label("main:"));
       tokens.add(new Push(Register.lr));
                         
       tokens.addAll(bodyStatements);
@@ -135,8 +139,26 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ValueExpr valueExpr) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    if (valueExpr.getType().equals(BaseType.typeInt)) {
+      String literal = valueExpr.getLiter().getString();
+      // Find a register to store the value in.
+      Register reg = registers.getGeneralRegister();
+      
+      ImmediateValue val = new ImmediateValue(literal);
+      val.setPrefix("=");
+      
+      statementList.add(new Ldr(reg, val));
+      returnedRegister = reg;
+    }
+    else if (valueExpr.getType().equals(BaseType.typeBool)) {
+      
+    }
+    else if (valueExpr.getType().equals(BaseType.typeChar)) {
+      
+    }
+    return statementList;
   }
 
   @Override
@@ -161,9 +183,11 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(ExitStat exitStat) {
     Deque<Token> statementList = new LinkedList<Token>();
 
-    Expr expression = exitStat.getExpr();
-        
+    Expr expression = exitStat.getExpr();    
+
     statementList.addAll(expression.accept(this));
+    statementList.add(new Mov(Register.r0, returnedRegister));
+    statementList.add(new BranchLink(new Label("exit")));
     
     return statementList;
   }
