@@ -1,6 +1,6 @@
 package compiler.backEnd.operands;
 
-public enum Register {
+public enum Register implements Operand {
   
   r0,
   r1,

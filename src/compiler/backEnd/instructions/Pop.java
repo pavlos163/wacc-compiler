@@ -10,7 +10,7 @@ public class Pop extends Instruction {
 
   @Override
   public String toString() {
-    return "POP " + " " + destination;
+    return "POP " + " " + getDestination();
   }
 
 }

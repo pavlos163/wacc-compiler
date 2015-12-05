@@ -3,11 +3,14 @@ package compiler.frontEnd.assignables;
 import java.util.List;
 
 import compiler.CodePosition;
+import compiler.backEnd.codeGeneration.ASTNode;
+import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
+import compiler.backEnd.codeGeneration.IntermediateCodeGeneration;
 import compiler.frontEnd.semanticCheck.ReturnableType;
 import compiler.frontEnd.statements.Stat;
 import compiler.frontEnd.types.Type;
 
-public class Function implements ReturnableType {
+public class Function implements ASTNode {
   
   private final String ident;
   private final Stat stat;
@@ -43,6 +46,11 @@ public class Function implements ReturnableType {
   
   public Stat getStatements() {
     return stat;
+  }
+  
+  @Override
+  public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
   
 }

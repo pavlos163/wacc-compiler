@@ -1,5 +1,18 @@
 package compiler.backEnd.codeGeneration;
 
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
+
+import compiler.backEnd.instructions.AssemblerDirective;
+import compiler.backEnd.instructions.Instruction;
+import compiler.backEnd.instructions.Label;
+import compiler.backEnd.instructions.Ldr;
+import compiler.backEnd.instructions.Pop;
+import compiler.backEnd.instructions.Push;
+import compiler.backEnd.instructions.Token;
+import compiler.backEnd.operands.ImmediateValue;
+import compiler.backEnd.operands.Register;
 import compiler.frontEnd.assignables.ArrayElem;
 import compiler.frontEnd.assignables.Call;
 import compiler.frontEnd.assignables.First;
@@ -24,150 +37,180 @@ import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
 
-public class IntermediateCodeGeneration<T> implements AbstractSyntaxTreeVisitor<T> {
-  
+public class IntermediateCodeGeneration implements 
+    AbstractSyntaxTreeVisitor<Deque<Token>> {
+
   @Override
-  public T visit(ProgramNode programNode) {
-    // TODO Auto-generated method stub
-    return null;
+  public Deque<Token> visit(ProgramNode programNode) {
+    Deque<Token> tokens = new LinkedList<Token>();
+    try {
+      // First we visit the functions and generate the code.
+      IntermediateCodeGeneration codeGen = 
+          new IntermediateCodeGeneration();
+      for (Function func : programNode.getFunctions()) {
+        tokens.addAll(func.accept(codeGen));
+      }
+      
+      tokens.add(new AssemblerDirective(".text"));
+      tokens.add(new AssemblerDirective(".global main"));
+      
+      Deque<Token> bodyStatements = 
+          programNode.getStatements().accept(codeGen);
+      
+      // TODO: Handle stack.
+      
+      tokens.add(new Label("main"));
+      tokens.add(new Push(Register.lr));
+      
+      tokens.addAll(bodyStatements);
+      
+      ImmediateValue value = new ImmediateValue("0");
+      value.setPrefix("=");
+      
+      tokens.add(new Ldr(Register.r0, value));
+      tokens.add(new Pop(Register.pc));
+      
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return tokens;
   }
-  
+
   @Override
-  public T visit(Function func) {
+  public Deque<Token> visit(Function func) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ArrayElem arrayElem) {
+  public Deque<Token> visit(ArrayElem arrayElem) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ArrayLiter arrayLiter) {
+  public Deque<Token> visit(ArrayLiter arrayLiter) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(Call call) {
+  public Deque<Token> visit(Call call) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(First fst) {
+  public Deque<Token> visit(First fst) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(NewPair newPair) {
+  public Deque<Token> visit(NewPair newPair) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(Second snd) {
+  public Deque<Token> visit(Second snd) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(BinaryOperExpr binExpr) {
+  public Deque<Token> visit(BinaryOperExpr binExpr) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(UnaryOperExpr unExpr) {
+  public Deque<Token> visit(UnaryOperExpr unExpr) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ValueExpr valueExpr) {
+  public Deque<Token> visit(ValueExpr valueExpr) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(Variable variable) {
+  public Deque<Token> visit(Variable variable) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(AssignStat assignStat) {
+  public Deque<Token> visit(AssignStat assignStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(BeginEndStat beginEnd) {
+  public Deque<Token> visit(BeginEndStat beginEnd) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ExitStat exitStat) {
+  public Deque<Token> visit(ExitStat exitStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(FreeStat freeStat) {
+  public Deque<Token> visit(FreeStat freeStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(IfThenElseStat ifStat) {
+  public Deque<Token> visit(IfThenElseStat ifStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ReturnStat returnStat) {
+  public Deque<Token> visit(ReturnStat returnStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(PrintlnStat printlnStat) {
+  public Deque<Token> visit(PrintlnStat printlnStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(PrintStat printStat) {
+  public Deque<Token> visit(PrintStat printStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(ReadStat readStat) {
+  public Deque<Token> visit(ReadStat readStat) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(SkipStat skipStat) {
+  public Deque<Token> visit(SkipStat skipStat) {
+    return new LinkedList<Token>();
+  }
+
+  @Override
+  public Deque<Token> visit(StatList statList) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public T visit(StatList statList) {
+  public Deque<Token> visit(WhileStat whileStat) {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public T visit(WhileStat whileStat) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  }  
 
 }

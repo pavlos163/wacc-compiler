@@ -30,9 +30,10 @@ public class ProgramNode implements ASTNode {
   public CodePosition getPosition() {
     return codePos;
   }
-
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
   }
+  
 }

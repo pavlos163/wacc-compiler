@@ -25,6 +25,9 @@ import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
 
 public interface AbstractSyntaxTreeVisitor<T> {
+  
+  T visit(ProgramNode programNode);
+  
   T visit(Function func);
   
   // Assignables.
@@ -73,8 +76,6 @@ public interface AbstractSyntaxTreeVisitor<T> {
   T visit(StatList statList);
   
   T visit(WhileStat whileStat);
-
-  T visit(ProgramNode programNode);
   
 }
 
