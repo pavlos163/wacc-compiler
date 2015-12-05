@@ -26,6 +26,7 @@ public class Main {
       throw new RuntimeException("File to be compiled must be of type .wacc");
     }
     outputFile = replaceExtension(inputFile, ".s");
+    outputFile = outputFile.replaceAll(".*/", "");
     
     InputStream input = new FileInputStream(inputFile);
     PrintStream output = new PrintStream(new File(outputFile));
