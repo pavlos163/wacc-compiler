@@ -10,6 +10,8 @@ import java.util.Set;
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.AssemblerDirective;
 import compiler.backEnd.instructions.BranchLink;
+import compiler.backEnd.instructions.Cmp;
+import compiler.backEnd.instructions.Cond;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
 import compiler.backEnd.instructions.Mov;
@@ -70,6 +72,7 @@ public class ArmCodeState {
     endFunction();
   }
   
+  // Functions to handle print.
   public void usePrintString() {
     String message = "%.*s\\0";
     updateData(message);
@@ -86,6 +89,24 @@ public class ArmCodeState {
     usedFunctions.add(PRINT_STRING);
   }
   
+  public void usePrintBool() {
+    String trueValue = "true\\0";
+    String falseValue = "false\\0";
+    updateData(trueValue);
+    updateData(falseValue);
+    if (usedFunctions.contains(PRINT_BOOL)) {
+      return;
+    }
+    startFunction(PRINT_BOOL);
+    code.add(new Cmp(Register.r0, new ImmediateValue(0)));
+    code.add(new Ldr(Cond.NE ,Register.r0, 
+        new ImmediateValue(msgData.get(trueValue))));
+    code.add(new Ldr(Cond.EQ, Register.r0, 
+        new ImmediateValue(msgData.get(falseValue))));
+    endPrintFunction("printf");
+    usedFunctions.add(PRINT_BOOL);
+  }
+  
   public void usePrintln() {
     String message = "Hey ln";
     if (usedFunctions.contains(PRINT_LN)) {
@@ -96,6 +117,9 @@ public class ArmCodeState {
     endPrintFunction("puts"); // since \n is considered a single character.
   }
   
+  
+  
+  // Functions that handle data.
   public Deque<Token> getData() {
     return data;
   }
