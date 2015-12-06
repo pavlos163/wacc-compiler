@@ -104,10 +104,11 @@ public class ArmCodeState {
     }
     startFunction(PRINT_BOOL);
     code.add(new Cmp(Register.r0, new ImmediateValue(0)));
-    code.add(new Ldr(Cond.NE ,Register.r0, 
-        new ImmediateValue(msgData.get(trueValue))));
-    code.add(new Ldr(Cond.EQ, Register.r0, 
-        new ImmediateValue(msgData.get(falseValue))));
+    ImmediateValue trueImm =  new ImmediateValue(msgData.get(trueValue));
+    trueImm.setPrefix("=");
+    code.add(new Ldr(Cond.NE ,Register.r0, trueImm));
+    ImmediateValue falseImm = new ImmediateValue(msgData.get(falseValue));
+    code.add(new Ldr(Cond.EQ, Register.r0, falseImm));
     endPrintFunction("printf");
     usedFunctions.add(PRINT_BOOL);
   }
