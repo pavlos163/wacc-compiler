@@ -272,6 +272,7 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(reg, val));
       returnedRegister = reg;
     }
+    
     return statementList;
   }
 
@@ -397,6 +398,10 @@ public class IntermediateCodeGeneration implements
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_INT)));
       codeState.usePrintInt();
+    }
+    else if (type.equals(BaseType.typeChar)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
     }
     
     if (isLn) {
