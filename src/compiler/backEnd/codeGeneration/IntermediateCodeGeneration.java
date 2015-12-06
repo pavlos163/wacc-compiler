@@ -356,7 +356,7 @@ public class IntermediateCodeGeneration implements
       Register reg = registers.getGeneralRegister();
       char c = removeEscapeSlash(charValue);
       
-      ImmediateValue val = new ImmediateValue(c);
+      ImmediateValue val = new ImmediateValue(charValue);
       statementList.add(new Mov(reg, val));
       returnedRegister = reg;
     }
