@@ -153,6 +153,7 @@ public class ArmCodeState {
     messageVal.setPrefix("=");
     code.add(new Ldr(Register.r0, messageVal));
     endReadFunction();
+    usedFunctions.add(READ_INT);
   }
   
   public void useReadChar() {
@@ -167,6 +168,7 @@ public class ArmCodeState {
     messageVal.setPrefix("=");
     code.add(new Ldr(Register.r0, messageVal));
     endReadFunction();
+    usedFunctions.add(READ_CHAR);
   }
   // Functions that handle data.
   public Deque<Token> getData() {
