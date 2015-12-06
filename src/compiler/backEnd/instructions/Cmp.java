@@ -14,7 +14,7 @@ public class Cmp extends Instruction {
   
   @Override
   public String toString() {
-    return "CMP" + getCond() + " " + getDestination() + ", " +
+    return "CMP" + getCond() + getDestination() + ", " +
         getPrimarySource();
   }
 

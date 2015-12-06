@@ -16,7 +16,7 @@ public class And extends Instruction {
   
   @Override
   public String toString() {
-    return "AND" + getCond() + " " + getDestination() + ", " + 
+    return "AND" + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
 

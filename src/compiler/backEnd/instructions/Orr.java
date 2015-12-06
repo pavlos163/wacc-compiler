@@ -16,7 +16,7 @@ public class Orr extends Instruction {
   
   @Override
   public String toString() {
-    return "ORR" + getCond() + " " + getDestination() + ", " + 
+    return "ORR" + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
 

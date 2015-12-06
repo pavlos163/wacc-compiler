@@ -66,6 +66,7 @@ public class IntermediateCodeGeneration implements
   private ArmCodeState codeState = new ArmCodeState();
   private int stackOffset;
   private int currOffset;
+  private int extraOffset;
   
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
@@ -93,18 +94,14 @@ public class IntermediateCodeGeneration implements
       textSection.add(new Label("main"));
       textSection.add(new Push(Register.lr));
       
-      ImmediateValue val = new ImmediateValue(stackOffset);
-
-      if (stackOffset > 0) {
-        textSection.add(new Sub(Register.sp, Register.sp, val));
-      }
+      extraOffset = stackOffset;
+      subExtraOffset(textSection);
       
       // Add code for the main label.
       textSection.addAll(bodyStatements);
-
-      if (stackOffset > 0) {
-        textSection.add(new Add(Register.sp, Register.sp, val));
-      }
+      
+      extraOffset = stackOffset;
+      addExtraOffset(textSection);
       
       ImmediateValue value = new ImmediateValue("0");
       value.setPrefix("=");
@@ -124,6 +121,34 @@ public class IntermediateCodeGeneration implements
     return finalCode;
   }
 
+  private void subExtraOffset(Deque<Token> textSection) {
+    ImmediateValue val;
+    if (extraOffset > 1024) {
+      extraOffset -= 1024;
+      val = new ImmediateValue(1024);
+      textSection.add(new Sub(Register.sp, Register.sp, val));
+      subExtraOffset(textSection);
+    }
+    else if (extraOffset > 0) {
+      val = new ImmediateValue(extraOffset);
+      textSection.add(new Sub(Register.sp, Register.sp, val));
+    }
+  }
+  
+  private void addExtraOffset(Deque<Token> textSection) {
+    ImmediateValue val;
+    if (extraOffset > 1024) {
+      extraOffset -= 1024;
+      val = new ImmediateValue(1024);
+      textSection.add(new Add(Register.sp, Register.sp, val));
+      addExtraOffset(textSection);
+    }
+    else if (extraOffset > 0) {
+      val = new ImmediateValue(extraOffset);
+      textSection.add(new Add(Register.sp, Register.sp, val));
+    }
+  }
+  
   @Override
   public Deque<Token> visit(Function func) {
     // TODO Auto-generated method stub
@@ -173,12 +198,12 @@ public class IntermediateCodeGeneration implements
     // First we are visiting the left and right hand side expressions.
     Expr lhs = binExpr.getLHS();
     statementList.addAll(lhs.accept(this));
-    Register regLHS = registers.getGeneralRegister();
+    Register regLHS = returnedRegister;
     
     // We also assign registers to these expressions.
     Expr rhs = binExpr.getRHS();
     statementList.addAll(rhs.accept(this));
-    Register regRHS = registers.getGeneralRegister();
+    Register regRHS = returnedRegister;
         
     Register destination = registers.getGeneralRegister();
     
@@ -248,6 +273,8 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(Cond.EQ, destination, exprFalse));
       break;
     case "&&":
+      System.out.println(regLHS.toString());
+      System.out.println(regRHS.toString());
       statementList.add(new And(destination, regLHS, regRHS));
       break;
     case "||":
@@ -316,6 +343,9 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeBool)) {
       int boolValue = ((BoolLiter) (valueExpr.getLiter())).getValue();
       Register reg = registers.getGeneralRegister();
+      System.out.println("--------");
+      System.out.println(reg.toString());
+      System.out.println("--------");
       ImmediateValue val = new ImmediateValue(boolValue);
       
       statementList.add(new Mov(reg, val));
