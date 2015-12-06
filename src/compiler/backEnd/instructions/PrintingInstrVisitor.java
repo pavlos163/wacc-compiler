@@ -27,10 +27,10 @@ public class PrintingInstrVisitor implements InstructionVisitor<String> {
     if (value.equals(".ltorg")) {
       return ident(1) + dir.toString();
     }
-    else if (value.equals(".global main")) {
+    /* else if (value.equals(".global main")) {
       return "\n" + dir.toString();
-    }
-    return dir.toString() + "\n";
+    }*/
+    return "\n" + dir.toString();
   }
   
   @Override
