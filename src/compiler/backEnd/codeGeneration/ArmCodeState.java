@@ -108,17 +108,30 @@ public class ArmCodeState {
   }
   
   public void usePrintln() {
-    String message = "Hey ln";
+    String message = "\\0";
+    updateData(message);
     if (usedFunctions.contains(PRINT_LN)) {
       return;
     }
     startFunction(PRINT_LN);
-    code.add(new Ldr(Register.r0, new ImmediateValue(message)));
+    code.add(new Ldr(Register.r0, new ImmediateValue(msgData.get(message))));
     endPrintFunction("puts"); // since \n is considered a single character.
+    usedFunctions.add(PRINT_LN);
   }
-  
-  
-  
+
+  public void usePrintInt() {
+    String identifier = "%d\\0";
+    updateData(identifier);
+    if (usedFunctions.contains(identifier)) {
+      return;
+    }
+    startFunction(PRINT_INT);
+    code.add(new Mov(Register.r1, Register.r0));
+    code.add(new Ldr(Register.r0, new ImmediateValue(
+        msgData.get(identifier))));
+    endPrintFunction("printf");
+    usedFunctions.add(PRINT_INT);
+  }
   // Functions that handle data.
   public Deque<Token> getData() {
     return data;

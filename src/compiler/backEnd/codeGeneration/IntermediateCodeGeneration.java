@@ -388,6 +388,16 @@ public class IntermediateCodeGeneration implements
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_STRING)));
       codeState.usePrintString();
     }
+    else if (type.equals(BaseType.typeBool)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_BOOL)));
+      codeState.usePrintBool();
+    }
+    else if (type.equals(BaseType.typeInt)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_INT)));
+      codeState.usePrintInt();
+    }
     
     if (isLn) {
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_LN)));
