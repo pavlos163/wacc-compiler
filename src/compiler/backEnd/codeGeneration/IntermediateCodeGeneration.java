@@ -373,6 +373,7 @@ public class IntermediateCodeGeneration implements
     else {
       currOffset -= getSize(lhs);
       Register regRHS = registers.getGeneralRegister();
+
       Address assignAddress = new Address(Register.sp, currOffset);
       
       if (isByte((Variable) lhs)) {

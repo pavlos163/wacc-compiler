@@ -27,7 +27,7 @@ public class Address implements Operand {
   public String toString() {
     String str = "[" + reg;
     if (offset != 0) {
-      str += ", " + offset;
+      str += ", #" + offset;
     }
     str += "]";
     return str;
