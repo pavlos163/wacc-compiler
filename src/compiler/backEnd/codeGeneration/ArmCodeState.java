@@ -1,12 +1,14 @@
 package compiler.backEnd.codeGeneration;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import compiler.backEnd.instructions.Add;
+import compiler.backEnd.instructions.AssemblerDirective;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
@@ -32,12 +34,22 @@ public class ArmCodeState {
   private Set<String> usedFunctions = new HashSet<String>();
   private Deque<Token> code = new LinkedList<Token>();
   private Deque<Token> data = new LinkedList<Token>();
-  // Not sure about it.
-  private Map<Integer, String> msgData;
+  private Map<String, String> msgData = new HashMap<String, String>();
+  private MsgGenerator msgGenerator = new MsgGenerator();
   
   public ArmCodeState() {
+    data.add(new AssemblerDirective(".data"));
   }
- 
+  
+  private void addToDataSection(String message, Label generatedMsg) {
+    data.add(generatedMsg);
+    // TODO: Fix problem special characters make.
+    data.add(new AssemblerDirective(".word " + 
+        message.length()));
+    data.add(new AssemblerDirective(".ascii " + "\"" + message
+        + "\""));
+  }
+  
   private void startFunction(String funcName) {
     code.add(new Label(funcName));
     code.add(new Push(Register.lr));
@@ -59,15 +71,15 @@ public class ArmCodeState {
   }
   
   public void usePrintString() {
-    // We need to put something to the Data Section.
-    String message = "Hey";
+    String message = "%.*s\\0";
+    updateData(message);
     if (usedFunctions.contains(PRINT_STRING)) {
       return;
     }
     startFunction(PRINT_STRING);
     code.add(new Ldr(Register.r1, new Address(Register.r0)));
     code.add(new Add(Register.r2, Register.r0, new ImmediateValue(4)));
-    ImmediateValue messageVal = new ImmediateValue(message);
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(message));
     messageVal.setPrefix("=");
     code.add(new Ldr(Register.r0, messageVal));
     endPrintFunction("printf");
@@ -81,15 +93,21 @@ public class ArmCodeState {
     }
     startFunction(PRINT_LN);
     code.add(new Ldr(Register.r0, new ImmediateValue(message)));
-    endPrintFunction("puts"); // since \n is considered a single characher.
+    endPrintFunction("puts"); // since \n is considered a single character.
   }
   
   public Deque<Token> getData() {
     return data;
   }
   
-  public void updateData(Label msg) {
-    return;
+  public String updateData(String message) {
+    if (!msgData.containsKey(message)) {
+      Label generatedMsg = msgGenerator.generateMsg();
+      msgData.put(message, generatedMsg.toString());
+      addToDataSection(message, generatedMsg);
+      return generatedMsg.toString();
+    }
+    return msgData.get(message);
   }
   
   public int getSize() {

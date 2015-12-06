@@ -53,40 +53,43 @@ public class IntermediateCodeGeneration implements
   
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
-    Deque<Token> tokens = new LinkedList<Token>();
+    Deque<Token> textSection = new LinkedList<Token>();
+    
+    textSection.add(new AssemblerDirective(".text"));
+    textSection.add(new AssemblerDirective(".global main"));
+    
     try {
       // First we visit the functions and generate the code.
       
       for (Function func : programNode.getFunctions()) {
-        tokens.addAll(func.accept(this));
+        textSection.addAll(func.accept(this));
       }
-      
-      tokens.add(new AssemblerDirective(".text"));
-      tokens.add(new AssemblerDirective(".global main"));
       
       Deque<Token> bodyStatements = 
           programNode.getStatements().accept(this);
       
       // TODO: Handle stack.
             
-      tokens.add(new Label("main:"));
-      tokens.add(new Push(Register.lr));
+      textSection.add(new Label("main:"));
+      textSection.add(new Push(Register.lr));
                         
-      tokens.addAll(bodyStatements);
+      textSection.addAll(bodyStatements);
             
       ImmediateValue value = new ImmediateValue("0");
       value.setPrefix("=");
       
-      tokens.add(new Ldr(Register.r0, value));
-      tokens.add(new Pop(Register.pc));
-      tokens.add(new AssemblerDirective(".ltorg"));
+      textSection.add(new Ldr(Register.r0, value));
+      textSection.add(new Pop(Register.pc));
+      textSection.add(new AssemblerDirective(".ltorg"));
       // After main label code.
-      tokens.addAll(codeState.getAfterMainLabelCode());
+      textSection.addAll(codeState.getAfterMainLabelCode());
       
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    return tokens;
+    Deque<Token> finalCode = codeState.getData();
+    finalCode.addAll(textSection);
+    return finalCode;
   }
 
   @Override
@@ -166,7 +169,8 @@ public class IntermediateCodeGeneration implements
     }
     else if (valueExpr.getType().equals(new ArrType(BaseType.typeChar))) {
       Register reg = registers.getGeneralRegister();
-      ImmediateValue val = new ImmediateValue("string");
+      ImmediateValue val = new ImmediateValue(codeState.updateData(
+          valueExpr.getString()));
       val.setPrefix("=");
       statementList.add(new Ldr(reg, val));
       returnedRegister = reg;
