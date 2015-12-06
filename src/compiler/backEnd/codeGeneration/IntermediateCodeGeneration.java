@@ -342,16 +342,22 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(IfThenElseStat ifStat) {
   	Deque<Token> statementList = new LinkedList<Token>();
 		Expr condition = ifStat.getCondition();
+		
 		statementList.addAll(condition.accept(this));
+		
 		Register reg = registers.getGeneralRegister();
+		
 		statementList.add(new Cmp(reg, new ImmediateValue("#0")));
-		statementList.add(new BranchLink(Cond.EQ, new Label("L" + (ifStatementCounter * 2))));
-    registers.freeRegister(reg);
-    visit(ifStat.ifBody);
-    statementList.add(new Branch(new Label("L" + (ifStatementCounter * 2 + 1))));
+		statementList.add(new BranchLink(Cond.EQ, new Label("L" +
+		    (ifStatementCounter * 2))));
     
+		registers.freeRegister(reg);
+    ifStat.getIf().accept(this);
+    
+    statementList.add(new Branch(new Label("L" + (ifStatementCounter * 2 + 1))));
     statementList.add(new Label("L" + (ifStatementCounter * 2)));
-		visit(ifStat.elseBody);
+		
+    ifStat.getElse().accept(this);
 		
 		statementList.add(new Label("L" + (ifStatementCounter * 2 + 1)));
 		
