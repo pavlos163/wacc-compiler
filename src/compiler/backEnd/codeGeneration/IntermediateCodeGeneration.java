@@ -81,7 +81,7 @@ public class IntermediateCodeGeneration implements
             
       // TODO: Handle stack.
             
-      textSection.add(new Label("main:"));
+      textSection.add(new Label("main"));
       textSection.add(new Push(Register.lr));
       
       StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
