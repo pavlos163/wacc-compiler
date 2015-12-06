@@ -14,7 +14,7 @@ public class Ldr extends Instruction {
   
   @Override
   public String toString() {
-    return "LDR " + getCond() + getDestination() + 
+    return "LDR" + getCond() + getDestination() + 
         ", " + getPrimarySource();
   }
 
