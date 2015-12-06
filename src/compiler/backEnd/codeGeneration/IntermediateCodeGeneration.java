@@ -409,13 +409,29 @@ public class IntermediateCodeGeneration implements
       codeState.usePrintln();
     }
     
+    registers.freeRegister(register);
     return tokens;
   }
 
   @Override
   public Deque<Token> visit(ReadStat readStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> tokens = new LinkedList<Token>();
+    AssignLHS readItem = readStat.getItem();
+    readItem.accept(this);
+    
+    if (readItem.getType().equals(BaseType.typeInt)) {
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink( new Label(codeState.READ_INT)));
+      codeState.useReadInt();
+    }
+    else if (readItem.getType().equals(BaseType.typeChar)) {
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
+      codeState.useReadChar();
+    }
+    
+    registers.freeRegister(returnedRegister);
+    return tokens;
   }
 
   @Override

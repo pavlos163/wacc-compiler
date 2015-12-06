@@ -71,7 +71,12 @@ public class ArmCodeState {
     code.add(new BranchLink(new Label("fflush")));
     endFunction();
   }
-  
+ 
+  private void endReadFunction() {
+    code.add(new Add(Register.r0, Register.r0, new ImmediateValue(4)));
+    code.add(new BranchLink(new Label("scanf")));
+    endFunction();
+  }
   // Functions to handle print.
   public void usePrintString() {
     String message = "%.*s\\0";
@@ -131,6 +136,32 @@ public class ArmCodeState {
         msgData.get(identifier))));
     endPrintFunction("printf");
     usedFunctions.add(PRINT_INT);
+  }
+  
+  public void useReadInt() {
+    String identifier = "%d\\0";
+    updateData(identifier);
+    if (usedFunctions.contains(identifier)) {
+      return;
+    }
+    startFunction(READ_INT);
+    code.add(new Mov(Register.r1, Register.r0));
+    code.add(new Ldr(Register.r0, new ImmediateValue
+        (msgData.get(identifier))));
+    endReadFunction();
+  }
+  
+  public void useReadChar() {
+    String identifier = " %c\\0";
+    updateData(identifier);
+    if (usedFunctions.contains(identifier)) {
+      return;
+    }
+    startFunction(READ_CHAR);
+    code.add(new Mov(Register.r1, Register.r0));
+    code.add(new Ldr(Register.r0, new ImmediateValue(
+        msgData.get(identifier))));
+    endReadFunction();
   }
   // Functions that handle data.
   public Deque<Token> getData() {
