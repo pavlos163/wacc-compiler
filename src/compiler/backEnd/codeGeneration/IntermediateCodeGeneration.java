@@ -495,6 +495,8 @@ public class IntermediateCodeGeneration implements
     AssignLHS readItem = readStat.getItem();
     readItem.accept(this);
     
+    System.out.println(readItem.getType());
+    
     if (readItem.getType().equals(BaseType.typeInt)) {
       tokens.add(new Mov(Register.r0, returnedRegister));
       tokens.add(new BranchLink( new Label(codeState.READ_INT)));
