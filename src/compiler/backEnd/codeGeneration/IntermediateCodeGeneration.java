@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.And;
 import compiler.backEnd.instructions.AssemblerDirective;
+import compiler.backEnd.instructions.Branch;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Cmp;
 import compiler.backEnd.instructions.Cond;
@@ -57,6 +58,7 @@ public class IntermediateCodeGeneration implements
   
   RegisterList registers = new RegisterList();
   Register returnedRegister = null;
+  int ifStatementCounter = 0;
 
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
@@ -338,8 +340,23 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(IfThenElseStat ifStat) {
-    // TODO Auto-generated method stub
-    return null;
+  	Deque<Token> statementList = new LinkedList<Token>();
+		Expr condition = ifStat.getCondition();
+		statementList.addAll(condition.accept(this));
+		Register reg = registers.getGeneralRegister();
+		statementList.add(new Cmp(reg, new ImmediateValue("#0")));
+		statementList.add(new BranchLink(Cond.EQ, new Label("L" + (ifStatementCounter * 2))));
+    registers.freeRegister(reg);
+    visit(ifStat.ifBody);
+    statementList.add(new Branch(new Label("L" + (ifStatementCounter * 2 + 1))));
+    
+    statementList.add(new Label("L" + (ifStatementCounter * 2)));
+		visit(ifStat.elseBody);
+		
+		statementList.add(new Label("L" + (ifStatementCounter * 2 + 1)));
+		
+	  ifStatementCounter++;
+  	return statementList;
   }
 
   @Override
