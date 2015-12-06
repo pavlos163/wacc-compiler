@@ -20,7 +20,7 @@ public class Sub extends Instruction {
   
   @Override
   public String toString() {
-    String str = "SUB" + getCond() + " " + getDestination() + 
+    String str = "SUB" + getCond() + getDestination() + 
         ", " + getPrimarySource();
     if (getSecondarySource() != null) {
       str += ", " + getSecondarySource();

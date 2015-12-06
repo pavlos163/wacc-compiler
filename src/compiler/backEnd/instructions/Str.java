@@ -33,7 +33,7 @@ public class Str extends Instruction {
     else {
       s += "STR";
     }
-    return s + getCond() + " " + getDestination()
+    return s + getCond() + getDestination()
         + ", " + getPrimarySource();
   }
 

@@ -14,7 +14,7 @@ public class Mov extends Instruction {
   
   @Override
   public String toString() {
-    return "MOV" + getCond() + " " + getDestination() + ", " + 
+    return "MOV" + getCond() + getDestination() + ", " + 
         getPrimarySource();
   }
 
