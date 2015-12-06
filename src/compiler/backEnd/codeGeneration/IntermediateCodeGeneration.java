@@ -90,7 +90,7 @@ public class IntermediateCodeGeneration implements
             
       // TODO: Handle stack.
             
-      textSection.add(new Label("main:"));
+      textSection.add(new Label("main"));
       textSection.add(new Push(Register.lr));
       
       ImmediateValue val = new ImmediateValue(stackOffset);
@@ -338,6 +338,7 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(reg, val));
       returnedRegister = reg;
     }
+    
     return statementList;
   }
 
@@ -463,19 +464,49 @@ public class IntermediateCodeGeneration implements
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_STRING)));
       codeState.usePrintString();
     }
+    else if (type.equals(BaseType.typeBool)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_BOOL)));
+      codeState.usePrintBool();
+    }
+    else if (type.equals(BaseType.typeInt)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_INT)));
+      codeState.usePrintInt();
+    }
+    else if (type.equals(BaseType.typeChar)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
+    }
     
     if (isLn) {
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_LN)));
       codeState.usePrintln();
     }
     
+    registers.freeRegister(register);
     return tokens;
   }
 
   @Override
   public Deque<Token> visit(ReadStat readStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> tokens = new LinkedList<Token>();
+    AssignLHS readItem = readStat.getItem();
+    readItem.accept(this);
+    
+    if (readItem.getType().equals(BaseType.typeInt)) {
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink( new Label(codeState.READ_INT)));
+      codeState.useReadInt();
+    }
+    else if (readItem.getType().equals(BaseType.typeChar)) {
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
+      codeState.useReadChar();
+    }
+    
+    registers.freeRegister(returnedRegister);
+    return tokens;
   }
 
   @Override

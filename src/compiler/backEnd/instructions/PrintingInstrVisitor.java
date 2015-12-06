@@ -18,7 +18,7 @@ public class PrintingInstrVisitor implements InstructionVisitor<String> {
   
   @Override
   public String visit(Label label) {
-    return "\n" + label.toString();
+    return "\n" + label.getLabel();
   }
   
   @Override
@@ -27,9 +27,9 @@ public class PrintingInstrVisitor implements InstructionVisitor<String> {
     if (value.equals(".ltorg")) {
       return ident(1) + dir.toString();
     }
-    /* else if (value.equals(".global main")) {
+    else if (value.equals(".global main")) {
       return "\n" + dir.toString();
-    }*/
+    }
     return "\n" + dir.toString();
   }
   
