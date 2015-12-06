@@ -11,12 +11,12 @@ public class Label implements Operand, Token {
   }
   
   public String getLabel() {
-    return label;
+    return label + ":";
   }
   
   @Override
   public String toString() {
-    return getLabel() + ":";
+    return label;
   }
   
   @Override

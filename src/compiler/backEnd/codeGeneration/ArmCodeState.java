@@ -47,7 +47,7 @@ public class ArmCodeState {
     data.add(generatedMsg);
     // TODO: Fix problem special characters make.
     data.add(new AssemblerDirective(".word " + 
-        message.length()));
+        (message.length() - countSlash(message))));
     data.add(new AssemblerDirective(".ascii " + "\"" + message
         + "\""));
   }
@@ -119,7 +119,9 @@ public class ArmCodeState {
       return;
     }
     startFunction(PRINT_LN);
-    code.add(new Ldr(Register.r0, new ImmediateValue(msgData.get(message))));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(message));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
     endPrintFunction("puts"); // since \n is considered a single character.
     usedFunctions.add(PRINT_LN);
   }
@@ -132,8 +134,9 @@ public class ArmCodeState {
     }
     startFunction(PRINT_INT);
     code.add(new Mov(Register.r1, Register.r0));
-    code.add(new Ldr(Register.r0, new ImmediateValue(
-        msgData.get(identifier))));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(identifier));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
     endPrintFunction("printf");
     usedFunctions.add(PRINT_INT);
   }
@@ -146,8 +149,9 @@ public class ArmCodeState {
     }
     startFunction(READ_INT);
     code.add(new Mov(Register.r1, Register.r0));
-    code.add(new Ldr(Register.r0, new ImmediateValue
-        (msgData.get(identifier))));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(identifier));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
     endReadFunction();
   }
   
@@ -159,8 +163,9 @@ public class ArmCodeState {
     }
     startFunction(READ_CHAR);
     code.add(new Mov(Register.r1, Register.r0));
-    code.add(new Ldr(Register.r0, new ImmediateValue(
-        msgData.get(identifier))));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(identifier));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
     endReadFunction();
   }
   // Functions that handle data.
@@ -177,7 +182,7 @@ public class ArmCodeState {
     }
     return msgData.get(message);
   }
-  
+ 
   public int getSize() {
     return code.size();
   }
@@ -186,4 +191,15 @@ public class ArmCodeState {
     return this.code;
   }
   
+  private int countSlash(String msg) {
+    int cnt = 0;
+    for (int i = 0; i < msg.length(); ++i) {
+      if (msg.charAt(i) == '\\') {
+        cnt++;
+      }
+    }
+    return cnt;
+  }
+
 }
+
