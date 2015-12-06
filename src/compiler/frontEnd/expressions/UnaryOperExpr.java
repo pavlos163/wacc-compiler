@@ -74,6 +74,14 @@ public class UnaryOperExpr implements Expr {
   public CodePosition getPosition() {
     return codePos;
   }
+  
+  public Expr getExpr() {
+    return expr;
+  }
+  
+  public UnaryOperLiter getOp() {
+    return unaryOp;
+  }
 
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {

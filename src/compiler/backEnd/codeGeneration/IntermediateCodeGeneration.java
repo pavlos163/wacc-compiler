@@ -58,6 +58,9 @@ import compiler.frontEnd.types.Type;
 public class IntermediateCodeGeneration implements 
     AbstractSyntaxTreeVisitor<Deque<Token>> {
   
+  private static final Label DIV_LABEL = new Label("__aeabi_idiv");
+  private static final Label MOD_LABEL = new Label("__aeabi_idivmod");
+  
   private RegisterList registers = new RegisterList();
   private Register returnedRegister = null;
   private ArmCodeState codeState = new ArmCodeState();
@@ -163,18 +166,20 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(BinaryOperExpr binExpr) {    
     Deque<Token> statementList = new LinkedList<Token>();
     
+    // First we are visiting the left and right hand side expressions.
     Expr lhs = binExpr.getLHS();
     statementList.addAll(lhs.accept(this));
     Register regLHS = registers.getGeneralRegister();
     
+    // We also assign registers to these expressions.
     Expr rhs = binExpr.getRHS();
     statementList.addAll(rhs.accept(this));
     Register regRHS = registers.getGeneralRegister();
-    
-    registers.freeRegister(regLHS);
-    registers.freeRegister(regRHS);
-    
+        
     Register destination = registers.getGeneralRegister();
+    
+    Register regZero = registers.getReturnRegister();
+    Register regOne = registers.getReturnRegister();
     
     ImmediateValue exprTrue = new ImmediateValue("1");
     ImmediateValue exprFalse = new ImmediateValue("0");
@@ -183,55 +188,111 @@ public class IntermediateCodeGeneration implements
     case "*":
       statementList.add(new Mul(destination, regLHS, regRHS));
     case "/":
+      statementList.add(new Mov(regZero, regLHS));
+      statementList.add(new Mov(regOne, regRHS));
       
+      statementList.add(new BranchLink(DIV_LABEL));
+      statementList.add(new Mov(destination, regZero));
+      break;
     case "%":
+      statementList.add(new Mov(regZero, regLHS));
+      statementList.add(new Mov(regOne, regRHS));
       
+      statementList.add(new BranchLink(MOD_LABEL));
+      statementList.add(new Mov(destination, regZero));
+      break;
     case "+":
       statementList.add(new Add(destination, regLHS, regRHS));
+      break;
     case "-":
       statementList.add(new Sub(destination, regLHS, regRHS));
+      break;
     case ">":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.GT, destination, exprTrue));
       statementList.add(new Mov(Cond.LE, destination, exprFalse));
+      break;
     case ">=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.GE, destination, exprTrue));
       statementList.add(new Mov(Cond.LT, destination, exprFalse));
+      break;
     case "<":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.LT, destination, exprTrue));
       statementList.add(new Mov(Cond.GE, destination, exprFalse));
+      break;
     case "<=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.LE, destination, exprTrue));
       statementList.add(new Mov(Cond.GT, destination, exprFalse));
+      break;
     case "==":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.EQ, destination, exprTrue));
       statementList.add(new Mov(Cond.NE, destination, exprFalse));
+      break;
     case "!=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.NE, destination, exprTrue));
       statementList.add(new Mov(Cond.EQ, destination, exprFalse));
+      break;
     case "&&":
       statementList.add(new And(destination, regLHS, regRHS));
+      break;
     case "||":
       statementList.add(new Orr(destination, regLHS, regRHS));
+      break;
     }
+    
+    registers.freeRegister(regLHS);
+    registers.freeRegister(regRHS);
+    registers.freeRegister(regZero);
+    registers.freeRegister(regOne);
+    registers.freeRegister(destination);
+    
+    returnedRegister = destination;
     return statementList;
   }
 
   @Override
   public Deque<Token> visit(UnaryOperExpr unExpr) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Expr expression = unExpr.getExpr();
+    expression.accept(this);
+    Register regExpr = registers.getGeneralRegister();
+    Register regHelper = registers.getGeneralRegister();
+    
+    ImmediateValue zeroVal = new ImmediateValue("0");
+    
+    switch(unExpr.getOp().getString()) {
+    case "!":
+      // R4 = R4 && 0 => R4 = !R4
+      statementList.add(new And(regExpr, regExpr, zeroVal));
+      break;
+    case "-":
+      // R5 = 0
+      statementList.add(new Mov(regHelper, zeroVal));
+      // R4 = R5 - R4 => R4 = -R4
+      statementList.add(new Sub(regExpr, regHelper, regExpr));
+      break;
+    case "ord":
+      // ?
+    case "len":
+      // ?
+    case "chr":
+      // ?
+    }
+    
+    returnedRegister = regExpr;
+    return statementList;
   }
 
   @Override
@@ -263,6 +324,7 @@ public class IntermediateCodeGeneration implements
       
       ImmediateValue val = new ImmediateValue(charValue);
       statementList.add(new Mov(reg, val));
+      returnedRegister = reg;
     }
     else if (valueExpr.getType().equals(new ArrType(BaseType.typeChar))) {
       Register reg = registers.getGeneralRegister();
