@@ -64,10 +64,16 @@ public class IntermediateCodeGeneration implements
   private RegisterList registers = new RegisterList();
   private Register returnedRegister = null;
   private ArmCodeState codeState = new ArmCodeState();
+  private int stackOffset;
+  private int currOffset;
   
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
     Deque<Token> textSection = new LinkedList<Token>();
+    
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    stackOffset = programNode.getStatements().accept(stackVisitor);
+    currOffset = stackOffset;
     
     textSection.add(new AssemblerDirective(".text"));
     textSection.add(new AssemblerDirective(".global main"));
@@ -87,8 +93,6 @@ public class IntermediateCodeGeneration implements
       textSection.add(new Label("main:"));
       textSection.add(new Push(Register.lr));
       
-      StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
-      int stackOffset = programNode.getStatements().accept(stackVisitor);
       ImmediateValue val = new ImmediateValue(stackOffset);
 
       if (stackOffset > 0) {
@@ -366,8 +370,9 @@ public class IntermediateCodeGeneration implements
       
     }
     else {
+      currOffset -= getSize(lhs);
       Register regRHS = registers.getGeneralRegister();
-      Address assignAddress = new Address(Register.sp);
+      Address assignAddress = new Address(Register.sp, currOffset);
       
       if (isByte((Variable) lhs)) {
         statementList.add(new Str(regRHS, assignAddress, true));
@@ -380,6 +385,14 @@ public class IntermediateCodeGeneration implements
     }
     
     return statementList;
+  }
+  
+  private int getSize(AssignLHS lhs) {
+    if (lhs.getType().equals(BaseType.typeBool) ||
+        lhs.getType().equals(BaseType.typeChar)) {
+      return 1;
+    }
+    return 4;
   }
   
   private boolean isByte(Variable var) {
