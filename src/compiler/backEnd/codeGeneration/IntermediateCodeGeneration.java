@@ -75,7 +75,6 @@ public class IntermediateCodeGeneration implements
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     stackOffset = programNode.getStatements().accept(stackVisitor);
     currOffset = stackOffset;
-    extraOffset = stackOffset;
     
     textSection.add(new AssemblerDirective(".text"));
     textSection.add(new AssemblerDirective(".global main"));
@@ -95,11 +94,13 @@ public class IntermediateCodeGeneration implements
       textSection.add(new Label("main"));
       textSection.add(new Push(Register.lr));
       
+      extraOffset = stackOffset;
       subExtraOffset(textSection);
       
       // Add code for the main label.
       textSection.addAll(bodyStatements);
       
+      extraOffset = stackOffset;
       addExtraOffset(textSection);
       
       ImmediateValue value = new ImmediateValue("0");
@@ -137,7 +138,7 @@ public class IntermediateCodeGeneration implements
   private void addExtraOffset(Deque<Token> textSection) {
     ImmediateValue val;
     if (extraOffset > 1024) {
-      extraOffset -= extraOffset % 1024;
+      extraOffset -= 1024;
       val = new ImmediateValue(1024);
       textSection.add(new Add(Register.sp, Register.sp, val));
       addExtraOffset(textSection);
