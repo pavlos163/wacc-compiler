@@ -9,6 +9,7 @@ import compiler.backEnd.instructions.AssemblerDirective;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Cmp;
 import compiler.backEnd.instructions.Cond;
+import compiler.backEnd.instructions.Eor;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
 import compiler.backEnd.instructions.Mov;
@@ -298,16 +299,17 @@ public class IntermediateCodeGeneration implements
     Deque<Token> statementList = new LinkedList<Token>();
     
     Expr expression = unExpr.getExpr();
-    expression.accept(this);
-    Register regExpr = registers.getGeneralRegister();
+    statementList.addAll(expression.accept(this));
+    Register regExpr = returnedRegister;
     Register regHelper = registers.getGeneralRegister();
     
     ImmediateValue zeroVal = new ImmediateValue("0");
+    ImmediateValue oneVal = new ImmediateValue("1");
     
     switch(unExpr.getOp().getString()) {
     case "!":
       // R4 = R4 && 0 => R4 = !R4
-      statementList.add(new And(regExpr, regExpr, zeroVal));
+      statementList.add(new Eor(regExpr, regExpr, oneVal));
       break;
     case "-":
       // R5 = 0
@@ -322,6 +324,8 @@ public class IntermediateCodeGeneration implements
     case "chr":
       // ?
     }
+    
+    registers.freeRegister(regExpr);
     
     returnedRegister = regExpr;
     return statementList;
