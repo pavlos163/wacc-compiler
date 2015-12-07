@@ -210,7 +210,7 @@ public class IntermediateCodeGeneration implements
     statementList.addAll(rhs.accept(this));
     Register regRHS = returnedRegister;
         
-    Register destination = registers.getGeneralRegister();
+    Register destination = regLHS;
     
     Register regZero = registers.getReturnRegister();
     Register regOne = registers.getReturnRegister();
@@ -417,7 +417,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(AssignStat assignStat) {
     Deque<Token> statementList = new LinkedList<Token>();
     
-    // For now (if we suppose all LHS to be just variables.
+    // For now (if we suppose all LHS to be just variables).
     
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
