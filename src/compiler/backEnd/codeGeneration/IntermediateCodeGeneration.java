@@ -485,17 +485,17 @@ public class IntermediateCodeGeneration implements
 		
 		Register reg = registers.getGeneralRegister();
 		
-		statementList.add(new Cmp(reg, new ImmediateValue("#0")));
-		statementList.add(new BranchLink(Cond.EQ, new Label("L" +
+		statementList.add(new Cmp(reg, new ImmediateValue("0")));
+		statementList.add(new Branch(Cond.EQ, new Label("L" +
 		    (ifStatementCounter * 2))));
     
 		registers.freeRegister(reg);
-    ifStat.getIf().accept(this);
+    statementList.addAll(ifStat.getIf().accept(this));
     
     statementList.add(new Branch(new Label("L" + (ifStatementCounter * 2 + 1))));
     statementList.add(new Label("L" + (ifStatementCounter * 2)));
 		
-    ifStat.getElse().accept(this);
+    statementList.addAll(ifStat.getElse().accept(this));
 		
 		statementList.add(new Label("L" + (ifStatementCounter * 2 + 1)));
 		
