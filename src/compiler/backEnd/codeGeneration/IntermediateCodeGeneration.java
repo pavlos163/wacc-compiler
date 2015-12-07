@@ -401,7 +401,8 @@ public class IntermediateCodeGeneration implements
     
     Identifier varName = variable.getScope().lookUpAll(variable.getName());
     
-    if (variable.getType().equals(BaseType.typeBool)) {
+    if (variable.getType().equals(BaseType.typeBool) ||
+          variable.getType().equals(BaseType.typeChar)) {
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, varName.getStackPosition()), true));
     }
