@@ -216,7 +216,16 @@ public class IntermediateCodeGeneration implements
     
     switch(binExpr.getBinOp().getString()) {
     case "*":
-      statementList.add(new Mul(destination, regLHS, regRHS));
+      Register overflowReg = registers.getGeneralRegister();
+      statementList.add(new Mul(true, destination, overflowReg, 
+          regLHS, regRHS));
+      ImmediateValue asrFlags = new ImmediateValue("ASR #31");
+      asrFlags.setPrefix("");
+      statementList.add(new Cmp(overflowReg, destination, asrFlags));
+      statementList.add(new BranchLink(Cond.VS,
+          new Label(codeState.INTEGER_OVERFLOW)));
+      codeState.throwOverflow();
+      registers.freeRegister(overflowReg);
       break;
     case "/":
       statementList.add(new Mov(regZero, regLHS));

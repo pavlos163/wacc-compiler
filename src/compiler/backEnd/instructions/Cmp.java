@@ -1,5 +1,6 @@
 package compiler.backEnd.instructions;
 
+import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Operand;
 
 public class Cmp extends Instruction {
@@ -12,10 +13,19 @@ public class Cmp extends Instruction {
     super(destination, source);
   }
   
+  public Cmp(Operand destination, Operand source, ImmediateValue asrFlag) {
+    super(destination, source, asrFlag);
+  }
+  
   @Override
   public String toString() {
+    Operand asrFlags = getSecondarySource();
+    String secondary = "";
+    if (asrFlags != null) {
+      secondary = ", " + asrFlags.toString();
+    }
     return "CMP" + getCond() + getDestination() + ", " +
-        getPrimarySource();
+        getPrimarySource() + secondary;
   }
 
   @Override
