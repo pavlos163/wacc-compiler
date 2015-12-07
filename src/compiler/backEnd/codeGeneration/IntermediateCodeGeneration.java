@@ -217,6 +217,7 @@ public class IntermediateCodeGeneration implements
     switch(binExpr.getBinOp().getString()) {
     case "*":
       statementList.add(new Mul(destination, regLHS, regRHS));
+      break;
     case "/":
       statementList.add(new Mov(regZero, regLHS));
       statementList.add(new Mov(regOne, regRHS));
@@ -232,14 +233,16 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(destination, regZero));
       break;
     case "+":
-      statementList.add(new Add(destination, regLHS, regRHS));
+      statementList.add(new Add(true ,destination, regLHS, regRHS));
+      statementList.add(new BranchLink(Cond.VS,
+          new Label(codeState.INTEGER_OVERFLOW)));
+      codeState.throwOverflow();
       break;
     case "-":
       statementList.add(new Sub(destination, regLHS, regRHS));
       break;
     case ">":
       statementList.add(new Cmp(regLHS, regRHS));
-      
       statementList.add(new Mov(Cond.GT, destination, exprTrue));
       statementList.add(new Mov(Cond.LE, destination, exprFalse));
       break;

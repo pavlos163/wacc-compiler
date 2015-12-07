@@ -6,10 +6,18 @@ import compiler.backEnd.operands.Register;
 public abstract class Instruction implements Token {
   
   protected Cond cond = Cond.AL;
-  
+  protected boolean s = false;
   protected final Operand destination;
   protected final Operand primarySource;
   protected final Operand secondarySource;
+  
+  public Instruction(boolean s, Operand destination, Operand primarySource,
+      Operand secondarySource) {
+    this.s = s;
+    this.destination = destination;
+    this.primarySource = primarySource;
+    this.secondarySource = secondarySource;
+  }
   
   public Instruction(Cond cond, Operand destination, Operand source) {
     this.cond = cond;
