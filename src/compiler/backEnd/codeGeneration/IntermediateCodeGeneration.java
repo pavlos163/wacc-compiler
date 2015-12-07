@@ -70,7 +70,7 @@ public class IntermediateCodeGeneration implements
   private int stackOffset;
   private int currOffset;
   private int extraOffset;
-  
+  int msgNum=0;
   int ifStatementCounter = 0;
   
   @Override
@@ -479,6 +479,8 @@ public class IntermediateCodeGeneration implements
 		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
 		statementList.add(new BranchLink(new Label("p_free_pair") ));
 		statementList.addAll(freeStat.getItem().accept(this));
+		codeState.freePair(msgNum);
+		msgNum++;
 		return statementList;
   }
 
