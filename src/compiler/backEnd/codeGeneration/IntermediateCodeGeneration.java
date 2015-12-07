@@ -399,6 +399,8 @@ public class IntermediateCodeGeneration implements
     
     if (lhs instanceof Variable) {
       Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      System.out.println(name.getStackPosition());
+      System.out.println("-----^------");
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);

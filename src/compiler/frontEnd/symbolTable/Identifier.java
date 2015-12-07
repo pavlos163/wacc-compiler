@@ -8,6 +8,7 @@ public class Identifier {
   private final Type identType;
   private CodePosition codePos;
   private int stackPosition = -1;
+  private boolean isDeclaration = true;
   
   public Identifier(Type type, CodePosition codePos) {
      this.identType = type;
@@ -28,6 +29,14 @@ public class Identifier {
   
   public void setStackPosition(int newPosition) {
     stackPosition = newPosition;
+  }
+  
+  public boolean isDeclaration() {
+    return isDeclaration;
+  }
+  
+  public void setDeclaration(boolean value) {
+    isDeclaration = value;
   }
   
 }
