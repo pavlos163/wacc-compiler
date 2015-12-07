@@ -548,6 +548,12 @@ public class IntermediateCodeGeneration implements
       codeState.useReadInt();
     }
     else if (readItem.getType().equals(BaseType.typeChar)) {
+      if (readItem instanceof Variable) {
+        Variable var = (Variable) readItem;
+        Identifier ident = var.getScope().lookUpAll(var.getName());
+        tokens.add(new Add(returnedRegister, Register.sp,
+            new ImmediateValue(ident.getStackPosition())));
+      }
       tokens.add(new Mov(Register.r0, returnedRegister));
       tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
       codeState.useReadChar();
