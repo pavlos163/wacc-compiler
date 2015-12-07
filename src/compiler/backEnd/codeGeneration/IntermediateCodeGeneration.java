@@ -386,13 +386,14 @@ public class IntermediateCodeGeneration implements
     
     // For now (if we suppose all LHS to be just variables.
     
+    System.out.println("Assignment after reading a value ");
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
     
     AssignLHS lhs = assignStat.getLhs();
     
+    
     if (lhs instanceof First) {
-      
     }
     else if (lhs instanceof Second) {
       
@@ -522,12 +523,16 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ReadStat readStat) {
     Deque<Token> tokens = new LinkedList<Token>();
+    Deque<Token> readVar = new LinkedList<Token>();
     AssignLHS readItem = readStat.getItem();
-    readItem.accept(this);
+    readVar = readItem.accept(this);
     
     System.out.println(readItem.getType());
     
     if (readItem.getType().equals(BaseType.typeInt)) {
+      /*if (readItem.getType() instanceof Variable) {
+        tokens.add(new Ldr());
+      }*/
       tokens.add(new Mov(Register.r0, returnedRegister));
       tokens.add(new BranchLink( new Label(codeState.READ_INT)));
       codeState.useReadInt();
@@ -537,7 +542,6 @@ public class IntermediateCodeGeneration implements
       tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
       codeState.useReadChar();
     }
-    
     registers.freeRegister(returnedRegister);
     return tokens;
   }
