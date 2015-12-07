@@ -226,7 +226,7 @@ public class IntermediateCodeGeneration implements
       ImmediateValue asrFlags = new ImmediateValue("ASR #31");
       asrFlags.setPrefix("");
       statementList.add(new Cmp(overflowReg, destination, asrFlags));
-      statementList.add(new BranchLink(Cond.VS,
+      statementList.add(new BranchLink(Cond.NE,
           new Label(codeState.INTEGER_OVERFLOW)));
       codeState.throwOverflow();
       registers.freeRegister(overflowReg);
@@ -303,6 +303,7 @@ public class IntermediateCodeGeneration implements
       break;
     }
     
+    registers.freeRegister(regRHS);
     registers.freeRegister(regZero);
     registers.freeRegister(regOne);
     registers.freeRegister(destination);
@@ -390,7 +391,6 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     
-    registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -453,6 +453,7 @@ public class IntermediateCodeGeneration implements
     }
     
     registers.freeRegister(regRHS);
+    returnedRegister = regRHS;
     
     return statementList;
   }
