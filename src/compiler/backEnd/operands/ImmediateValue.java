@@ -16,7 +16,7 @@ public class ImmediateValue implements Operand {
   }
   
   public String getValue() {
-    if (prefix.equals("=") || prefix.equals("#")) {
+    if (prefix.equals("=") || prefix.equals("#") || prefix.equals("")) {
       return prefix + value;
     }
     return null;

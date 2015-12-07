@@ -32,6 +32,9 @@ public class ArmCodeState {
   public static final String PRINT_CHAR = "putchar";
   public static final String READ_INT = "p_read_int";
   public static final String READ_CHAR = "p_read_char";
+  public static final String INTEGER_OVERFLOW = "p_throw_overflow_error";
+  public static final String RUNTIME_ERROR = "p_throw_runtime_error";
+  public static final String DIVIDE_BY_ZERO = "p_check_divide_by_zero";
   
   private Set<String> usedFunctions = new HashSet<String>();
   private Deque<Token> code = new LinkedList<Token>();
@@ -173,6 +176,51 @@ public class ArmCodeState {
     usedFunctions.add(READ_CHAR);
   }
   // Functions that handle data.
+  public void throwOverflow() {
+    String errorMessage = "OverflowError: the result is too small/large" +
+    		" to store in a 4-byte signed-integer.\\n";
+    updateData(errorMessage);
+    if (usedFunctions.contains(INTEGER_OVERFLOW)) {
+      return;
+    }
+    code.add(new Label(INTEGER_OVERFLOW));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(errorMessage));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
+    code.add(new BranchLink(new Label(RUNTIME_ERROR)));
+    throwRuntimeError();
+    usedFunctions.add(INTEGER_OVERFLOW);
+  }
+  
+  public void checkDivisionByZero() {
+    String errorMessage = "DivideByZeroError: divide or modulo by zero\\n\\0";
+    updateData(errorMessage);
+    if (usedFunctions.contains(DIVIDE_BY_ZERO)) {
+      return;
+    }
+    startFunction(DIVIDE_BY_ZERO);
+    code.add(new Cmp(Register.r1, new ImmediateValue(0)));
+    ImmediateValue messageVal = new ImmediateValue(msgData.get(errorMessage));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Cond.EQ, Register.r0, messageVal));
+    code.add(new BranchLink(Cond.EQ, new Label(RUNTIME_ERROR)));
+    endFunction();
+    throwRuntimeError();
+    usedFunctions.add(DIVIDE_BY_ZERO);
+  }
+  
+  public void throwRuntimeError() {
+    if (usedFunctions.contains(RUNTIME_ERROR)) {
+      return;
+    }
+    code.add(new Label(RUNTIME_ERROR));
+    code.add(new BranchLink(new Label(PRINT_STRING)));
+    code.add(new Mov(Register.r0, new ImmediateValue(-1)));
+    code.add(new BranchLink(new Label("exit")));
+    usePrintString();
+    usedFunctions.add(RUNTIME_ERROR);
+  }
+ 
   public Deque<Token> getData() {
     return data;
   }

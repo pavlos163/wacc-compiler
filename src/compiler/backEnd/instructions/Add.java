@@ -3,6 +3,11 @@ package compiler.backEnd.instructions;
 import compiler.backEnd.operands.Operand;
 
 public class Add extends Instruction {
+ 
+  public Add(boolean s, Operand destination, Operand primarySource,
+      Operand secondarySource) {
+    super(s, destination, primarySource, secondarySource);
+  }
   
   public Add(Cond cond, Operand destination, Operand primarySource, 
       Operand secondarySource) {
@@ -16,7 +21,7 @@ public class Add extends Instruction {
   
   @Override
   public String toString() {
-    return "ADD" + getCond() + getDestination() + ", " + 
+    return "ADD" + (s?"S":"") + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
 
