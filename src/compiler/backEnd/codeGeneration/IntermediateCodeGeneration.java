@@ -275,8 +275,6 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(Cond.EQ, destination, exprFalse));
       break;
     case "&&":
-      System.out.println(regLHS.toString());
-      System.out.println(regRHS.toString());
       statementList.add(new And(destination, regLHS, regRHS));
       break;
     case "||":
@@ -345,9 +343,6 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeBool)) {
       int boolValue = ((BoolLiter) (valueExpr.getLiter())).getValue();
       Register reg = registers.getGeneralRegister();
-      System.out.println("--------");
-      System.out.println(reg.toString());
-      System.out.println("--------");
       ImmediateValue val = new ImmediateValue(boolValue);
       
       statementList.add(new Mov(reg, val));
@@ -382,8 +377,14 @@ public class IntermediateCodeGeneration implements
     
     Identifier varName = variable.getScope().lookUpAll(variable.getName());
     
-    statementList.add(new Ldr(returnedRegister, 
-        new Address(Register.sp, varName.getStackPosition())));
+    if (variable.getType().equals(BaseType.typeBool)) {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition()), true));
+    }
+    else {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition())));
+    }
     
     return statementList;
   }
