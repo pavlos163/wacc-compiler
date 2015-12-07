@@ -297,7 +297,7 @@ public class IntermediateCodeGeneration implements
     
     Expr expression = unExpr.getExpr();
     statementList.addAll(expression.accept(this));
-    Register regExpr = registers.getGeneralRegister();
+    Register regExpr = returnedRegister;
     Register regHelper = registers.getGeneralRegister();
     
     ImmediateValue zeroVal = new ImmediateValue("0");
@@ -321,6 +321,8 @@ public class IntermediateCodeGeneration implements
     case "chr":
       // ?
     }
+    
+    registers.freeRegister(regExpr);
     
     returnedRegister = regExpr;
     return statementList;
