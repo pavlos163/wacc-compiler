@@ -21,7 +21,6 @@ import compiler.backEnd.instructions.Str;
 import compiler.backEnd.instructions.Sub;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.Address;
-import compiler.backEnd.codeGeneration.ArmCodeState;
 import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
@@ -275,8 +274,6 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(Cond.EQ, destination, exprFalse));
       break;
     case "&&":
-      System.out.println(regLHS.toString());
-      System.out.println(regRHS.toString());
       statementList.add(new And(destination, regLHS, regRHS));
       break;
     case "||":
@@ -348,9 +345,6 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeBool)) {
       int boolValue = ((BoolLiter) (valueExpr.getLiter())).getValue();
       Register reg = registers.getGeneralRegister();
-      System.out.println("--------");
-      System.out.println(reg.toString());
-      System.out.println("--------");
       ImmediateValue val = new ImmediateValue(boolValue);
       
       statementList.add(new Mov(reg, val));
@@ -374,6 +368,7 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     
+    registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -381,7 +376,18 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(Variable variable) {
     Deque<Token> statementList = new LinkedList<Token>();
     returnedRegister = registers.getGeneralRegister();
-
+    
+    Identifier varName = variable.getScope().lookUpAll(variable.getName());
+    
+    if (variable.getType().equals(BaseType.typeBool)) {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition()), true));
+    }
+    else {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition())));
+    }
+    
     return statementList;
   }
 
@@ -391,37 +397,38 @@ public class IntermediateCodeGeneration implements
     
     // For now (if we suppose all LHS to be just variables.
     
-    System.out.println("Assignment after reading a value ");
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
     
     AssignLHS lhs = assignStat.getLhs();
-    
+
     if (lhs instanceof Variable) {
       Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
-      System.out.println(name.getStackPosition());
-      System.out.println("-----^------");
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);
       }
     }
-    if (lhs instanceof First) {
+    else if (lhs instanceof First) {
+      
     }
     else if (lhs instanceof Second) {
+      
     }
     else if (lhs instanceof ArrayElem) {
+      
     }
     Register regRHS = registers.getGeneralRegister();
 
     Address assignAddress = new Address(Register.sp, currOffset);
-      
+    
     if (isByte((Variable) lhs)) {
       statementList.add(new Str(regRHS, assignAddress, true));
     }
     else {
       statementList.add(new Str(regRHS, assignAddress));
-    } 
+    }
+    
     registers.freeRegister(regRHS);
     
     return statementList;
@@ -442,7 +449,6 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(BeginEndStat beginEnd) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -472,7 +478,6 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(IfThenElseStat ifStat) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -530,11 +535,8 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ReadStat readStat) {
     Deque<Token> tokens = new LinkedList<Token>();
-    Deque<Token> readVar = new LinkedList<Token>();
     AssignLHS readItem = readStat.getItem();
-    readVar = readItem.accept(this);
-    
-    System.out.println(readItem.getType());
+    readItem.accept(this);
     
     if (readItem.getType().equals(BaseType.typeInt)) {
       if (readItem instanceof Variable) {
@@ -552,6 +554,7 @@ public class IntermediateCodeGeneration implements
       tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
       codeState.useReadChar();
     }
+    
     registers.freeRegister(returnedRegister);
     return tokens;
   }
