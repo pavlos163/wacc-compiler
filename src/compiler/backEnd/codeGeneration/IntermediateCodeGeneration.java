@@ -186,8 +186,26 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(NewPair newPair) {
-    // TODO Auto-generated method stub
-    return null;
+  	Deque<Token> statementList = new LinkedList<Token>();
+  	Register reg1 = registers.getGeneralRegister();
+  	Register reg2 = registers.getGeneralRegister();
+  	ImmediateValue val = new ImmediateValue(10);//is it?
+  	val.setPrefix("=");
+  	statementList.add(new Ldr(Register.r0, val));
+  	statementList.add(new BranchLink(new Label("malloc")));
+  	statementList.add(new Mov(reg1, Register.r0));
+  	newPair.getFirst().accept(this);
+  	statementList.add(new Ldr(Register.r0, val));//which value??
+  	statementList.add(new BranchLink(new Label("malloc")));
+  	statementList.add(new Str(reg2, new Address(Register.r0)));
+  	statementList.add(new Str(Register.r0, new Address(reg1)));
+  	newPair.getFirst().accept(this);
+  	statementList.add(new Ldr(Register.r0, val)); //??
+  	statementList.add(new BranchLink(new Label("malloc")));
+  	statementList.add(new Str(reg2, new Address(Register.r0)));
+  	statementList.add(new Str(Register.r0, new Address(reg1)));
+  	statementList.add(new Str(reg1,Register.sp));
+  	return statementList;
   }
 
   @Override
@@ -476,9 +494,11 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
   	Deque<Token> statementList = new LinkedList<Token>();
+  	
 		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
 		statementList.add(new BranchLink(new Label("p_free_pair") ));
 		statementList.addAll(freeStat.getItem().accept(this));
+		
 		codeState.freePair(msgNum);
 		msgNum++;
 		return statementList;
