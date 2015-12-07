@@ -131,7 +131,7 @@ public class ArmCodeState {
   public void usePrintInt() {
     String identifier = "%d\\0";
     updateData(identifier);
-    if (usedFunctions.contains(identifier)) {
+    if (usedFunctions.contains(PRINT_INT)) {
       return;
     }
     startFunction(PRINT_INT);
@@ -146,7 +146,7 @@ public class ArmCodeState {
   public void useReadInt() {
     String identifier = "%d\\0";
     updateData(identifier);
-    if (usedFunctions.contains(identifier)) {
+    if (usedFunctions.contains(READ_INT)) {
       return;
     }
     startFunction(READ_INT);
@@ -161,7 +161,7 @@ public class ArmCodeState {
   public void useReadChar() {
     String identifier = " %c\\0";
     updateData(identifier);
-    if (usedFunctions.contains(identifier)) {
+    if (usedFunctions.contains(READ_CHAR)) {
       return;
     }
     startFunction(READ_CHAR);
