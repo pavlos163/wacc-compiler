@@ -492,7 +492,8 @@ public class IntermediateCodeGeneration implements
 		registers.freeRegister(reg);
     statementList.addAll(ifStat.getIf().accept(this));
     
-    statementList.add(new Branch(new Label("L" + (ifStatementCounter * 2 + 1))));
+    statementList.add(new Branch(new Label("L" 
+        + (ifStatementCounter * 2 + 1))));
     statementList.add(new Label("L" + (ifStatementCounter * 2)));
 		
     statementList.addAll(ifStat.getElse().accept(this));
@@ -605,8 +606,25 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(WhileStat whileStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Expr condition = whileStat.getCondition();
+    Label startWhile = new Label("L" + ifStatementCounter * 2);
+    Label endWhile = new Label("L" + (ifStatementCounter * 2 + 1));
+        
+    statementList.add(new Branch(startWhile));
+    statementList.add(endWhile);
+    
+    statementList.addAll(whileStat.getBody().accept(this));
+    
+    statementList.add(startWhile);
+    statementList.addAll(condition.accept(this));
+    
+    statementList.add(new Cmp(returnedRegister, new ImmediateValue("1")));
+    statementList.add(new Branch(Cond.EQ, endWhile));
+    
+    ifStatementCounter++;
+    return statementList;
   }
   
   private char removeEscapeSlash(String charValue) {
