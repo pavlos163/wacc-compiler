@@ -402,7 +402,6 @@ public class IntermediateCodeGeneration implements
     else if (lhs instanceof Second) {
     }
     else if (lhs instanceof ArrayElem) {
-      
     }
     else {
       currOffset -= getSize(lhs);
