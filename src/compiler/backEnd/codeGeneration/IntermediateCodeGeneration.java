@@ -354,9 +354,12 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
       String charValue = valueExpr.getString();
       Register reg = registers.getGeneralRegister();
-      char c = removeEscapeSlash(charValue);
       
-      ImmediateValue val = new ImmediateValue(charValue);
+      String c = removeEscapeSlash(charValue);
+      
+      System.out.println(c);
+      ImmediateValue val = new ImmediateValue(c);
+      System.out.println(val.toString());
       statementList.add(new Mov(reg, val));
       returnedRegister = reg;
     }
@@ -627,16 +630,16 @@ public class IntermediateCodeGeneration implements
     return statementList;
   }
   
-  private char removeEscapeSlash(String charValue) {
-    charValue.replace("\\0", "\0");
-    charValue.replace("\\b", "\b");
-    charValue.replace("\\n", "\n");
-    charValue.replace("\\f", "\f");
-    charValue.replace("\\r", "\r");
-    charValue.replace("\\\"", "\"");
-    charValue.replace("\\'", "'");
-    charValue.replace("\\\\", "\\");
-    return charValue.charAt(1);
+  private String removeEscapeSlash(String charValue) {
+    charValue = charValue.replace("\\0", "0");
+    charValue = charValue.replace("\\b", "\b");
+    charValue = charValue.replace("\\n", "\n");
+    charValue = charValue.replace("\\f", "\f");
+    charValue = charValue.replace("\\r", "\r");
+    charValue = charValue.replace("\\\"", "\"");
+    charValue = charValue.replace("\\'", "'");
+    charValue = charValue.replace("\\\\", "\\");
+    return "" + charValue.charAt(1);
   }
 
 }
