@@ -1,7 +1,9 @@
 package compiler.backEnd.codeGeneration;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.And;
@@ -20,7 +22,6 @@ import compiler.backEnd.instructions.Str;
 import compiler.backEnd.instructions.Sub;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.Address;
-import compiler.backEnd.codeGeneration.ArmCodeState;
 import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
@@ -51,6 +52,7 @@ import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
 import compiler.frontEnd.types.Type;
@@ -369,6 +371,7 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     
+    registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -376,7 +379,12 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(Variable variable) {
     Deque<Token> statementList = new LinkedList<Token>();
     returnedRegister = registers.getGeneralRegister();
-
+    
+    Identifier varName = variable.getScope().lookUpAll(variable.getName());
+    
+    statementList.add(new Ldr(returnedRegister, 
+        new Address(Register.sp, varName.getStackPosition())));
+    
     return statementList;
   }
 
@@ -389,9 +397,17 @@ public class IntermediateCodeGeneration implements
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
     
-    AssignLHS lhs = assignStat.getLhs();
     
-    if (lhs instanceof First) {
+    AssignLHS lhs = assignStat.getLhs();
+
+    if (lhs instanceof Variable) {
+      Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      if (name.getStackPosition() == -1) {
+        currOffset -= getSize(lhs);
+        name.setStackPosition(currOffset);
+      }
+    }
+    else if (lhs instanceof First) {
       
     }
     else if (lhs instanceof Second) {
@@ -400,21 +416,18 @@ public class IntermediateCodeGeneration implements
     else if (lhs instanceof ArrayElem) {
       
     }
-    else {
-      currOffset -= getSize(lhs);
-      Register regRHS = registers.getGeneralRegister();
+    Register regRHS = registers.getGeneralRegister();
 
-      Address assignAddress = new Address(Register.sp, currOffset);
-      
-      if (isByte((Variable) lhs)) {
-        statementList.add(new Str(regRHS, assignAddress, true));
-      }
-      else {
-        statementList.add(new Str(regRHS, assignAddress));
-      }
-      
-      registers.freeRegister(regRHS);
+    Address assignAddress = new Address(Register.sp, currOffset);
+    
+    if (isByte((Variable) lhs)) {
+      statementList.add(new Str(regRHS, assignAddress, true));
     }
+    else {
+      statementList.add(new Str(regRHS, assignAddress));
+    }
+    
+    registers.freeRegister(regRHS);
     
     return statementList;
   }
@@ -434,7 +447,6 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(BeginEndStat beginEnd) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -464,7 +476,6 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(IfThenElseStat ifStat) {
-    // TODO Auto-generated method stub
     return null;
   }
 

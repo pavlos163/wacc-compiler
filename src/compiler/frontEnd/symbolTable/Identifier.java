@@ -7,6 +7,7 @@ public class Identifier {
   
   private final Type identType;
   private CodePosition codePos;
+  private int stackPosition = -1;
   
   public Identifier(Type type, CodePosition codePos) {
      this.identType = type;
@@ -20,4 +21,13 @@ public class Identifier {
   public CodePosition getPosition() {
     return codePos;
   }
+  
+  public int getStackPosition() {
+    return stackPosition;
+  }
+  
+  public void setStackPosition(int newPosition) {
+    stackPosition = newPosition;
+  }
+  
 }

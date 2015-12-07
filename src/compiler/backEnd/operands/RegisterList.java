@@ -43,8 +43,8 @@ public class RegisterList {
       Register reg = registerList.get(i);
       if (!usedRegisters.contains(reg)) {
         usedRegisters.add(reg);
+        return reg;
       }
-      return reg;
     }
     return null;
   }
