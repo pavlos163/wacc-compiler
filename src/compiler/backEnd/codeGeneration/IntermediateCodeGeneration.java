@@ -400,11 +400,12 @@ public class IntermediateCodeGeneration implements
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
     
-    
     AssignLHS lhs = assignStat.getLhs();
 
     if (lhs instanceof Variable) {
       Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      System.out.println(name.getStackPosition());
+      System.out.println("-----^------");
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);
