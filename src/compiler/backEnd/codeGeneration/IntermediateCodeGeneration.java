@@ -402,8 +402,6 @@ public class IntermediateCodeGeneration implements
 
     if (lhs instanceof Variable) {
       Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
-      System.out.println(name.getStackPosition());
-      System.out.println("-----^------");
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);
@@ -539,6 +537,12 @@ public class IntermediateCodeGeneration implements
     readItem.accept(this);
     
     if (readItem.getType().equals(BaseType.typeInt)) {
+      if (readItem instanceof Variable) {
+        Variable var = (Variable) readItem;
+        Identifier ident = var.getScope().lookUpAll(var.getName());
+        tokens.add(new Add(returnedRegister, Register.sp,
+            new ImmediateValue(ident.getStackPosition())));
+      }
       tokens.add(new Mov(Register.r0, returnedRegister));
       tokens.add(new BranchLink( new Label(codeState.READ_INT)));
       codeState.useReadInt();

@@ -175,7 +175,6 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
     for (ASTNode node : statList.getChildren()) {
       stackOffset += node.accept(this);
     }
-    System.out.println(stackOffset);
     return stackOffset;
   }
 
