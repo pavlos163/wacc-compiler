@@ -16,7 +16,7 @@ public class Mul extends Instruction {
   
   @Override
   public String toString() {
-    return "MUL" + getCond() + " " + getDestination() + ", " + 
+    return "MUL" + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
 

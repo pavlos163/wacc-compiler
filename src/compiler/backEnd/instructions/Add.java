@@ -16,7 +16,7 @@ public class Add extends Instruction {
   
   @Override
   public String toString() {
-    return "ADD" + getCond() + " " + getDestination() + ", " + 
+    return "ADD" + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
   }
 

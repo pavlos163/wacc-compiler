@@ -15,7 +15,7 @@ public enum Cond {
   @Override
   public String toString() {
     if (this.equals(Cond.AL)) {
-      return "";
+      return " ";
     }
     return name() + " ";
   }

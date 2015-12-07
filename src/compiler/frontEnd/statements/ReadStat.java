@@ -36,6 +36,10 @@ public class ReadStat extends Stat {
     return readItem.getType().equals(new ArrType(BaseType.typeChar));
   }
   
+  public AssignLHS getItem() {
+    return readItem;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);

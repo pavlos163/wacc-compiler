@@ -1,6 +1,7 @@
 package compiler.backEnd.codeGeneration;
 
 import compiler.frontEnd.assignables.ArrayElem;
+import compiler.frontEnd.assignables.AssignLHS;
 import compiler.frontEnd.assignables.Call;
 import compiler.frontEnd.assignables.First;
 import compiler.frontEnd.assignables.Function;
@@ -23,6 +24,7 @@ import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.BaseType;
 import compiler.frontEnd.types.PairType;
 import compiler.frontEnd.types.Type;
@@ -39,42 +41,42 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
   
   @Override
   public Integer visit(ProgramNode programNode) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(Function func) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(ArrayElem arrayElem) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(ArrayLiter arrayLiter) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(Call call) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(First fst) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(NewPair newPair) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
   public Integer visit(Second snd) {
-    return stackOffset;
+    return 0;
   }
 
   @Override
@@ -99,20 +101,28 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
 
   @Override
   public Integer visit(AssignStat assignStat) {
-    Type type = assignStat.getLhs().getType();
-    if (type.equals(BaseType.typeInt)) {
-      return INT_SIZE;
+    AssignLHS lhs = assignStat.getLhs();
+    Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+    
+    if (name.isDeclaration()) {
+      name.setDeclaration(false);
+      Type type = lhs.getType();
+      if (type.equals(BaseType.typeInt)) {
+        return INT_SIZE;
+      }
+      else if (type.equals(BaseType.typeChar)) {
+        return CHAR_SIZE;
+      }
+      else if (type.equals(BaseType.typeBool)) {
+        return BOOL_SIZE;
+      }
+      else if (type.equals(new PairType())) {
+        return PAIR_SIZE;
+      }
+      return ARRAY_SIZE;
     }
-    else if (type.equals(BaseType.typeChar)) {
-      return CHAR_SIZE;
-    }
-    else if (type.equals(BaseType.typeBool)) {
-      return BOOL_SIZE;
-    }
-    else if (type.equals(new PairType())) {
-      return PAIR_SIZE;
-    }
-    return ARRAY_SIZE;
+    
+    return 0;
   }
 
   @Override

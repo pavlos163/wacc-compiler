@@ -25,7 +25,7 @@ public class BranchLink implements Token {
   
   @Override
   public String toString() {
-    return "BL" + getCond() + " " + getLabel();
+    return "BL" + getCond() + getLabel();
   }
 
   @Override

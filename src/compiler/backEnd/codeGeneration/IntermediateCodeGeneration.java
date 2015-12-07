@@ -10,6 +10,7 @@ import compiler.backEnd.instructions.Branch;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Cmp;
 import compiler.backEnd.instructions.Cond;
+import compiler.backEnd.instructions.Eor;
 import compiler.backEnd.instructions.Label;
 import compiler.backEnd.instructions.Ldr;
 import compiler.backEnd.instructions.Mov;
@@ -51,63 +52,107 @@ import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.symbolTable.Identifier;
+import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
+import compiler.frontEnd.types.Type;
 
 public class IntermediateCodeGeneration implements 
     AbstractSyntaxTreeVisitor<Deque<Token>> {
   
-  RegisterList registers = new RegisterList();
-  Register returnedRegister = null;
+  private static final Label DIV_LABEL = new Label("__aeabi_idiv");
+  private static final Label MOD_LABEL = new Label("__aeabi_idivmod");
+  
+  private RegisterList registers = new RegisterList();
+  private Register returnedRegister = null;
+  private ArmCodeState codeState = new ArmCodeState();
+  private int stackOffset;
+  private int currOffset;
+  private int extraOffset;
+  
   int ifStatementCounter = 0;
-
+  
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
-    Deque<Token> tokens = new LinkedList<Token>();
+    Deque<Token> textSection = new LinkedList<Token>();
+    
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    stackOffset = programNode.getStatements().accept(stackVisitor);
+    currOffset = stackOffset;
+    
+    textSection.add(new AssemblerDirective(".text"));
+    textSection.add(new AssemblerDirective(".global main"));
+    
     try {
       // First we visit the functions and generate the code.
-      IntermediateCodeGeneration codeGen = 
-          new IntermediateCodeGeneration();
+      
       for (Function func : programNode.getFunctions()) {
-        tokens.addAll(func.accept(codeGen));
+        textSection.addAll(func.accept(this));
       }
-            
-      tokens.add(new AssemblerDirective(".text"));
-      tokens.add(new AssemblerDirective(".global main"));
       
       Deque<Token> bodyStatements = 
-          programNode.getStatements().accept(codeGen);
+          programNode.getStatements().accept(this);
             
       // TODO: Handle stack.
             
-      tokens.add(new Label("main:"));
-      tokens.add(new Push(Register.lr));
+      textSection.add(new Label("main"));
+      textSection.add(new Push(Register.lr));
       
-      StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
-      int stackOffset = programNode.getStatements().accept(stackVisitor);
-      ImmediateValue val = new ImmediateValue(stackOffset);
-
-      if (stackOffset > 0) {
-        tokens.add(new Sub(Register.sp, Register.sp, val));
-      }
+      extraOffset = stackOffset;
+      subExtraOffset(textSection);
       
-      tokens.addAll(bodyStatements);
-
-      if (stackOffset > 0) {
-        tokens.add(new Add(Register.sp, Register.sp, val));
-      }
+      // Add code for the main label.
+      textSection.addAll(bodyStatements);
+      
+      extraOffset = stackOffset;
+      addExtraOffset(textSection);
       
       ImmediateValue value = new ImmediateValue("0");
       value.setPrefix("=");
       
-      tokens.add(new Ldr(Register.r0, value));
-      tokens.add(new Pop(Register.pc));
-      tokens.add(new AssemblerDirective(".ltorg"));
+      textSection.add(new Ldr(Register.r0, value));
+      textSection.add(new Pop(Register.pc));
+      textSection.add(new AssemblerDirective(".ltorg"));
+      
+      // After main label code.
+      textSection.addAll(codeState.getAfterMainLabelCode());
+      
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    return tokens;
+    Deque<Token> finalCode = codeState.getData();
+    finalCode.addAll(textSection);
+    return finalCode;
   }
 
+  private void subExtraOffset(Deque<Token> textSection) {
+    ImmediateValue val;
+    if (extraOffset > 1024) {
+      extraOffset -= 1024;
+      val = new ImmediateValue(1024);
+      textSection.add(new Sub(Register.sp, Register.sp, val));
+      subExtraOffset(textSection);
+    }
+    else if (extraOffset > 0) {
+      val = new ImmediateValue(extraOffset);
+      textSection.add(new Sub(Register.sp, Register.sp, val));
+    }
+  }
+  
+  private void addExtraOffset(Deque<Token> textSection) {
+    ImmediateValue val;
+    if (extraOffset > 1024) {
+      extraOffset -= 1024;
+      val = new ImmediateValue(1024);
+      textSection.add(new Add(Register.sp, Register.sp, val));
+      addExtraOffset(textSection);
+    }
+    else if (extraOffset > 0) {
+      val = new ImmediateValue(extraOffset);
+      textSection.add(new Add(Register.sp, Register.sp, val));
+    }
+  }
+  
   @Override
   public Deque<Token> visit(Function func) {
     // TODO Auto-generated method stub
@@ -154,18 +199,20 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(BinaryOperExpr binExpr) {    
     Deque<Token> statementList = new LinkedList<Token>();
     
+    // First we are visiting the left and right hand side expressions.
     Expr lhs = binExpr.getLHS();
     statementList.addAll(lhs.accept(this));
-    Register regLHS = registers.getGeneralRegister();
+    Register regLHS = returnedRegister;
     
+    // We also assign registers to these expressions.
     Expr rhs = binExpr.getRHS();
     statementList.addAll(rhs.accept(this));
-    Register regRHS = registers.getGeneralRegister();
-    
-    registers.freeRegister(regLHS);
-    registers.freeRegister(regRHS);
-    
+    Register regRHS = returnedRegister;
+        
     Register destination = registers.getGeneralRegister();
+    
+    Register regZero = registers.getReturnRegister();
+    Register regOne = registers.getReturnRegister();
     
     ImmediateValue exprTrue = new ImmediateValue("1");
     ImmediateValue exprFalse = new ImmediateValue("0");
@@ -174,55 +221,112 @@ public class IntermediateCodeGeneration implements
     case "*":
       statementList.add(new Mul(destination, regLHS, regRHS));
     case "/":
+      statementList.add(new Mov(regZero, regLHS));
+      statementList.add(new Mov(regOne, regRHS));
       
+      statementList.add(new BranchLink(DIV_LABEL));
+      statementList.add(new Mov(destination, regZero));
+      break;
     case "%":
+      statementList.add(new Mov(regZero, regLHS));
+      statementList.add(new Mov(regOne, regRHS));
       
+      statementList.add(new BranchLink(MOD_LABEL));
+      statementList.add(new Mov(destination, regOne));
+      break;
     case "+":
       statementList.add(new Add(destination, regLHS, regRHS));
+      break;
     case "-":
       statementList.add(new Sub(destination, regLHS, regRHS));
+      break;
     case ">":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.GT, destination, exprTrue));
       statementList.add(new Mov(Cond.LE, destination, exprFalse));
+      break;
     case ">=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.GE, destination, exprTrue));
       statementList.add(new Mov(Cond.LT, destination, exprFalse));
+      break;
     case "<":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.LT, destination, exprTrue));
       statementList.add(new Mov(Cond.GE, destination, exprFalse));
+      break;
     case "<=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.LE, destination, exprTrue));
       statementList.add(new Mov(Cond.GT, destination, exprFalse));
+      break;
     case "==":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.EQ, destination, exprTrue));
       statementList.add(new Mov(Cond.NE, destination, exprFalse));
+      break;
     case "!=":
       statementList.add(new Cmp(regLHS, regRHS));
       
       statementList.add(new Mov(Cond.NE, destination, exprTrue));
       statementList.add(new Mov(Cond.EQ, destination, exprFalse));
+      break;
     case "&&":
       statementList.add(new And(destination, regLHS, regRHS));
+      break;
     case "||":
       statementList.add(new Orr(destination, regLHS, regRHS));
+      break;
     }
+    
+    registers.freeRegister(regZero);
+    registers.freeRegister(regOne);
+    registers.freeRegister(destination);
+    
+    returnedRegister = destination;
     return statementList;
   }
 
   @Override
   public Deque<Token> visit(UnaryOperExpr unExpr) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Expr expression = unExpr.getExpr();
+    statementList.addAll(expression.accept(this));
+    Register regExpr = returnedRegister;
+    Register regHelper = registers.getGeneralRegister();
+    
+    ImmediateValue zeroVal = new ImmediateValue("0");
+    ImmediateValue oneVal = new ImmediateValue("1");
+    
+    switch(unExpr.getOp().getString()) {
+    case "!":
+      // R4 = R4 && 0 => R4 = !R4
+      statementList.add(new Eor(regExpr, regExpr, oneVal));
+      break;
+    case "-":
+      // R5 = 0
+      statementList.add(new Mov(regHelper, zeroVal));
+      // R4 = R5 - R4 => R4 = -R4
+      statementList.add(new Sub(regExpr, regHelper, regExpr));
+      break;
+    case "ord":
+      // ?
+    case "len":
+      // ?
+    case "chr":
+      // ?
+    }
+    
+    registers.freeRegister(regExpr);
+    
+    returnedRegister = regExpr;
+    return statementList;
   }
 
   @Override
@@ -254,7 +358,18 @@ public class IntermediateCodeGeneration implements
       
       ImmediateValue val = new ImmediateValue(charValue);
       statementList.add(new Mov(reg, val));
+      returnedRegister = reg;
     }
+    else if (valueExpr.getType().equals(new ArrType(BaseType.typeChar))) {
+      Register reg = registers.getGeneralRegister();
+      ImmediateValue val = new ImmediateValue(codeState.updateData(
+          valueExpr.getString()));
+      val.setPrefix("=");
+      statementList.add(new Ldr(reg, val));
+      returnedRegister = reg;
+    }
+    
+    registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -262,7 +377,18 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(Variable variable) {
     Deque<Token> statementList = new LinkedList<Token>();
     returnedRegister = registers.getGeneralRegister();
-
+    
+    Identifier varName = variable.getScope().lookUpAll(variable.getName());
+    
+    if (variable.getType().equals(BaseType.typeBool)) {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition()), true));
+    }
+    else {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition())));
+    }
+    
     return statementList;
   }
 
@@ -276,8 +402,15 @@ public class IntermediateCodeGeneration implements
     statementList.addAll(rhs.accept(this));
     
     AssignLHS lhs = assignStat.getLhs();
-    
-    if (lhs instanceof First) {
+
+    if (lhs instanceof Variable) {
+      Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      if (name.getStackPosition() == -1) {
+        currOffset -= getSize(lhs);
+        name.setStackPosition(currOffset);
+      }
+    }
+    else if (lhs instanceof First) {
       
     }
     else if (lhs instanceof Second) {
@@ -286,21 +419,28 @@ public class IntermediateCodeGeneration implements
     else if (lhs instanceof ArrayElem) {
       
     }
+    Register regRHS = registers.getGeneralRegister();
+
+    Address assignAddress = new Address(Register.sp, currOffset);
+    
+    if (isByte((Variable) lhs)) {
+      statementList.add(new Str(regRHS, assignAddress, true));
+    }
     else {
-      Register regRHS = registers.getGeneralRegister();
-      Address assignAddress = new Address(Register.sp);
-      
-      if (isByte((Variable) lhs)) {
-        statementList.add(new Str(regRHS, assignAddress, true));
-      }
-      else {
-        statementList.add(new Str(regRHS, assignAddress));
-      }
-      
-      registers.freeRegister(regRHS);
+      statementList.add(new Str(regRHS, assignAddress));
     }
     
+    registers.freeRegister(regRHS);
+    
     return statementList;
+  }
+  
+  private int getSize(AssignLHS lhs) {
+    if (lhs.getType().equals(BaseType.typeBool) ||
+        lhs.getType().equals(BaseType.typeChar)) {
+      return 1;
+    }
+    return 4;
   }
   
   private boolean isByte(Variable var) {
@@ -310,7 +450,6 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(BeginEndStat beginEnd) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -326,7 +465,6 @@ public class IntermediateCodeGeneration implements
         returnedRegister));
     
     registers.freeRegister(returnedRegister);
-    registers.freeRegister(Register.r0);
     statementList.add(new BranchLink(new Label("exit")));
     
     return statementList;
@@ -373,20 +511,80 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(PrintlnStat printlnStat) {
-    // TODO Auto-generated method stub
-    return null;
+    return  visitPrint(printlnStat.getExpr().accept(this), 
+        returnedRegister, printlnStat.getExpr().getType(), true);
   }
 
   @Override
   public Deque<Token> visit(PrintStat printStat) {
-    // TODO Auto-generated method stub
-    return null;
+    return visitPrint(printStat.getExpr().accept(this), 
+        returnedRegister, printStat.getExpr().getType(), false);
+  }
+  
+  private Deque<Token> visitPrint(Deque<Token> tokens, 
+      Register register, Type type, Boolean isLn) {
+    
+    // String.
+    if (type.equals(new ArrType(BaseType.typeChar))) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_STRING)));
+      codeState.usePrintString();
+    }
+    else if (type.equals(BaseType.typeBool)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_BOOL)));
+      codeState.usePrintBool();
+    }
+    else if (type.equals(BaseType.typeInt)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink( new Label(ArmCodeState.PRINT_INT)));
+      codeState.usePrintInt();
+    }
+    else if (type.equals(BaseType.typeChar)) {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
+    }
+    
+    if (isLn) {
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_LN)));
+      codeState.usePrintln();
+    }
+    
+    registers.freeRegister(register);
+    return tokens;
   }
 
   @Override
   public Deque<Token> visit(ReadStat readStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> tokens = new LinkedList<Token>();
+    AssignLHS readItem = readStat.getItem();
+    readItem.accept(this);
+    
+    if (readItem.getType().equals(BaseType.typeInt)) {
+      if (readItem instanceof Variable) {
+        Variable var = (Variable) readItem;
+        Identifier ident = var.getScope().lookUpAll(var.getName());
+        tokens.add(new Add(returnedRegister, Register.sp,
+            new ImmediateValue(ident.getStackPosition())));
+      }
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink( new Label(codeState.READ_INT)));
+      codeState.useReadInt();
+    }
+    else if (readItem.getType().equals(BaseType.typeChar)) {
+      if (readItem instanceof Variable) {
+        Variable var = (Variable) readItem;
+        Identifier ident = var.getScope().lookUpAll(var.getName());
+        tokens.add(new Add(returnedRegister, Register.sp,
+            new ImmediateValue(ident.getStackPosition())));
+      }
+      tokens.add(new Mov(Register.r0, returnedRegister));
+      tokens.add(new BranchLink(new Label(codeState.READ_CHAR)));
+      codeState.useReadChar();
+    }
+    
+    registers.freeRegister(returnedRegister);
+    return tokens;
   }
 
   @Override
@@ -396,12 +594,13 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(StatList statList) {
-    Deque<Token> statementList = new LinkedList<Token>();
+    Deque<Token> tokens = new LinkedList<Token>();
     
-    for (ASTNode statement : statList.getChildren()) {
-      statementList.addAll(statement.accept(this));
+    for (ASTNode stat: statList.getChildren()) {
+      tokens.addAll(stat.accept(this));
     }
-    return statementList;
+    
+    return tokens;
   }
 
   @Override

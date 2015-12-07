@@ -25,7 +25,7 @@ public class Branch implements Token {
   
   @Override
   public String toString() {
-    return "B" + getCond() + " " + getLabel();
+    return "B" + getCond() + getLabel();
   }
 
   @Override

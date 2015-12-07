@@ -4,37 +4,29 @@ import compiler.backEnd.operands.Operand;
 
 public class Ldr extends Instruction {
   
-  private boolean isByte;
-  
-  public Ldr(Cond cond, Operand destination, Operand source, boolean isByte) {
-    super(cond, destination, source);
-    this.isByte = isByte;
-  }
+  private boolean signedByte = false;
   
   public Ldr(Cond cond, Operand destination, Operand source) {
     super(cond, destination, source);
   }
 
-  public Ldr(Operand destination, Operand source, boolean isByte) {
-    super(destination, source);
-    this.isByte = isByte;
-  }
-  
   public Ldr(Operand destination, Operand source) {
     super(destination, source);
   }
   
+  public Ldr(Operand destination, Operand source, boolean signedByte) {
+    super(destination, source);
+    this.signedByte = signedByte;
+  }
+
   @Override
   public String toString() {
-    String s = "";
-    if (isByte) {
-      s += "LDRB";
+    String str = "LDR";
+    if (signedByte) {
+      str += "SB";
     }
-    else {
-      s += "LDR";
-    }
-    return s + getCond() + " " + getDestination()
-        + ", " + getPrimarySource();
+    return str + getCond() + getDestination() + 
+        ", " + getPrimarySource();
   }
 
   @Override
