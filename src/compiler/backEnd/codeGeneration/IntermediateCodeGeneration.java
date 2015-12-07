@@ -281,8 +281,6 @@ public class IntermediateCodeGeneration implements
       break;
     }
     
-    registers.freeRegister(regLHS);
-    registers.freeRegister(regRHS);
     registers.freeRegister(regZero);
     registers.freeRegister(regOne);
     registers.freeRegister(destination);
