@@ -303,7 +303,6 @@ public class IntermediateCodeGeneration implements
       break;
     }
     
-    registers.freeRegister(regRHS);
     registers.freeRegister(regZero);
     registers.freeRegister(regOne);
     registers.freeRegister(destination);
@@ -391,6 +390,7 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     
+    registers.freeRegister(returnedRegister);
     return statementList;
   }
 
