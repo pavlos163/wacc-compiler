@@ -23,6 +23,7 @@ import compiler.backEnd.instructions.Sub;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.Address;
 import compiler.backEnd.operands.ImmediateValue;
+import compiler.backEnd.operands.Operand;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
 import compiler.frontEnd.assignables.ArrayElem;
@@ -474,8 +475,11 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
-    // TODO Auto-generated method stub
-    return null;
+  	Deque<Token> statementList = new LinkedList<Token>();
+		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
+		statementList.add(new BranchLink(new Label("p_free_pair") ));
+		statementList.addAll(freeStat.getItem().accept(this));
+		return statementList;
   }
 
   @Override
