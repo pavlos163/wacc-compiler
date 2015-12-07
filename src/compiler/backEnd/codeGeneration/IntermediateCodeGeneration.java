@@ -51,6 +51,7 @@ import compiler.frontEnd.statements.ReturnStat;
 import compiler.frontEnd.statements.SkipStat;
 import compiler.frontEnd.statements.StatList;
 import compiler.frontEnd.statements.WhileStat;
+import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
 import compiler.frontEnd.types.Type;
@@ -528,9 +529,12 @@ public class IntermediateCodeGeneration implements
     System.out.println(readItem.getType());
     
     if (readItem.getType().equals(BaseType.typeInt)) {
-      /*if (readItem.getType() instanceof Variable) {
-        tokens.add(new Ldr());
-      }*/
+      if (readItem instanceof Variable) {
+        Variable var = (Variable) readItem;
+        Identifier ident = var.getScope().lookUpAll(var.getName());
+        tokens.add(new Add(returnedRegister, Register.sp,
+            new ImmediateValue(ident.getStackPosition())));
+      }
       tokens.add(new Mov(Register.r0, returnedRegister));
       tokens.add(new BranchLink( new Label(codeState.READ_INT)));
       codeState.useReadInt();
