@@ -229,7 +229,7 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(regOne, regRHS));
       
       statementList.add(new BranchLink(MOD_LABEL));
-      statementList.add(new Mov(destination, regZero));
+      statementList.add(new Mov(destination, regOne));
       break;
     case "+":
       statementList.add(new Add(destination, regLHS, regRHS));
@@ -462,7 +462,6 @@ public class IntermediateCodeGeneration implements
         returnedRegister));
     
     registers.freeRegister(returnedRegister);
-    registers.freeRegister(Register.r0);
     statementList.add(new BranchLink(new Label("exit")));
     
     return statementList;
