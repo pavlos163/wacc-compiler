@@ -654,6 +654,9 @@ public class IntermediateCodeGeneration implements
     else if (charValue.contains("\\\\")) {
       charValue = charValue.replace("\\\\", "\\");
     }
+    else {
+      return charValue;
+    }
     return "" + charValue.charAt(1);
   }
 
