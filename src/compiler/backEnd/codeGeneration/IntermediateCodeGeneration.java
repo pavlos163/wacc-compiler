@@ -397,27 +397,30 @@ public class IntermediateCodeGeneration implements
     
     AssignLHS lhs = assignStat.getLhs();
     
+    if (lhs instanceof Variable) {
+      Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      if (name.getStackPosition() == -1) {
+        currOffset -= getSize(lhs);
+        name.setStackPosition(currOffset);
+      }
+    }
     if (lhs instanceof First) {
     }
     else if (lhs instanceof Second) {
     }
     else if (lhs instanceof ArrayElem) {
     }
-    else {
-      currOffset -= getSize(lhs);
-      Register regRHS = registers.getGeneralRegister();
+    Register regRHS = registers.getGeneralRegister();
 
-      Address assignAddress = new Address(Register.sp, currOffset);
+    Address assignAddress = new Address(Register.sp, currOffset);
       
-      if (isByte((Variable) lhs)) {
-        statementList.add(new Str(regRHS, assignAddress, true));
-      }
-      else {
-        statementList.add(new Str(regRHS, assignAddress));
-      }
-      
-      registers.freeRegister(regRHS);
+    if (isByte((Variable) lhs)) {
+      statementList.add(new Str(regRHS, assignAddress, true));
     }
+    else {
+      statementList.add(new Str(regRHS, assignAddress));
+    } 
+    registers.freeRegister(regRHS);
     
     return statementList;
   }
