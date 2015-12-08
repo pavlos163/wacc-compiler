@@ -188,6 +188,7 @@ public class IntermediateCodeGeneration implements
       else {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg));
       }
+      statementList.add(new Ldr(arrayReg, new Address(arrayReg)));
     }
     registers.freeRegister(arrayReg);
     
