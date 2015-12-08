@@ -38,6 +38,7 @@ public class ArmCodeState {
   public static final String DIVIDE_BY_ZERO = "p_check_divide_by_zero";
   public static final String ARRAY_BOUND = "p_check_array_bounds";
   public static final String FREE_PAIR = "p_free_pair";
+  public static final String CHECK_NULL_POINTER = "p_check_null_pointer";
   
   private Set<String> usedFunctions = new HashSet<String>();
   private Deque<Token> code = new LinkedList<Token>();
@@ -283,7 +284,8 @@ public class ArmCodeState {
     }
     return msgData.get(message);
   }
-  public void freePair(){
+  
+  public void freePair() {
     String messageVal = 
         "NullReferenceError: dereference a null reference\\n\\0";
     updateData(messageVal);
@@ -309,6 +311,23 @@ public class ArmCodeState {
   	usedFunctions.add(FREE_PAIR);
   }
  
+  public void checkNullPointer() {
+    String messageVal = 
+        "NullReferenceError: dereference a null reference\\n\\0";
+    updateData(messageVal);
+    if (usedFunctions.contains(CHECK_NULL_POINTER)) {
+      return;
+    }
+    startFunction(CHECK_NULL_POINTER);
+    code.add(new Cmp(Register.r0, new ImmediateValue(0)));
+    ImmediateValue msgVal = new ImmediateValue(msgData.get(messageVal));
+    msgVal.setPrefix("=");
+    code.add(new Ldr(Cond.EQ, Register.r0, msgVal));
+    code.add(new BranchLink(Cond.EQ, new Label(RUNTIME_ERROR)));
+    endFunction();
+    throwRuntimeError();
+    usedFunctions.add(CHECK_NULL_POINTER);
+  }
   public int getSize() {
     return code.size();
   }
