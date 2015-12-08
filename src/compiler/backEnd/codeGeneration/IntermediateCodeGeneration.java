@@ -565,7 +565,14 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(BeginEndStat beginEnd) {
     Deque<Token> token = new LinkedList<Token>();
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    int scopeOffset = beginEnd.getContent().accept(stackVisitor);
+    currOffset += scopeOffset;
+    extraOffset = scopeOffset;
+    subExtraOffset(token);
     token.addAll(beginEnd.getContent().accept(this));
+    addExtraOffset(token);
+    currOffset -= scopeOffset;
     return token;
   }
 
@@ -599,6 +606,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(IfThenElseStat ifStat) {
   	Deque<Token> statementList = new LinkedList<Token>();
 		Expr condition = ifStat.getCondition();
+		StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
 		
 		statementList.addAll(condition.accept(this));
 		
@@ -608,13 +616,28 @@ public class IntermediateCodeGeneration implements
 		statementList.add(new Branch(Cond.EQ, new Label("L" +
 		    (ifStatementCounter * 2))));
 		registers.freeRegister(reg);
+		
+		// Create space in the stack for the ifBody scope.
+		int scopeOffset = ifStat.getIf().accept(stackVisitor);
+    currOffset += scopeOffset;
+    extraOffset = scopeOffset;
+    subExtraOffset(statementList);
     statementList.addAll(ifStat.getIf().accept(this));
+    addExtraOffset(statementList);
+    currOffset -= scopeOffset;
     
     statementList.add(new Branch(new Label("L" 
         + (ifStatementCounter * 2 + 1))));
     statementList.add(new Label("L" + (ifStatementCounter * 2)));
 		
+    // Create space in the stack for the else scope.
+    scopeOffset = ifStat.getElse().accept(stackVisitor);
+    currOffset += scopeOffset;
+    extraOffset = scopeOffset;
+    subExtraOffset(statementList);
     statementList.addAll(ifStat.getElse().accept(this));
+    addExtraOffset(statementList);
+    currOffset -= scopeOffset;
 		
 		statementList.add(new Label("L" + (ifStatementCounter * 2 + 1)));
 		
@@ -724,7 +747,7 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(WhileStat whileStat) {
     Deque<Token> statementList = new LinkedList<Token>();
-    
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     Expr condition = whileStat.getCondition();
     Label startWhile = new Label("L" + ifStatementCounter * 2);
     Label endWhile = new Label("L" + (ifStatementCounter * 2 + 1));
@@ -732,7 +755,13 @@ public class IntermediateCodeGeneration implements
     statementList.add(new Branch(startWhile));
     statementList.add(endWhile);
     
+    int scopeOffset = whileStat.getBody().accept(stackVisitor);
+    currOffset += scopeOffset;
+    extraOffset = scopeOffset;
+    subExtraOffset(statementList);
     statementList.addAll(whileStat.getBody().accept(this));
+    addExtraOffset(statementList);
+    currOffset -= scopeOffset;
     
     statementList.add(startWhile);
     statementList.addAll(condition.accept(this));
@@ -740,7 +769,6 @@ public class IntermediateCodeGeneration implements
     statementList.add(new Cmp(returnedRegister, new ImmediateValue("1")));
     statementList.add(new Branch(Cond.EQ, endWhile));
     registers.freeRegister(returnedRegister);
-    
     ifStatementCounter++;
     return statementList;
   }
