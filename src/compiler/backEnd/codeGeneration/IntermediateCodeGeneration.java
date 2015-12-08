@@ -543,7 +543,9 @@ public class IntermediateCodeGeneration implements
       Register reg = registers.getGeneralRegister();
       ImmediateValue zeroVal = new ImmediateValue("0");
       zeroVal.setPrefix("=");
+      
       statementList.add(new Ldr(reg, zeroVal));
+      returnedRegister = reg;
     }
     else if (valueExpr.getType().equals(BaseType.typeInt)) {
       String intValue = valueExpr.getLiter().getString();
@@ -661,7 +663,14 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Str(regRHS, assignAddress, true));
       }
       else {
-        statementList.add(new Str(regRHS, assignAddress));
+        if (regRHS != null) {
+          statementList.add(new Str(regRHS, assignAddress));
+        }
+        else {
+          Register tempReg = registers.getGeneralRegister();
+          statementList.add(new Str(tempReg, assignAddress));
+          registers.freeRegister(tempReg);
+        }
       }
     }
     else if (lhs instanceof First) {
