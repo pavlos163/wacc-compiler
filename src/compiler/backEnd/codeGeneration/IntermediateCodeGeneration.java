@@ -761,9 +761,9 @@ public class IntermediateCodeGeneration implements
     reg = returnedRegister;
     
 		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
-		statementList.add(new BranchLink(new Label("p_free_pair") ));
+		statementList.add(new BranchLink(new Label(codeState.FREE_PAIR) ));
 		
-		codeState.freePair(msgNum);
+		codeState.freePair();
 		registers.freeRegister(reg);
 		
 		msgNum++;

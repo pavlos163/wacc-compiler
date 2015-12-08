@@ -37,7 +37,7 @@ public class ArmCodeState {
   public static final String RUNTIME_ERROR = "p_throw_runtime_error";
   public static final String DIVIDE_BY_ZERO = "p_check_divide_by_zero";
   public static final String ARRAY_BOUND = "p_check_array_bounds";
-
+  public static final String FREE_PAIR = "p_free_pair";
   
   private Set<String> usedFunctions = new HashSet<String>();
   private Deque<Token> code = new LinkedList<Token>();
@@ -283,14 +283,18 @@ public class ArmCodeState {
     }
     return msgData.get(message);
   }
-  public void freePair(int msgNum){
-  	code.add(new Push(Register.lr));
-  	code.add(new Cmp(Register.r0, new ImmediateValue("0")));
-  	
-  	ImmediateValue msg = new ImmediateValue("msg_" + msgNum);
-  	msg.setPrefix("=");
-  	code.add(new Ldr(Cond.EQ, Register.r0, msg));
-  	
+  public void freePair(){
+    String messageVal = 
+        "NullReferenceError: dereference a null reference\\n\\0";
+    updateData(messageVal);
+    if (usedFunctions.contains(FREE_PAIR)) { 
+      return;
+    }
+  	startFunction(FREE_PAIR);
+  	code.add(new Cmp(Register.r0, new ImmediateValue(0)));
+  	ImmediateValue msgVal = new ImmediateValue(msgData.get(messageVal));
+  	msgVal.setPrefix("=");
+  	code.add(new Ldr(Cond.EQ, Register.r0, msgVal));
   	code.add(new Branch(Cond.EQ, new Label("p_throw_runtime_error")));
   	code.add(new Push(Register.r0));
   	code.add(new Ldr(Register.r0, new Address(Register.r0)));
@@ -300,7 +304,9 @@ public class ArmCodeState {
   	code.add(new BranchLink(new Label("free")));
   	code.add(new Pop(Register.r0));
   	code.add(new BranchLink(new Label("free")));
-  	code.add(new Pop(Register.pc));
+  	endFunction();
+  	throwRuntimeError();
+  	usedFunctions.add(FREE_PAIR);
   }
  
   public int getSize() {
