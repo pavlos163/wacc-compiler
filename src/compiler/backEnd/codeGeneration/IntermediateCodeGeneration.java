@@ -61,6 +61,7 @@ import compiler.frontEnd.statements.WhileStat;
 import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
+import compiler.frontEnd.types.PairType;
 import compiler.frontEnd.types.Type;
 
 public class IntermediateCodeGeneration implements 
@@ -182,7 +183,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(Function func) {
     Deque<Token> tokens = new LinkedList<Token>();
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
-    int funcOffset = func.accept(stackVisitor);
+    int funcOffset = func.getStatements().accept(stackVisitor);
     stackOffset += funcOffset;
     currOffset = stackOffset;
     
@@ -208,7 +209,9 @@ public class IntermediateCodeGeneration implements
     
     int paramOffset = 0;
     for (Param param : parameters) {
-      if (param.getType().equals(BaseType.typeInt)) {
+      if (param.getType().equals(BaseType.typeInt) || param.getType().
+          equals(new ArrType(null)) || param.getType().equals
+          (new PairType())) {
         paramOffset += 4;
         param.getScope().lookUpAll(param.getIdent()).
             setStackPosition(paramOffset, stackOffset);
@@ -225,6 +228,8 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ArrayElem arrayElem) {
     Deque<Token> tokens = new LinkedList<Token>();
+    
+    int typeSize = ((BaseType) arrayElem.getType()).getSize();
     
     // We need registers to keep track of the array size and the current
     // array index as well.
@@ -301,7 +306,7 @@ public class IntermediateCodeGeneration implements
     literSizeValue.setPrefix("=");
 
     Register reg = registers.getGeneralRegister();
-    
+
     tokens.add(new Ldr(Register.r0, literSizeValue));
     tokens.add(new BranchLink(new Label("malloc")));
     tokens.add(new Mov(reg, Register.r0));
@@ -364,7 +369,8 @@ public class IntermediateCodeGeneration implements
     for (Expr expr : argList) {
       tokens.addAll(expr.accept(this));
       Register reg = returnedRegister;
-      if (expr.getType().equals(BaseType.typeInt)) {
+      if (expr.getType().equals(BaseType.typeInt) || expr.getType().equals(new ArrType(null))
+          || expr.getType().equals(new PairType())) {
         argOffSet = -4;
         argSize += 4;
       }
@@ -461,7 +467,8 @@ public class IntermediateCodeGeneration implements
       expressionNumber++;
     }
     
-    returnedRegister = heapReg;
+    registers.freeRegister(regExpr);
+    returnedRegister = regExpr;
     return tokens;
   }
 
@@ -1088,7 +1095,7 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(WhileStat whileStat) {
     Deque<Token> tokens = new LinkedList<Token>();
-    
+
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     
     Expr condition = whileStat.getCondition();
