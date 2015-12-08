@@ -286,15 +286,15 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(First fst) {
-    return visitPairItem(true);
+    return visitPairItem(fst, true);
   }
   
   @Override
   public Deque<Token> visit(Second snd) {
-    return visitPairItem(false);
+    return visitPairItem(snd, false);
   }
 
-  private Deque<Token> visitPairItem(boolean isFst) {
+  private Deque<Token> visitPairItem(AssignLHS item, boolean isFst) {
     Deque<Token> tokens = new LinkedList<Token>();
     
     int addressSecond = 4;
@@ -310,6 +310,14 @@ public class IntermediateCodeGeneration implements
     }
     else {
       tokens.add(new Ldr(reg, new Address(reg, addressSecond)));
+    }
+    
+    if (item.getType().equals(BaseType.typeInt) ||
+        item.getType().equals(BaseType.typeChar)) {
+      tokens.add(new Ldr(reg, new Address(reg), true));
+    }
+    else {
+      tokens.add(new Ldr(reg, new Address(reg)));
     }
     
     returnedRegister = reg;
