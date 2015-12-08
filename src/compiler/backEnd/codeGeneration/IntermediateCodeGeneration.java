@@ -28,6 +28,7 @@ import compiler.backEnd.operands.ImmediateValue;
 import compiler.backEnd.operands.Operand;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
+import compiler.frontEnd.assignables.ArgList;
 import compiler.frontEnd.assignables.ArrayElem;
 import compiler.frontEnd.assignables.AssignLHS;
 import compiler.frontEnd.assignables.AssignRHS;
@@ -35,6 +36,7 @@ import compiler.frontEnd.assignables.Call;
 import compiler.frontEnd.assignables.First;
 import compiler.frontEnd.assignables.Function;
 import compiler.frontEnd.assignables.NewPair;
+import compiler.frontEnd.assignables.Param;
 import compiler.frontEnd.assignables.Second;
 import compiler.frontEnd.assignables.Variable;
 import compiler.frontEnd.expressions.BinaryOperExpr;
@@ -177,7 +179,7 @@ public class IntermediateCodeGeneration implements
     statementList.add(new Sub(Register.sp, Register.sp, 
         new ImmediateValue(funcOffset)));
     // Visit parameters first. Do something there.
-    // func.getParameters().
+    visitParameters(func.getParameters());
     statementList.addAll(func.getStatements().accept(this));
     statementList.add(new Add(Register.sp, Register.sp, 
         new ImmediateValue(funcOffset)));
@@ -186,6 +188,26 @@ public class IntermediateCodeGeneration implements
     statementList.add(new Pop(Register.pc));
     statementList.add(new AssemblerDirective(".ltorg"));
     return statementList;
+  }
+  
+  public void visitParameters(List<Param> parameters) {
+    // We need to calculate the offsets for the parameters.
+    
+    int paramOffset = 0;
+    for (Param param : parameters) {
+      if (param.getType().equals(BaseType.typeInt)) {
+        paramOffset += 4;
+        param.getScope().lookUpAll(param.getIdent()).
+            setStackPosition(paramOffset, stackOffset);
+      } 
+      else if (param.getType().equals(BaseType.typeBool) || 
+          param.getType().equals(BaseType.typeChar)) {
+        paramOffset ++;
+        param.getScope().lookUpAll(param.getIdent())
+            .setStackPosition(paramOffset, stackOffset);
+      }
+      // TODO: Array and strings.
+    }
   }
 
   @Override
@@ -301,13 +323,31 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(Call call) {
     Deque<Token> statementList = new LinkedList<Token>();
     if (call.getArguments().numberOfArguments() != 0) {
-      // Do something.
+      statementList.addAll(visitArguments(call.getArguments()));
     }
-    
     statementList.add(new BranchLink(new Label("f_" + call.getName())));
     returnedRegister = registers.getGeneralRegister();
     statementList.add(new Mov(returnedRegister, Register.r0));
+    return statementList;
+  }
+  
+  public Deque<Token> visitArguments(ArgList argList) {
+    Deque<Token> statementList = new LinkedList<Token>();
     
+    int argOffSet = 0;
+    for (Expr expr : argList) {
+      statementList.addAll(expr.accept(this));
+      Register reg = returnedRegister;
+      if (expr.getType().equals(BaseType.typeInt)) {
+        argOffSet = -4;
+      }
+      if (expr.getType().equals(BaseType.typeBool) || 
+          expr.getType().equals(BaseType.typeChar)) {
+        argOffSet = -1;
+      }
+      statementList.add(new Str(reg, new Address(Register.sp, argOffSet)));
+      registers.freeRegister(reg);
+    }
     return statementList;
   }
 
