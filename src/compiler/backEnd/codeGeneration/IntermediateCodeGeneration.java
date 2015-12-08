@@ -173,15 +173,14 @@ public class IntermediateCodeGeneration implements
     
     Identifier name = arrayElem.getScope().lookUpAll(arrayElem.getName());
     
-    if (name.getStackPosition() != currOffset) {
-      ImmediateValue offsetValue = new ImmediateValue(currOffset);
-      statementList.add(new Add(arrayReg, Register.sp, offsetValue));
-    }
+    ImmediateValue offsetValue = new ImmediateValue(currOffset);
+    statementList.add(new Add(arrayReg, Register.sp, offsetValue));
     
     List<Expr> expressionList = ((ArrayElem) arrayElem).getExpressions();
     Expr expr;
     for (int i = 0; i < expressionList.size(); i++) {
       expr = expressionList.get(i);
+      System.out.println(expr);
       statementList.addAll(expr.accept(this));
       arrayIndexReg = returnedRegister;
       
@@ -191,7 +190,6 @@ public class IntermediateCodeGeneration implements
 
       statementList.add(new BranchLink(new Label(codeState.ARRAY_BOUND)));
       codeState.throwArrayBoundError();
-      statementList.add(new Add(arrayReg, arrayReg, new ImmediateValue("4")));
       if (i == expressionList.size() - 1) {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
       }
@@ -210,7 +208,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(ArrayLiter arrayLiter) {
     Deque<Token> statementList = new LinkedList<Token>();
     System.out.println("HERE!");
-    
+        
     int typeSize;
     if (!arrayLiter.getExpressions().isEmpty()) {
        typeSize = ((BaseType) arrayLiter.getBaseType()).getSize();
@@ -228,10 +226,11 @@ public class IntermediateCodeGeneration implements
 
     Register reg = registers.getGeneralRegister();
     
+    
     statementList.add(new Ldr(Register.r0, literSizeValue));
     statementList.add(new BranchLink(new Label("malloc")));
     statementList.add(new Mov(reg, Register.r0));
-    
+        
     List<Expr> expressionList = arrayLiter.getExpressions();
     Address address;
         
@@ -249,7 +248,7 @@ public class IntermediateCodeGeneration implements
       offset += typeSize;
       registers.freeRegister(returnedRegister);
     }
-        
+            
     if (returnedRegister == null) {
       returnedRegister = registers.getGeneralRegister();
     }
@@ -582,7 +581,13 @@ public class IntermediateCodeGeneration implements
         name.setStackPosition(currOffset, currStackSize);
       }
       
+      System.out.println(arrayIndexReg);
+      
       ImmediateValue offsetValue = new ImmediateValue(currOffset);
+      System.out.println("Stack size: " + currStackSize);
+      System.out.println("Current offset: " + currOffset);
+      System.out.println("Stack position: " + name.getStackPosition());
+      
       statementList.add(new Add(arrayReg, Register.sp, offsetValue));
 
       List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
@@ -610,8 +615,6 @@ public class IntermediateCodeGeneration implements
       }
       
       statementList.add(new Str(regRHS, new Address(arrayReg)));
-      statementList.add(new Add(regRHS, Register.sp, 
-          new ImmediateValue(currOffset)));
       registers.freeRegister(arrayReg);
       registers.freeRegister(arrayIndexReg);
     }
