@@ -520,8 +520,8 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
               varName.getStackPosition())));
-      statementList.add(new Ldr(returnedRegister,
-          new Address(returnedRegister)));
+      //statementList.add(new Ldr(returnedRegister,
+      //    new Address(returnedRegister)));
     }
     
     return statementList;
