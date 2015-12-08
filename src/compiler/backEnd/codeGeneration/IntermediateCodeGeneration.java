@@ -282,10 +282,37 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(First fst) {
-    // TODO Auto-generated method stub
-    return null;
+    return visitPairItem(true);
+  }
+  
+  @Override
+  public Deque<Token> visit(Second snd) {
+    return visitPairItem(false);
   }
 
+  private Deque<Token> visitPairItem(boolean isFst) {
+    Deque<Token> tokens = new LinkedList<Token>();
+    
+    int addressSecond = 4;
+    
+    Register reg = registers.getGeneralRegister();
+    Register extraReg = registers.getGeneralRegister();
+    
+    tokens.add(new Mov(Register.r0, extraReg));
+    tokens.add(new BranchLink(new Label("p_check_null_pointer")));
+    if (isFst) {
+      tokens.add(new Ldr(reg, new Address(extraReg)));
+    }
+    else {
+      tokens.add(new Ldr(reg, new Address(extraReg, addressSecond)));
+    }
+    
+    returnedRegister = reg;
+    registers.freeRegister(extraReg);
+    
+    return tokens;
+  }
+  
   @Override
   public Deque<Token> visit(NewPair newPair) {
     Deque<Token> statementList = new LinkedList<Token>();
@@ -331,12 +358,6 @@ public class IntermediateCodeGeneration implements
     registers.freeRegister(regExpr);
     returnedRegister = regExpr;
     return statementList;
-  }
-
-  @Override
-  public Deque<Token> visit(Second snd) {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override
