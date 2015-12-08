@@ -335,6 +335,9 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(regHelper, zeroVal));
       // R4 = R5 - R4 => R4 = -R4
       statementList.add(new Sub(regExpr, regHelper, regExpr));
+      statementList.add(new BranchLink(Cond.VS,
+          new Label(codeState.INTEGER_OVERFLOW)));
+      codeState.throwOverflow();
       registers.freeRegister(regHelper);
       break;
     case "ord":
