@@ -766,6 +766,11 @@ public class IntermediateCodeGeneration implements
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
     }
+    else {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_REF)));
+      codeState.usePrintRef();
+    }
     
     if (isLn) {
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_LN)));
