@@ -11,6 +11,6 @@ public interface InstructionVisitor<T> {
   T visit(Branch branch);
 
   T visit(Label label);
-  
+    
 }
   

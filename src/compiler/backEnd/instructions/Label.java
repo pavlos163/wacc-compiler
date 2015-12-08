@@ -11,6 +11,9 @@ public class Label implements Operand, Token {
   }
   
   public String getLabel() {
+    if (label == "") {
+      return "\n";
+    }
     return label + ":";
   }
   

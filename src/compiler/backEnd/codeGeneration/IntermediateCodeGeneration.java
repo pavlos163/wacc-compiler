@@ -120,12 +120,12 @@ public class IntermediateCodeGeneration implements
       
       // After main label code.
       textSection.addAll(codeState.getAfterMainLabelCode());
-      
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
     Deque<Token> finalCode = codeState.getData();
     finalCode.addAll(textSection);
+    finalCode.add(new Label(""));
     return finalCode;
   }
 
