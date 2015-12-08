@@ -36,7 +36,7 @@ public class Address implements Operand {
       str += ", #" + offset;
     }
     str += "]";
-    return str;
+    return str + (offset<0?"!":"");
   }
   
 }
