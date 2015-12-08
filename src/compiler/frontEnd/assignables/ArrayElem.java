@@ -67,6 +67,10 @@ public class ArrayElem implements AssignLHS, Liter {
     return scope;
   }
   
+  public List<Expr> getExpressions() {
+    return exprs;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);

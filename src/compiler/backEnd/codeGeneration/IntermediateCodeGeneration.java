@@ -2,6 +2,7 @@ package compiler.backEnd.codeGeneration;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.And;
@@ -23,7 +24,6 @@ import compiler.backEnd.instructions.Sub;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.Address;
 import compiler.backEnd.operands.ImmediateValue;
-import compiler.backEnd.operands.Operand;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
 import compiler.frontEnd.assignables.ArrayElem;
@@ -162,8 +162,19 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ArrayElem arrayElem) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Register reg = registers.getGeneralRegister();
+    
+    ImmediateValue offsetValue = new ImmediateValue(currOffset);
+    statementList.add(new Add(reg, Register.sp, offsetValue));
+    
+    List<Expr> expressionList = arrayElem.getExpressions();
+    
+    for (Expr expression : expressionList) {
+      
+    }
+    return statementList;
   }
 
   @Override
@@ -422,6 +433,7 @@ public class IntermediateCodeGeneration implements
     
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
+    Register regRHS = registers.getGeneralRegister();
     
     AssignLHS lhs = assignStat.getLhs();
     Identifier name = null;
@@ -440,9 +452,34 @@ public class IntermediateCodeGeneration implements
       
     }
     else if (lhs instanceof ArrayElem) {
+      System.out.println("kfjaskj");
+      int typeSize = ((BaseType) lhs.getType()).getSize();
+      Register sizeReg = registers.getGeneralRegister();
+      statementList.add(new Mov(sizeReg, new ImmediateValue(typeSize)));
       
+      Register arrayReg = registers.getGeneralRegister();
+      Register extraReg = registers.getGeneralRegister();
+      statementList.add(new Mov(extraReg, arrayReg));
+      
+      Register arrayIndexReg = registers.getGeneralRegister();
+      List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
+      Expr expr;
+      for (int i = 0; i < expressionList.size(); i++) {
+        expr = expressionList.get(i);
+        statementList.addAll(expr.accept(this));
+        statementList.add(new Mul(arrayIndexReg, returnedRegister, sizeReg));
+        statementList.add(new Add(arrayIndexReg, new ImmediateValue("4")));
+        if (i == expressionList.size() - 1) {
+          Address address = new Address(arrayReg, arrayIndexReg);
+          if (typeSize == 4) {
+            statementList.add(new Str(regRHS, address));
+          }
+          else {
+            statementList.add(new Str(regRHS, address, true));
+          }
+        }
+      }
     }
-    Register regRHS = registers.getGeneralRegister();
     
     Address assignAddress = new Address(Register.sp, currOffset);
     if (name != null) {
@@ -627,7 +664,6 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(StatList statList) {
     Deque<Token> tokens = new LinkedList<Token>();
-    
     for (ASTNode stat: statList.getChildren()) {
       tokens.addAll(stat.accept(this));
     }

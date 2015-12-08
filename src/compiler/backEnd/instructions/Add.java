@@ -9,6 +9,10 @@ public class Add extends Instruction {
     super(s, destination, primarySource, secondarySource);
   }
   
+  public Add(Operand destination, Operand primarySource) {
+    super(destination, primarySource);
+  }
+  
   public Add(Cond cond, Operand destination, Operand primarySource, 
       Operand secondarySource) {
     super(cond, destination, primarySource, secondarySource);
