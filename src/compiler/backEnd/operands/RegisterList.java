@@ -46,7 +46,7 @@ public class RegisterList {
         return reg;
       }
     }
-    return null;
+    return null; // Use stack instead!
   }
   
   public boolean isUsed(Register reg) {
