@@ -664,7 +664,8 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(FreeStat freeStat) {
   	Deque<Token> statementList = new LinkedList<Token>();
 		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
-		statementList.add(new BranchLink(new Label("p_free_pair") ));
+		statementList.add(new BranchLink(new Label("p_free_pair")));
+		// TODO: call codeState to produce the free function.
 		statementList.addAll(freeStat.getItem().accept(this));
 		return statementList;
   }
