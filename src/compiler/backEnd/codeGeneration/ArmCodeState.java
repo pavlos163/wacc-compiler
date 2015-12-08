@@ -244,7 +244,7 @@ public class ArmCodeState {
     code.add(new Cmp(Register.r0, Register.r1));
     ImmediateValue largeIndexImm = new ImmediateValue
         (msgData.get(largeIndexMessage));
-    negIndexImm.setPrefix("=");
+    largeIndexImm.setPrefix("=");
     code.add(new Ldr(Cond.CS, Register.r0, largeIndexImm));
     code.add(new BranchLink(Cond.CS, new Label(RUNTIME_ERROR)));
     endFunction();
