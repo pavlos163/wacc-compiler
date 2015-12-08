@@ -442,11 +442,12 @@ public class IntermediateCodeGeneration implements
       registers.freeRegister(regHelper);
       break;
     case "ord":
-      // ?
+      break;
     case "len":
       statementList.add(new Ldr(regExpr, new Address(regExpr)));
+      break;
     case "chr":
-      // ?
+      break;
     }
     
     registers.freeRegister(regExpr);
