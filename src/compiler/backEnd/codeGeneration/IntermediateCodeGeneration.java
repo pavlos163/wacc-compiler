@@ -906,7 +906,8 @@ public class IntermediateCodeGeneration implements
     
     return tokens;
   }
-
+  
+  // Produces assembly code for a free statement.
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
     Deque<Token> tokens = new LinkedList<Token>();
