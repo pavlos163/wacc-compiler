@@ -148,6 +148,22 @@ public class ArmCodeState {
     usedFunctions.add(PRINT_INT);
   }
   
+  public void usePrintRef() {
+    String identifier = "%p\\0";
+    updateData(identifier);
+    startFunction(PRINT_REF);
+    if (usedFunctions.contains(PRINT_REF)) {
+      return;
+    }
+    code.add(new Mov(Register.r1, Register.r0));
+    ImmediateValue messageVal =  new ImmediateValue(msgData.get(identifier));
+    messageVal.setPrefix("=");
+    code.add(new Ldr(Register.r0, messageVal));
+    endPrintFunction("printf");
+    usedFunctions.add(PRINT_REF);
+  }
+ 
+  
   public void useReadInt() {
     String identifier = "%d\\0";
     updateData(identifier);
@@ -177,6 +193,7 @@ public class ArmCodeState {
     endReadFunction();
     usedFunctions.add(READ_CHAR);
   }
+  
   // Functions that handle data.
   public void throwOverflow() {
     String errorMessage = "OverflowError: the result is too small/large" +
