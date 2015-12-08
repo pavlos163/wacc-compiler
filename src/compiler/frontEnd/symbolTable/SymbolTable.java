@@ -3,6 +3,8 @@ package compiler.frontEnd.symbolTable;
 import java.util.HashMap;
 import java.util.Map;
 
+import compiler.CodePosition;
+
 public class SymbolTable<T extends Identifier> {
   private SymbolTable<T> parentScope;
   private Map<String, T> dictionary = 
@@ -29,6 +31,19 @@ public class SymbolTable<T extends Identifier> {
     while (currentScope != null) {
       element = currentScope.lookUpCurrLevelOnly(name);
       if (element != null) {
+        return element;
+      }
+      currentScope = currentScope.parentScope;
+    }
+    return null;
+  }
+  
+  public Identifier lookUpAll(String name, CodePosition codePos) {
+    SymbolTable<T> currentScope = this;
+    Identifier element = null;
+    while (currentScope != null) {
+      element = currentScope.lookUpCurrLevelOnly(name);
+      if (element != null && codePos.compareTo(element.getPosition()) >= 0) {
         return element;
       }
       currentScope = currentScope.parentScope;
