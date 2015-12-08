@@ -611,9 +611,9 @@ public class IntermediateCodeGeneration implements
     
     if (variable.getType().equals(BaseType.typeBool) ||
           variable.getType().equals(BaseType.typeChar)) {
-      statementList.add(new Ldr(returnedRegister, 
-          new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
-              varName.getStackPosition()), true));
+      //statementList.add(new Ldr(returnedRegister, 
+        //  new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
+          //    varName.getStackPosition()), true));
     }
     else if (variable.getType().equals(BaseType.typeInt)) {
       statementList.add(new Ldr(returnedRegister, 
@@ -859,12 +859,18 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(PrintlnStat printlnStat) {
+    if (returnedRegister == null) {
+      returnedRegister = registers.getGeneralRegister();
+      registers.freeRegister(returnedRegister);
+    }
     return  visitPrint(printlnStat.getExpr().accept(this), 
         returnedRegister, printlnStat.getExpr().getType(), true);
   }
 
   @Override
   public Deque<Token> visit(PrintStat printStat) {
+    returnedRegister = registers.getGeneralRegister();
+    registers.freeRegister(returnedRegister);
     return visitPrint(printStat.getExpr().accept(this), 
         returnedRegister, printStat.getExpr().getType(), false);
   }

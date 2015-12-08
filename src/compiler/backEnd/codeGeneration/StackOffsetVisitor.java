@@ -110,10 +110,10 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
           assignStat.getCodePosition());
     }
     else if (lhs instanceof First) {
-      
+      return 0;
     }
     else if (lhs instanceof Second) {
-
+      return 0;
     }
     else {
       name = ((ArrayElem) lhs).getScope().lookUpAll(lhs.getName(), 
