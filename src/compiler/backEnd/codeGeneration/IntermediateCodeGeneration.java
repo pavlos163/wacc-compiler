@@ -300,20 +300,19 @@ public class IntermediateCodeGeneration implements
     int addressSecond = 4;
     
     Register reg = registers.getGeneralRegister();
-    Register extraReg = registers.getGeneralRegister();
-    
-    tokens.add(new Mov(Register.r0, extraReg));
+
+    tokens.add(new Ldr(reg, new Address(Register.sp, currStackSize - 4)));
+    tokens.add(new Mov(Register.r0, reg));
     tokens.add(new BranchLink(new Label("p_check_null_pointer")));
+        
     if (isFst) {
-      tokens.add(new Ldr(reg, new Address(extraReg)));
+      tokens.add(new Ldr(reg, new Address(reg)));
     }
     else {
-      tokens.add(new Ldr(reg, new Address(extraReg, addressSecond)));
+      tokens.add(new Ldr(reg, new Address(reg, addressSecond)));
     }
     
     returnedRegister = reg;
-    registers.freeRegister(extraReg);
-    
     return tokens;
   }
   
@@ -676,7 +675,7 @@ public class IntermediateCodeGeneration implements
     else if (lhs instanceof First) {
       First fst = (First) assignStat.getLhs();
       Register reg = registers.getGeneralRegister();
-      
+
       statementList.add(new Mov(Register.r0, reg));
       statementList.add(new BranchLink(new Label("p_check_null_pointer")));
       statementList.add(new Str(regRHS, new Address(reg)));
