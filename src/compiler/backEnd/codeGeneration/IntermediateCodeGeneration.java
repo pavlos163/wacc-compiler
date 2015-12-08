@@ -180,7 +180,7 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Mov(Register.r0, arrayIndexReg));
       statementList.add(new Mov(Register.r1, arrayReg));
 
-      statementList.add(new BranchLink(new Label("p_check_array_bounds")));
+      //statementList.add(new BranchLink(new Label("p_check_array_bounds")));
       statementList.add(new Add(arrayReg, arrayReg, new ImmediateValue("4")));
       if (i == expressionList.size() - 1) {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
@@ -559,7 +559,7 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Mov(Register.r0, arrayIndexReg));
         statementList.add(new Mov(Register.r1, arrayReg));
 
-        statementList.add(new BranchLink(new Label("p_check_array_bounds")));
+        //statementList.add(new BranchLink(new Label("p_check_array_bounds")));
         statementList.add(new Add(arrayReg, arrayReg, 
             new ImmediateValue("4")));
         if (i == expressionList.size() - 1) {
