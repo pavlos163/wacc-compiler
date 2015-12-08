@@ -438,7 +438,7 @@ public class IntermediateCodeGeneration implements
     case "ord":
       // ?
     case "len":
-      // ?
+      statementList.add(new Ldr(regExpr, new Address(regExpr)));
     case "chr":
       // ?
     }
