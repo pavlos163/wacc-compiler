@@ -4,6 +4,11 @@ import compiler.backEnd.operands.Operand;
 
 public class Sub extends Instruction {
 
+  public Sub(boolean s, Operand destination, Operand primarySource,
+      Operand secondarySource) {
+    super(s, destination, primarySource, secondarySource);
+  }
+  
   public Sub(Cond cond, Operand destination, Operand primarySource, 
       Operand secondarySource) {
     super(cond, destination, primarySource, secondarySource);
@@ -20,7 +25,7 @@ public class Sub extends Instruction {
   
   @Override
   public String toString() {
-    String str = "SUB" + getCond() + getDestination() + 
+    String str = "SUB" + (s?"S":"") + getCond() + getDestination() + 
         ", " + getPrimarySource();
     if (getSecondarySource() != null) {
       str += ", " + getSecondarySource();
