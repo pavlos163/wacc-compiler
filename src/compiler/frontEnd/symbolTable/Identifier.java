@@ -8,6 +8,7 @@ public class Identifier {
   private final Type identType;
   private CodePosition codePos;
   private int stackPosition = -1;
+  private int stackSize;
   private boolean isDeclaration = true;
   
   public Identifier(Type type, CodePosition codePos) {
@@ -27,8 +28,13 @@ public class Identifier {
     return stackPosition;
   }
   
-  public void setStackPosition(int newPosition) {
+  public int getStackSize() {
+    return stackSize;
+  }
+  
+  public void setStackPosition(int newPosition, int stackSize) {
     stackPosition = newPosition;
+    this.stackSize = stackSize;
   }
   
   public boolean isDeclaration() {

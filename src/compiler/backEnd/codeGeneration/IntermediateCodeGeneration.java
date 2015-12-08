@@ -70,6 +70,7 @@ public class IntermediateCodeGeneration implements
   private int stackOffset;
   private int currOffset;
   private int extraOffset;
+  private int currStackSize;
   
   int labelCounter = 0;
   
@@ -79,6 +80,7 @@ public class IntermediateCodeGeneration implements
     
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     stackOffset = programNode.getStatements().accept(stackVisitor);
+    currStackSize = stackOffset;
     currOffset = stackOffset;
     
     textSection.add(new AssemblerDirective(".text"));
@@ -458,16 +460,19 @@ public class IntermediateCodeGeneration implements
     Deque<Token> statementList = new LinkedList<Token>();
     returnedRegister = registers.getGeneralRegister();
     
-    Identifier varName = variable.getScope().lookUpAll(variable.getName());
+    Identifier varName = variable.getScope().lookUpAll(variable.getName()
+        , variable.getPosition());
     
     if (variable.getType().equals(BaseType.typeBool) ||
           variable.getType().equals(BaseType.typeChar)) {
       statementList.add(new Ldr(returnedRegister, 
-          new Address(Register.sp, varName.getStackPosition()), true));
+          new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
+              varName.getStackPosition()), true));
     }
     else {
       statementList.add(new Ldr(returnedRegister, 
-          new Address(Register.sp, varName.getStackPosition())));
+          new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
+              varName.getStackPosition())));
     }
     
     return statementList;
@@ -487,10 +492,13 @@ public class IntermediateCodeGeneration implements
     Identifier name = null;
 
     if (lhs instanceof Variable) {
-      name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
+          assignStat.getCodePosition());
+      System.out.println(name.getPosition() + " " + 
+          assignStat.getCodePosition() +" " + lhs.getType());
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
-        name.setStackPosition(currOffset);
+        name.setStackPosition(currOffset, currStackSize);
       }
     }
     else if (lhs instanceof First) {
@@ -533,10 +541,12 @@ public class IntermediateCodeGeneration implements
     Address assignAddress = new Address(Register.sp, currOffset);
     if (name != null) {
       int stackPos = name.getStackPosition();
-      assignAddress = new Address(Register.sp, stackPos);
+      assignAddress = new Address(Register.sp, (currStackSize -
+          name.getStackSize()) + stackPos);
     }
     
     if (isByte((Variable) lhs)) {
+      System.out.println("Hey " + lhs.getType() + lhs.getPosition());
       statementList.add(new Str(regRHS, assignAddress, true));
     }
     else {
@@ -567,11 +577,13 @@ public class IntermediateCodeGeneration implements
     Deque<Token> token = new LinkedList<Token>();
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     int scopeOffset = beginEnd.getContent().accept(stackVisitor);
+    currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
     subExtraOffset(token);
     token.addAll(beginEnd.getContent().accept(this));
     addExtraOffset(token);
+    currStackSize -= scopeOffset;
     currOffset -= scopeOffset;
     return token;
   }
@@ -619,24 +631,28 @@ public class IntermediateCodeGeneration implements
 		
 		// Create space in the stack for the ifBody scope.
 		int scopeOffset = ifStat.getIf().accept(stackVisitor);
+		currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
     subExtraOffset(statementList);
     statementList.addAll(ifStat.getIf().accept(this));
     addExtraOffset(statementList);
     currOffset -= scopeOffset;
+    currStackSize -= scopeOffset;
     
     statementList.add(new Branch(elseBodyLabel));
     statementList.add(ifBodyLabel);
 		
     // Create space in the stack for the else scope.
     scopeOffset = ifStat.getElse().accept(stackVisitor);
+    currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
     subExtraOffset(statementList);
     statementList.addAll(ifStat.getElse().accept(this));
     addExtraOffset(statementList);
     currOffset -= scopeOffset;
+    currStackSize -= scopeOffset;
 		
 		statementList.add(elseBodyLabel);
 		
@@ -703,7 +719,8 @@ public class IntermediateCodeGeneration implements
     if (readItem.getType().equals(BaseType.typeInt)) {
       if (readItem instanceof Variable) {
         Variable var = (Variable) readItem;
-        Identifier ident = var.getScope().lookUpAll(var.getName());
+        Identifier ident = var.getScope().lookUpAll(var.getName(), 
+            readStat.getCodePosition());
         tokens.add(new Add(returnedRegister, Register.sp,
             new ImmediateValue(ident.getStackPosition())));
       }
@@ -714,7 +731,8 @@ public class IntermediateCodeGeneration implements
     else if (readItem.getType().equals(BaseType.typeChar)) {
       if (readItem instanceof Variable) {
         Variable var = (Variable) readItem;
-        Identifier ident = var.getScope().lookUpAll(var.getName());
+        Identifier ident = var.getScope().lookUpAll(var.getName(),
+            readStat.getCodePosition());
         tokens.add(new Add(returnedRegister, Register.sp,
             new ImmediateValue(ident.getStackPosition())));
       }
@@ -755,12 +773,14 @@ public class IntermediateCodeGeneration implements
     statementList.add(endWhile);
     
     int scopeOffset = whileStat.getBody().accept(stackVisitor);
+    currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
     subExtraOffset(statementList);
     statementList.addAll(whileStat.getBody().accept(this));
     addExtraOffset(statementList);
     currOffset -= scopeOffset;
+    currStackSize -= scopeOffset;
     
     statementList.add(startWhile);
     statementList.addAll(condition.accept(this));

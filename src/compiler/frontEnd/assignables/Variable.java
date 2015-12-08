@@ -27,7 +27,7 @@ public class Variable implements AssignLHS, Expr {
 
   @Override
   public Type getType() {
-    return scope.lookUpAll(name).getType();
+    return scope.lookUpAll(name, codePos).getType();
   }
 
   @Override
