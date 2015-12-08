@@ -71,6 +71,8 @@ public class IntermediateCodeGeneration implements
   
   private static final int PAIR_SIZE = 8;
   private static final int ARRAY_SIZE = 4;
+  private static final int INT_SIZE = 4;
+  private static final int BYTE_SIZE = 1;
   
   private RegisterList registers = new RegisterList();
   private Register returnedRegister = null;
@@ -415,11 +417,12 @@ public class IntermediateCodeGeneration implements
     return tokens;
   }
   
+  // Produces assembly code for the newpair method.
   @Override
   public Deque<Token> visit(NewPair newPair) {
     Deque<Token> tokens = new LinkedList<Token>();
     
-    ImmediateValue heapSize = new ImmediateValue("8");
+    ImmediateValue heapSize = new ImmediateValue(PAIR_SIZE);
     heapSize.setPrefix("=");
     tokens.add(new Ldr(Register.r0, heapSize));
     tokens.add(new BranchLink(new Label("malloc")));
@@ -439,10 +442,10 @@ public class IntermediateCodeGeneration implements
       ImmediateValue sizeTypeValue;
       
       if (isByte(expression)) {
-        sizeTypeValue = new ImmediateValue("1");
+        sizeTypeValue = new ImmediateValue(BYTE_SIZE);
       }
       else {
-        sizeTypeValue = new ImmediateValue("4");
+        sizeTypeValue = new ImmediateValue(INT_SIZE);
       }
       
       sizeTypeValue.setPrefix("=");
@@ -582,7 +585,6 @@ public class IntermediateCodeGeneration implements
     
     registers.freeRegister(regZero);
     registers.freeRegister(regOne);
-    // registers.freeRegister(destination);
     
     returnedRegister = destination;
     return tokens;
@@ -615,12 +617,14 @@ public class IntermediateCodeGeneration implements
       codeState.throwOverflow();
       registers.freeRegister(regHelper);
       break;
-    case "ord":
-      break;
     case "len":
+      // The length of the array with just be the address of the returned
+      // register.
       tokens.add(new Ldr(regExpr, new Address(regExpr)));
       break;
     case "chr":
+      break;
+    case "ord":
       break;
     }
     
@@ -630,6 +634,9 @@ public class IntermediateCodeGeneration implements
     return tokens;
   }
 
+  // A ValueExpr could be a BaseType, an array or a pair.
+  // Therefore we should make several if statements dependand of the
+  // valueExpr type. 
   @Override
   public Deque<Token> visit(ValueExpr valueExpr) {
     Deque<Token> tokens = new LinkedList<Token>();
@@ -861,13 +868,16 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(BeginEndStat beginEnd) {
     Deque<Token> token = new LinkedList<Token>();
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    
     int scopeOffset = beginEnd.getContent().accept(stackVisitor);
     currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
+    
     subExtraOffset(token);
     token.addAll(beginEnd.getContent().accept(this));
     addExtraOffset(token);
+    
     currStackSize -= scopeOffset;
     currOffset -= scopeOffset;
     return token;
@@ -907,7 +917,7 @@ public class IntermediateCodeGeneration implements
     
     return tokens;
   }
-
+  
   @Override
   public Deque<Token> visit(IfThenElseStat ifStat) {
     Deque<Token> tokens = new LinkedList<Token>();
@@ -1061,10 +1071,13 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(SkipStat skipStat) {
     return new LinkedList<Token>();
   }
-
+  
+  // Visiting the statList will go through a loop of all the statements
+  // in the program and visit them.
   @Override
   public Deque<Token> visit(StatList statList) {
     Deque<Token> tokens = new LinkedList<Token>();
+    
     for (ASTNode stat: statList.getChildren()) {
       tokens.addAll(stat.accept(this));
     }
@@ -1075,7 +1088,9 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(WhileStat whileStat) {
     Deque<Token> tokens = new LinkedList<Token>();
+    
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    
     Expr condition = whileStat.getCondition();
     Label startWhile = new Label("L" + labelCounter * 2);
     Label endWhile = new Label("L" + (labelCounter * 2 + 1));
@@ -1088,9 +1103,11 @@ public class IntermediateCodeGeneration implements
     currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
+    
     subExtraOffset(tokens);
     tokens.addAll(whileStat.getBody().accept(this));
     addExtraOffset(tokens);
+    
     currOffset -= scopeOffset;
     currStackSize -= scopeOffset;
     
