@@ -1,5 +1,8 @@
 package compiler.frontEnd.assignables;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import compiler.CodePosition;
 import compiler.backEnd.codeGeneration.AbstractSyntaxTreeVisitor;
 import compiler.frontEnd.expressions.Expr;
@@ -24,6 +27,21 @@ public class NewPair implements AssignRHS {
   
   public CodePosition getPosition() {
     return codePos;
+  }
+  
+  public Expr getFirst() {
+    return first;
+  }
+  
+  public Expr getSecond() {
+    return second;
+  }
+  
+  public List<Expr> getExprs() {
+    List<Expr> expressions = new LinkedList<Expr>();
+    expressions.add(first);
+    expressions.add(second);
+    return expressions;
   }
   
   @Override

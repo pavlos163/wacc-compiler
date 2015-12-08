@@ -8,7 +8,7 @@ public class Str extends Instruction {
   
   public Str(Cond cond, Operand destination, Operand source, boolean isByte) {
     super(cond, destination, source);
-    this.isByte = true;
+    this.isByte = isByte;
   }
   
   public Str(Cond cond, Operand destination, Operand source) {
@@ -21,7 +21,7 @@ public class Str extends Instruction {
   
   public Str(Operand destination, Operand source, boolean isByte) {
     super(destination, source);
-    this.isByte = true;
+    this.isByte = isByte;
   }
   
   @Override

@@ -287,8 +287,47 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(NewPair newPair) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    ImmediateValue heapSize = new ImmediateValue("8");
+    heapSize.setPrefix("=");
+    statementList.add(new Ldr(Register.r0, heapSize));
+    statementList.add(new BranchLink(new Label("malloc")));
+    
+    Register heapReg = registers.getGeneralRegister();
+    
+    statementList.add(new Mov(heapReg, Register.r0));
+    registers.freeRegister(Register.r0);
+    
+    Register regExpr = null;
+    int expressionNumber = 0;
+    
+    for (Expr expression : newPair.getExprs()) {
+      statementList.addAll(expression.accept(this));
+      regExpr = returnedRegister;
+      
+      ImmediateValue sizeTypeValue;
+      
+      if (isByte(expression)) {
+        sizeTypeValue = new ImmediateValue("1");
+        sizeTypeValue.setPrefix("=");
+      }
+      else {
+        sizeTypeValue = new ImmediateValue("4");
+        sizeTypeValue.setPrefix("=");
+      }
+      
+      statementList.add(new Ldr(Register.r0, sizeTypeValue));
+      statementList.add(new BranchLink(new Label("malloc")));
+      statementList.add(new Str(regExpr, new Address(Register.r0), 
+          isByte(expression)));
+      System.out.println(isByte(expression));
+      int heapValue = 4 * expressionNumber;
+      statementList.add(new Str(Register.r0, new Address(heapReg, heapValue)));
+      expressionNumber++;
+    }
+    
+    return statementList;
   }
 
   @Override
@@ -550,13 +589,14 @@ public class IntermediateCodeGeneration implements
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
           assignStat.getCodePosition());
-      System.out.println(name.getPosition() + " " + 
-          assignStat.getCodePosition() +" " + lhs.getType());
+
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
       }
+      
       Address assignAddress = new Address(Register.sp, currOffset);
+      
       if (name != null) {
         int stackPos = name.getStackPosition();
         assignAddress = new Address(Register.sp, (currStackSize -
