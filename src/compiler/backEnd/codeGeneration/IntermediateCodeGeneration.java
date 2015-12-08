@@ -162,6 +162,7 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ArrayElem arrayElem) {
+    System.out.println("VISITED ELEM!");
     Deque<Token> statementList = new LinkedList<Token>();
     
     Register reg = registers.getGeneralRegister();
@@ -179,8 +180,48 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ArrayLiter arrayLiter) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+
+    int typeSize = ((BaseType) arrayLiter.getBaseType()).getSize();
+    int arraySize = arrayLiter.getExpressions().size();
+
+    int literSize = arraySize * typeSize + 4;
+    
+    ImmediateValue literSizeValue = new ImmediateValue(literSize);
+    literSizeValue.setPrefix("=");
+    
+    Register reg = registers.getGeneralRegister();
+    
+    statementList.add(new Ldr(Register.r0, literSizeValue));
+    statementList.add(new BranchLink(new Label("malloc")));
+    statementList.add(new Mov(reg, Register.r0));
+    
+    List<Expr> expressionList = arrayLiter.getExpressions();
+    Address address;
+    
+    int offset = 4;
+    for (Expr expression : expressionList) {
+      statementList.addAll(expression.accept(this));
+      address = new Address(reg, offset);
+      if (typeSize == 4) {
+        statementList.add(new Str(returnedRegister, address));
+      }
+      else {
+        statementList.add(new Str(returnedRegister, address, true));
+      }
+      offset += typeSize;
+    }
+    
+    Register extraReg = registers.getGeneralRegister();
+    
+    ImmediateValue arraySizeValue = new ImmediateValue(arraySize);
+    arraySizeValue.setPrefix("=");
+    
+    statementList.add(new Ldr(extraReg, arraySizeValue));
+    statementList.add(new Str(extraReg, new Address(reg)));
+    
+    returnedRegister = reg;
+    return statementList;
   }
 
   @Override

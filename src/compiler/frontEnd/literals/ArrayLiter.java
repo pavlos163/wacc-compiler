@@ -31,6 +31,10 @@ public class ArrayLiter implements Liter, AssignRHS {
     return arrayType;
   }
   
+  public Type getBaseType() {
+    return arrayType.getType();
+  }
+  
   public List<Expr> getExpressions() {
     return expressions;
   }
