@@ -201,14 +201,23 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ArrayLiter arrayLiter) {
     Deque<Token> statementList = new LinkedList<Token>();
-    int typeSize = ((BaseType) arrayLiter.getBaseType()).getSize();
+    System.out.println("HERE!");
+    
+    int typeSize;
+    if (!arrayLiter.getExpressions().isEmpty()) {
+       typeSize = ((BaseType) arrayLiter.getBaseType()).getSize();
+    }
+    else {
+      typeSize = 0;
+    }
+    
     int arraySize = arrayLiter.getExpressions().size();
 
     int literSize = arraySize * typeSize + 4;
-    
+
     ImmediateValue literSizeValue = new ImmediateValue(literSize);
     literSizeValue.setPrefix("=");
-    
+
     Register reg = registers.getGeneralRegister();
     
     statementList.add(new Ldr(Register.r0, literSizeValue));
@@ -221,7 +230,7 @@ public class IntermediateCodeGeneration implements
     int offset = 4;
     for (Expr expression : expressionList) {
       statementList.addAll(expression.accept(this));
-      System.out.println(returnedRegister);
+
       address = new Address(reg, offset);
       if (typeSize == 4) {
         statementList.add(new Str(returnedRegister, address));
@@ -232,16 +241,18 @@ public class IntermediateCodeGeneration implements
       offset += typeSize;
       registers.freeRegister(returnedRegister);
     }
-    
-    Register extraReg = returnedRegister;
+        
+    if (returnedRegister == null) {
+      returnedRegister = registers.getGeneralRegister();
+    }
     
     ImmediateValue arraySizeValue = new ImmediateValue(arraySize);
     arraySizeValue.setPrefix("=");
     
-    statementList.add(new Ldr(extraReg, arraySizeValue));
-    statementList.add(new Str(extraReg, new Address(reg)));
+    statementList.add(new Ldr(returnedRegister, arraySizeValue));
+    statementList.add(new Str(returnedRegister, new Address(reg)));
     
-    registers.freeRegister(extraReg);
+    registers.freeRegister(returnedRegister);
     
     returnedRegister = reg;
     return statementList;
@@ -502,6 +513,8 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
               varName.getStackPosition())));
+      statementList.add(new Ldr(returnedRegister,
+          new Address(returnedRegister)));
     }
     
     return statementList;
@@ -512,8 +525,8 @@ public class IntermediateCodeGeneration implements
     Deque<Token> statementList = new LinkedList<Token>();
     
     // For now (if we suppose all LHS to be just variables).
-    
     AssignRHS rhs = assignStat.getRhs();
+
     statementList.addAll(rhs.accept(this));
     Register regRHS = returnedRegister;
 
