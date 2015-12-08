@@ -215,10 +215,11 @@ public class IntermediateCodeGeneration implements
     
     List<Expr> expressionList = arrayLiter.getExpressions();
     Address address;
-    
+        
     int offset = 4;
     for (Expr expression : expressionList) {
       statementList.addAll(expression.accept(this));
+      System.out.println(returnedRegister);
       address = new Address(reg, offset);
       if (typeSize == 4) {
         statementList.add(new Str(returnedRegister, address));
@@ -227,6 +228,7 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Str(returnedRegister, address, true));
       }
       offset += typeSize;
+      registers.freeRegister(returnedRegister);
     }
     
     Register extraReg = returnedRegister;
