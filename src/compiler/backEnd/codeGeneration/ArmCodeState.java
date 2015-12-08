@@ -247,9 +247,9 @@ public class ArmCodeState {
     negIndexImm.setPrefix("=");
     code.add(new Ldr(Cond.CS, Register.r0, largeIndexImm));
     code.add(new BranchLink(Cond.CS, new Label(RUNTIME_ERROR)));
+    endFunction();
     throwRuntimeError();
     usedFunctions.add(ARRAY_BOUND);
-    endFunction();
   }
  
   public Deque<Token> getData() {
