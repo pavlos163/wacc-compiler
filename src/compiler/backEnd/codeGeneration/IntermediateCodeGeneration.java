@@ -527,7 +527,10 @@ public class IntermediateCodeGeneration implements
       statementList.addAll(((ArrayElem) valueExpr.getLiter()).accept(this));
     }
     else if (valueExpr.getLiter() instanceof PairLiter) {
-      
+      Register reg = registers.getGeneralRegister();
+      ImmediateValue zeroVal = new ImmediateValue("0");
+      zeroVal.setPrefix("=");
+      statementList.add(new Ldr(reg, new ImmediateValue("0")));
     }
     else if (valueExpr.getType().equals(BaseType.typeInt)) {
       String intValue = valueExpr.getLiter().getString();
