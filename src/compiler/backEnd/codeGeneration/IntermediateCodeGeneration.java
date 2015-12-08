@@ -479,11 +479,8 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
       String charValue = valueExpr.getString();
       Register reg = registers.getGeneralRegister();
-      
-      String c = removeEscapeSlash(charValue);
-      
-      ImmediateValue val = new ImmediateValue(c);
-
+      charValue = removeEscapeSlash(charValue);
+      ImmediateValue val = new ImmediateValue(charValue);
       statementList.add(new Mov(reg, val));
       returnedRegister = reg;
     }
@@ -544,8 +541,6 @@ public class IntermediateCodeGeneration implements
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
           assignStat.getCodePosition());
-      System.out.println(name.getPosition() + " " + 
-          assignStat.getCodePosition() +" " + lhs.getType());
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
@@ -558,7 +553,6 @@ public class IntermediateCodeGeneration implements
       }
       
       if (isByte((Variable) lhs)) {
-        System.out.println("Hey " + lhs.getType() + lhs.getPosition());
         statementList.add(new Str(regRHS, assignAddress, true));
       }
       else {
@@ -566,7 +560,6 @@ public class IntermediateCodeGeneration implements
       }
     }
     else if (lhs instanceof First) {
-      
     }
     else if (lhs instanceof Second) {
       
@@ -762,6 +755,7 @@ public class IntermediateCodeGeneration implements
       codeState.usePrintInt();
     }
     else if (type.equals(BaseType.typeChar)) {
+      System.out.print("Hey\n");
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
     }
@@ -857,34 +851,21 @@ public class IntermediateCodeGeneration implements
   }
   
   private String removeEscapeSlash(String charValue) {
-    if (charValue.contains("\\0")) {
-      charValue = charValue.replace("\\0", "0");
+    String copyCharValue = charValue;
+    int len = copyCharValue.length();
+    int slashIndex = -1;
+    for (int i=0; i<copyCharValue.length(); i++) {
+      if (copyCharValue.charAt(i) == '\\') {
+        slashIndex = i;
+        break;
+      }
     }
-    else if (charValue.contains("\\b")) {
-      charValue = charValue.replace("\\b", "\b");
+    if (slashIndex == -1) {
+      return copyCharValue;
     }
-    else if (charValue.contains("\\n")) {
-      charValue = charValue.replace("\\n", "\n");
-    }
-    else if (charValue.contains("\\f")) {
-      charValue = charValue.replace("\\f", "\f");
-    }
-    else if (charValue.contains("\\r")) {
-      charValue = charValue.replace("\\r", "\r");
-    }
-    else if (charValue.contains("\\\"")) {
-      charValue = charValue.replace("\\\"", "\"");
-    }
-    else if (charValue.contains("\\'")) {
-      charValue = charValue.replace("\\'", "'");
-    }
-    else if (charValue.contains("\\\\")) {
-      charValue = charValue.replace("\\\\", "\\");
-    }
-    else {
-      return charValue;
-    }
-    return "" + charValue.charAt(1);
+    String front = copyCharValue.substring(0, slashIndex);
+    String back = copyCharValue.substring(slashIndex + 1, len);
+    charValue = front + back;
+    return charValue;
   }
-
 }
