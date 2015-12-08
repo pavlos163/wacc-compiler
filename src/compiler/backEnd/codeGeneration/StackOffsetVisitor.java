@@ -127,7 +127,7 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
 
   @Override
   public Integer visit(BeginEndStat beginEnd) {
-    return 0;
+    return beginEnd.getContent().accept(this);
   }
 
   @Override
