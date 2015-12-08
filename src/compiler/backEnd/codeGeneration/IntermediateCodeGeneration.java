@@ -188,7 +188,6 @@ public class IntermediateCodeGeneration implements
       else {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg));
       }
-      statementList.add(new Ldr(arrayReg, new Address(arrayReg)));
     }
     registers.freeRegister(arrayReg);
     
@@ -490,9 +489,15 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, varName.getStackPosition()), true));
     }
+    else if (variable.getType().equals(BaseType.typeInt)) {
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, varName.getStackPosition())));
+    }
     else {
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, varName.getStackPosition())));
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(returnedRegister)));
     }
     
     return statementList;
