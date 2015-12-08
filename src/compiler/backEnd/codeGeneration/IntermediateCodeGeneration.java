@@ -351,7 +351,7 @@ public class IntermediateCodeGeneration implements
       codeState.throwOverflow();
       break;
     case "-":
-      statementList.add(new Sub(destination, regLHS, regRHS));
+      statementList.add(new Sub(true, destination, regLHS, regRHS));
       statementList.add(new BranchLink(Cond.VS,
           new Label(codeState.INTEGER_OVERFLOW)));
       codeState.throwOverflow();
@@ -427,7 +427,7 @@ public class IntermediateCodeGeneration implements
       Register regHelper = registers.getGeneralRegister();
       statementList.add(new Mov(regHelper, zeroVal));
       // R4 = R5 - R4 => R4 = -R4
-      statementList.add(new Sub(regExpr, regHelper, regExpr));
+      statementList.add(new Sub(true, regExpr, regHelper, regExpr));
       statementList.add(new BranchLink(Cond.VS,
           new Label(codeState.INTEGER_OVERFLOW)));
       codeState.throwOverflow();
