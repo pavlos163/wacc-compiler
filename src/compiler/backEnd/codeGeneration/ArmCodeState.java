@@ -286,18 +286,21 @@ public class ArmCodeState {
   public void freePair(int msgNum){
   	code.add(new Push(Register.lr));
   	code.add(new Cmp(Register.r0, new ImmediateValue("0")));
-  	code.add(new Ldr(Cond.EQ, Register.r0, new ImmediateValue("=msg_" + (msgNum))));
+  	
+  	ImmediateValue msg = new ImmediateValue("msg_" + msgNum);
+  	msg.setPrefix("=");
+  	code.add(new Ldr(Cond.EQ, Register.r0, msg));
+  	
   	code.add(new Branch(Cond.EQ, new Label("p_throw_runtime_error")));
-  	code.add(new Push(new ImmediateValue("{r0}")));//not sure if I should use adress
-  	code.add(new Ldr(Register.r0,new Address(Register.r0)));
+  	code.add(new Push(Register.r0));
+  	code.add(new Ldr(Register.r0, new Address(Register.r0)));
   	code.add(new BranchLink(new Label("free")));
-  	code.add(new Ldr(Register.r0,new Address(Register.sp)));
-  	code.add(new Ldr(Register.r0,new Address(Register.r0)));
+  	code.add(new Ldr(Register.r0, new Address(Register.sp)));
+  	code.add(new Ldr(Register.r0, new Address(Register.r0, 4)));
   	code.add(new BranchLink(new Label("free")));
-  	code.add(new Pop(new Address(Register.r0)));
+  	code.add(new Pop(Register.r0));
   	code.add(new BranchLink(new Label("free")));
   	code.add(new Pop(Register.pc));
-  	
   }
  
   public int getSize() {

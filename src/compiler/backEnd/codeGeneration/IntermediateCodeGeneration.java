@@ -328,6 +328,8 @@ public class IntermediateCodeGeneration implements
       expressionNumber++;
     }
     
+    registers.freeRegister(regExpr);
+    returnedRegister = regExpr;
     return statementList;
   }
 
@@ -725,11 +727,17 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(FreeStat freeStat) {
   	Deque<Token> statementList = new LinkedList<Token>();
   	
+  	Register reg;
+  	
+    statementList.addAll(freeStat.getItem().accept(this));
+    reg = returnedRegister;
+    
 		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
 		statementList.add(new BranchLink(new Label("p_free_pair") ));
-		statementList.addAll(freeStat.getItem().accept(this));
 		
 		codeState.freePair(msgNum);
+		registers.freeRegister(reg);
+		
 		msgNum++;
 		return statementList;
   }
