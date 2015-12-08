@@ -76,6 +76,7 @@ public class IntermediateCodeGeneration implements
   private int currOffset;
   private int extraOffset;
   private int currStackSize;
+  private int argSize;
   // Stack for the values there is no space for them 
   // in the registers.
   private Stack<Operand> stack = new Stack<Operand>();
@@ -227,7 +228,7 @@ public class IntermediateCodeGeneration implements
     Expr expr;
     for (int i = 0; i < expressionList.size(); i++) {
       expr = expressionList.get(i);
-      System.out.println(expr);
+      // System.out.println(expr);
       statementList.addAll(expr.accept(this));
       arrayIndexReg = returnedRegister;
       
@@ -262,7 +263,7 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ArrayLiter arrayLiter) {
     Deque<Token> statementList = new LinkedList<Token>();
-    System.out.println("HERE!");
+    // System.out.println("HERE!");
         
     int typeSize;
     if (!arrayLiter.getExpressions().isEmpty()) {
@@ -327,6 +328,9 @@ public class IntermediateCodeGeneration implements
       statementList.addAll(visitArguments(call.getArguments()));
     }
     statementList.add(new BranchLink(new Label("f_" + call.getName())));
+    statementList.add(new Add(Register.sp, Register.sp, 
+        new ImmediateValue(argSize)));
+    argSize = 0;
     returnedRegister = registers.getGeneralRegister();
     statementList.add(new Mov(returnedRegister, Register.r0));
     return statementList;
@@ -341,10 +345,12 @@ public class IntermediateCodeGeneration implements
       Register reg = returnedRegister;
       if (expr.getType().equals(BaseType.typeInt)) {
         argOffSet = -4;
+        argSize += 4;
       }
       if (expr.getType().equals(BaseType.typeBool) || 
           expr.getType().equals(BaseType.typeChar)) {
         argOffSet = -1;
+        argSize++;
       }
       statementList.add(new Str(reg, new Address(Register.sp, argOffSet)));
       registers.freeRegister(reg);
@@ -394,7 +400,7 @@ public class IntermediateCodeGeneration implements
       statementList.add(new BranchLink(new Label("malloc")));
       statementList.add(new Str(regExpr, new Address(Register.r0), 
           isByte(expression)));
-      System.out.println(isByte(expression));
+      // System.out.println(isByte(expression));
       int heapValue = 4 * expressionNumber;
       statementList.add(new Str(Register.r0, new Address(heapReg, heapValue)));
       expressionNumber++;
@@ -702,7 +708,7 @@ public class IntermediateCodeGeneration implements
       }
       
       if (isByte((Variable) lhs)) {
-        System.out.println("Hey " + lhs.getType() + lhs.getPosition());
+        // System.out.println("Hey " + lhs.getType() + lhs.getPosition());
         statementList.add(new Str(regRHS, assignAddress, true));
       }
       else {
