@@ -430,9 +430,10 @@ public class IntermediateCodeGeneration implements
     statementList.addAll(rhs.accept(this));
     
     AssignLHS lhs = assignStat.getLhs();
+    Identifier name = null;
 
     if (lhs instanceof Variable) {
-      Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+      name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);
@@ -450,6 +451,10 @@ public class IntermediateCodeGeneration implements
     Register regRHS = returnedRegister;
 
     Address assignAddress = new Address(Register.sp, currOffset);
+    if (name != null) {
+      int stackPos = name.getStackPosition();
+      assignAddress = new Address(Register.sp, stackPos);
+    }
     
     if (isByte((Variable) lhs)) {
       statementList.add(new Str(regRHS, assignAddress, true));
