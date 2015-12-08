@@ -13,7 +13,11 @@ public class WhileStat extends StatWithCond {
     this.whileBody = whileBody;
     checkErrors(condition);
   }
-
+  
+  public Stat getBody() {
+    return whileBody;
+  }
+  
   @Override
   public CodePosition getPosition() {
     return codePos;
@@ -23,4 +27,5 @@ public class WhileStat extends StatWithCond {
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
   }
+  
 }

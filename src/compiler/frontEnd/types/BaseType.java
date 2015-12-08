@@ -21,4 +21,11 @@ public enum BaseType implements Type {
     return super.toString().substring(4);
   }
   
+  public int getSize() {
+    if (this.equals(typeInt)) {
+      return 4;
+    }
+    return 1;
+  }
+  
 }

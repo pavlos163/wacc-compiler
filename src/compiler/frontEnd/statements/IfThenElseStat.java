@@ -21,6 +21,14 @@ public class IfThenElseStat extends StatWithCond {
     return codePos;
   }
   
+  public Stat getIf() {
+    return ifBody;
+  }
+  
+  public Stat getElse() {
+    return elseBody;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);

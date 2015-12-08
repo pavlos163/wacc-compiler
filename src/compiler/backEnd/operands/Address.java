@@ -3,6 +3,7 @@ package compiler.backEnd.operands;
 public class Address implements Operand {
   
   private final Register reg;
+  private Register offsetReg = null;
   private int offset;
   
   public Address(Register reg) {
@@ -15,6 +16,11 @@ public class Address implements Operand {
     this.offset = offset;
   }
   
+  public Address(Register reg, Register offsetReg) {
+    this.reg = reg;
+    this.offsetReg = offsetReg;
+  }
+
   public Register getRegister() {
     return reg;
   }

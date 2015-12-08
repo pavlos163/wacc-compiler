@@ -9,7 +9,7 @@ public class ImmediateValue implements Operand {
     this.value = value;
     this.prefix = "#";
   }
-  
+    
   public ImmediateValue(int value) {
     this.value = Integer.toString(value);
     this.prefix = "#";

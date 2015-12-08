@@ -9,11 +9,12 @@ public abstract class Instruction implements Token {
   protected boolean s = false;
   protected final Operand destination;
   protected final Operand primarySource;
-  protected final Operand secondarySource;
-  protected final Operand reg; // Overflow reg.
+  protected Operand secondarySource = null;
+  protected Operand reg = null; // Overflow reg.
+  protected int offset = 0;
   
-  public Instruction(boolean s, Operand destination , Operand reg, Operand primarySource,
-      Operand secondarySource) {
+  public Instruction(boolean s, Operand destination , Operand reg, 
+      Operand primarySource, Operand secondarySource) {
     this.s = s;
     this.reg = reg;
     this.destination = destination;
@@ -24,7 +25,6 @@ public abstract class Instruction implements Token {
   public Instruction(boolean s, Operand destination, Operand primarySource,
       Operand secondarySource) {
     this.s = s;
-    this.reg = null;
     this.destination = destination;
     this.primarySource = primarySource;
     this.secondarySource = secondarySource;
@@ -32,22 +32,17 @@ public abstract class Instruction implements Token {
   
   public Instruction(Cond cond, Operand destination, Operand source) {
     this.cond = cond;
-    this.reg = null;
     this.destination = destination;
     this.primarySource = source;
-    this.secondarySource = null;
   }
       
   public Instruction(Operand destination, Operand source) {
-    this.reg = null;
     this.destination = destination;
     this.primarySource = source;
-    this.secondarySource = null;
   }
   
   public Instruction(Cond cond, Operand destination, Operand primarySource,
       Operand secondarySource) {
-    this.reg = null;
     this.cond = cond;
     this.destination = destination;
     this.primarySource = primarySource;
@@ -56,17 +51,22 @@ public abstract class Instruction implements Token {
   
   public Instruction(Operand destination, Operand primarySource,
       Operand secondarySource) {
-    this.reg = null;
     this.destination = destination;
     this.primarySource = primarySource;
     this.secondarySource = secondarySource;
   }
   
   public Instruction(Operand destination) {
-    this.reg = null;
     this.destination = destination;
     this.primarySource = null;
-    this.secondarySource = null;
+  }
+  
+  public Instruction(Operand destination, Operand primarySource, 
+      Operand secondarySource, int offset) {
+    this.destination = destination;
+    this.primarySource = primarySource;
+    this.secondarySource = secondarySource;
+    this.offset = offset;
   }
   
   public Cond getCond() {
@@ -87,5 +87,9 @@ public abstract class Instruction implements Token {
   
   public Operand getOverflowReg() {
     return reg;
+  }
+  
+  public int getOffset() {
+    return offset;
   }
 }

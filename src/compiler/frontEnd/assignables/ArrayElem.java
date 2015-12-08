@@ -52,7 +52,7 @@ public class ArrayElem implements AssignLHS, Liter {
   public Type getType() {
     return type;
   }
-
+  
   @Override
   public CodePosition getPosition() {
     return codePos;
@@ -65,6 +65,10 @@ public class ArrayElem implements AssignLHS, Liter {
   
   public SymbolTable<Identifier> getScope() {
     return scope;
+  }
+  
+  public List<Expr> getExpressions() {
+    return exprs;
   }
   
   @Override
