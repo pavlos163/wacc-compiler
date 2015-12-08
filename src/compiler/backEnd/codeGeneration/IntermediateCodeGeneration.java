@@ -343,18 +343,18 @@ public class IntermediateCodeGeneration implements
       
       if (isByte(expression)) {
         sizeTypeValue = new ImmediateValue("1");
-        sizeTypeValue.setPrefix("=");
       }
       else {
         sizeTypeValue = new ImmediateValue("4");
-        sizeTypeValue.setPrefix("=");
       }
+      
+      sizeTypeValue.setPrefix("=");
       
       statementList.add(new Ldr(Register.r0, sizeTypeValue));
       statementList.add(new BranchLink(new Label("malloc")));
       statementList.add(new Str(regExpr, new Address(Register.r0), 
           isByte(expression)));
-      System.out.println(heapReg);
+
       int heapValue = 4 * expressionNumber;
       statementList.add(new Str(Register.r0, new Address(heapReg, heapValue)));
       registers.freeRegister(regExpr);
@@ -611,9 +611,9 @@ public class IntermediateCodeGeneration implements
     
     if (variable.getType().equals(BaseType.typeBool) ||
           variable.getType().equals(BaseType.typeChar)) {
-      //statementList.add(new Ldr(returnedRegister, 
-        //  new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
-          //    varName.getStackPosition()), true));
+      statementList.add(new Ldr(returnedRegister, 
+          new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
+              varName.getStackPosition()), true));
     }
     else if (variable.getType().equals(BaseType.typeInt)) {
       statementList.add(new Ldr(returnedRegister, 
@@ -787,21 +787,21 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
-  	Deque<Token> statementList = new LinkedList<Token>();
-  	
-  	Register reg;
-  	
+    Deque<Token> statementList = new LinkedList<Token>();
+    
+    Register reg;
+    
     statementList.addAll(freeStat.getItem().accept(this));
     reg = returnedRegister;
     
-		statementList.add(new Mov(Register.r0, reg));
-		statementList.add(new BranchLink(new Label(codeState.FREE_PAIR) ));
-		
-		codeState.freePair();
-		registers.freeRegister(reg);
-		
-		msgNum++;
-		return statementList;
+    statementList.add(new Mov(Register.r0, reg));
+    statementList.add(new BranchLink(new Label(codeState.FREE_PAIR) ));
+    
+    codeState.freePair();
+    registers.freeRegister(reg);
+    
+    msgNum++;
+    return statementList;
   }
 
   @Override
