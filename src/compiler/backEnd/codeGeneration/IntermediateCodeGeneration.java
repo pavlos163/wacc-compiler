@@ -171,6 +171,13 @@ public class IntermediateCodeGeneration implements
     Register arrayReg = registers.getGeneralRegister();
     Register arrayIndexReg = null;
     
+    Identifier name = arrayElem.getScope().lookUpAll(arrayElem.getName());
+    
+    if (name.getStackPosition() != currOffset) {
+      ImmediateValue offsetValue = new ImmediateValue(currOffset);
+      statementList.add(new Add(arrayReg, Register.sp, offsetValue));
+    }
+    
     List<Expr> expressionList = ((ArrayElem) arrayElem).getExpressions();
     Expr expr;
     for (int i = 0; i < expressionList.size(); i++) {
@@ -565,21 +572,22 @@ public class IntermediateCodeGeneration implements
       
     }
     else if (lhs instanceof ArrayElem) {
-      int typeSize = ((BaseType) lhs.getType()).getSize();
       name = ((ArrayElem) lhs).getScope().lookUpAll(lhs.getName());
       
       Register arrayReg = registers.getGeneralRegister();
-
       Register arrayIndexReg = null;
+      
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
       }
+      
       ImmediateValue offsetValue = new ImmediateValue(currOffset);
       statementList.add(new Add(arrayReg, Register.sp, offsetValue));
-      
+
       List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
       Expr expr;
+      
       for (int i = 0; i < expressionList.size(); i++) {
         expr = expressionList.get(i);
         statementList.addAll(expr.accept(this));
