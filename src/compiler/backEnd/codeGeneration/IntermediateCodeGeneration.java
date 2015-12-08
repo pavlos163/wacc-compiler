@@ -431,7 +431,6 @@ public class IntermediateCodeGeneration implements
     
     if (valueExpr.getLiter() instanceof ArrayElem) {
       statementList.addAll(((ArrayElem) valueExpr.getLiter()).accept(this));
-      System.out.println(returnedRegister);
     }
     else if (valueExpr.getLiter() instanceof PairLiter) {
       
@@ -561,7 +560,8 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Mov(Register.r1, arrayReg));
 
         statementList.add(new BranchLink(new Label("p_check_array_bounds")));
-        statementList.add(new Add(arrayReg, arrayReg, new ImmediateValue("4")));
+        statementList.add(new Add(arrayReg, arrayReg, 
+            new ImmediateValue("4")));
         if (i == expressionList.size() - 1) {
           statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
         }
@@ -570,8 +570,9 @@ public class IntermediateCodeGeneration implements
         }
       }
       
-      statementList.add(new Str(regRHS, arrayReg));
-      statementList.add(new Add(regRHS, Register.sp, new ImmediateValue(currOffset)));
+      statementList.add(new Str(regRHS, new Address(arrayReg)));
+      statementList.add(new Add(regRHS, Register.sp, 
+          new ImmediateValue(currOffset)));
       registers.freeRegister(arrayReg);
       registers.freeRegister(arrayIndexReg);
     }
@@ -771,7 +772,6 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(StatList statList) {
     Deque<Token> tokens = new LinkedList<Token>();
     for (ASTNode stat: statList.getChildren()) {
-      System.out.println(stat.toString());
       tokens.addAll(stat.accept(this));
     }
     
