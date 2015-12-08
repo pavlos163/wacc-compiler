@@ -240,7 +240,6 @@ public class IntermediateCodeGeneration implements
 
     Register reg = registers.getGeneralRegister();
     
-    
     statementList.add(new Ldr(Register.r0, literSizeValue));
     statementList.add(new BranchLink(new Label("malloc")));
     statementList.add(new Mov(reg, Register.r0));
@@ -544,7 +543,7 @@ public class IntermediateCodeGeneration implements
       Register reg = registers.getGeneralRegister();
       ImmediateValue zeroVal = new ImmediateValue("0");
       zeroVal.setPrefix("=");
-      statementList.add(new Ldr(reg, new ImmediateValue("0")));
+      statementList.add(new Ldr(reg, zeroVal));
     }
     else if (valueExpr.getType().equals(BaseType.typeInt)) {
       String intValue = valueExpr.getLiter().getString();
