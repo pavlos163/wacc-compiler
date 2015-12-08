@@ -190,6 +190,8 @@ public class IntermediateCodeGeneration implements
 
       statementList.add(new BranchLink(new Label(codeState.ARRAY_BOUND)));
       codeState.throwArrayBoundError();
+      statementList.add(new Add(arrayReg, arrayReg, 
+          new ImmediateValue("4")));
       if (i == expressionList.size() - 1) {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
       }
@@ -539,7 +541,7 @@ public class IntermediateCodeGeneration implements
 
     AssignLHS lhs = assignStat.getLhs();
     Identifier name = null;
-    
+        
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
           assignStat.getCodePosition());
@@ -580,19 +582,14 @@ public class IntermediateCodeGeneration implements
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
       }
-      
-      System.out.println(arrayIndexReg);
-      
+            
       ImmediateValue offsetValue = new ImmediateValue(currOffset);
-      System.out.println("Stack size: " + currStackSize);
-      System.out.println("Current offset: " + currOffset);
-      System.out.println("Stack position: " + name.getStackPosition());
-      
       statementList.add(new Add(arrayReg, Register.sp, offsetValue));
 
       List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
       Expr expr;
       
+
       for (int i = 0; i < expressionList.size(); i++) {
         expr = expressionList.get(i);
         statementList.addAll(expr.accept(this));
@@ -603,6 +600,7 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Mov(Register.r1, arrayReg));
 
         statementList.add(new BranchLink(new Label(codeState.ARRAY_BOUND)));
+
         codeState.throwArrayBoundError();
         statementList.add(new Add(arrayReg, arrayReg, 
             new ImmediateValue("4")));
