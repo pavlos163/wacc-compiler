@@ -600,7 +600,7 @@ public class IntermediateCodeGeneration implements
 		
 		statementList.addAll(condition.accept(this));
 		
-		Register reg = registers.getGeneralRegister();
+		Register reg = returnedRegister;
 		
 		statementList.add(new Cmp(reg, new ImmediateValue("0")));
 		statementList.add(new Branch(Cond.EQ, new Label("L" +
