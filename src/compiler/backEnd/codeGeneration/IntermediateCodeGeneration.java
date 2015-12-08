@@ -212,11 +212,12 @@ public class IntermediateCodeGeneration implements
       offset += typeSize;
     }
     
-    Register extraReg = registers.getGeneralRegister();
+    Register extraReg = returnedRegister;
     
     ImmediateValue arraySizeValue = new ImmediateValue(arraySize);
     arraySizeValue.setPrefix("=");
     
+    System.out.println(extraReg.toString());
     statementList.add(new Ldr(extraReg, arraySizeValue));
     statementList.add(new Str(extraReg, new Address(reg)));
     
@@ -527,7 +528,7 @@ public class IntermediateCodeGeneration implements
       }
     }
 
-    regRHS = returnedRegister;
+    // regRHS = returnedRegister;
 
     Address assignAddress = new Address(Register.sp, currOffset);
     if (name != null) {
