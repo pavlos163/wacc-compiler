@@ -74,6 +74,7 @@ public class IntermediateCodeGeneration implements
   private int currStackSize;
   
   int labelCounter = 0;
+  int msgNum = 0;
   
   @Override
   public Deque<Token> visit(ProgramNode programNode) {
@@ -722,11 +723,15 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
-    Deque<Token> statementList = new LinkedList<Token>();
-    statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
-    statementList.add(new BranchLink(new Label("p_free_pair") ));
-    statementList.addAll(freeStat.getItem().accept(this));
-    return statementList;
+  	Deque<Token> statementList = new LinkedList<Token>();
+  	
+		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
+		statementList.add(new BranchLink(new Label("p_free_pair") ));
+		statementList.addAll(freeStat.getItem().accept(this));
+		
+		codeState.freePair(msgNum);
+		msgNum++;
+		return statementList;
   }
 
   @Override

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.AssemblerDirective;
+import compiler.backEnd.instructions.Branch;
 import compiler.backEnd.instructions.BranchLink;
 import compiler.backEnd.instructions.Cmp;
 import compiler.backEnd.instructions.Cond;
@@ -281,6 +282,22 @@ public class ArmCodeState {
       return generatedMsg.toString();
     }
     return msgData.get(message);
+  }
+  public void freePair(int msgNum){
+  	code.add(new Push(Register.lr));
+  	code.add(new Cmp(Register.r0, new ImmediateValue("0")));
+  	code.add(new Ldr(Cond.EQ, Register.r0, new ImmediateValue("=msg_" + (msgNum))));
+  	code.add(new Branch(Cond.EQ, new Label("p_throw_runtime_error")));
+  	code.add(new Push(new ImmediateValue("{r0}")));//not sure if I should use adress
+  	code.add(new Ldr(Register.r0,new Address(Register.r0)));
+  	code.add(new BranchLink(new Label("free")));
+  	code.add(new Ldr(Register.r0,new Address(Register.sp)));
+  	code.add(new Ldr(Register.r0,new Address(Register.r0)));
+  	code.add(new BranchLink(new Label("free")));
+  	code.add(new Pop(new Address(Register.r0)));
+  	code.add(new BranchLink(new Label("free")));
+  	code.add(new Pop(Register.pc));
+  	
   }
  
   public int getSize() {

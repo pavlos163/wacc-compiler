@@ -10,6 +10,7 @@ import compiler.frontEnd.types.PairType;
 import compiler.frontEnd.types.Type;
 
 public class NewPair implements AssignRHS {
+<<<<<<< HEAD
   
   private final Expr first,second;
   private final CodePosition codePos;
@@ -48,5 +49,39 @@ public class NewPair implements AssignRHS {
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
   }
+=======
+
+	private final Expr first, second;
+	private final CodePosition codePos;
+
+	public NewPair(Expr first, Expr second, CodePosition codePos) {
+		this.first = first;
+		this.second = second;
+		this.codePos = codePos;
+	}
+
+	@Override
+	public Type getType() {
+		return new PairType(first.getType(), second.getType());
+	}
+	
+
+	public Expr getFirst() {
+		return first;
+	}
+
+	public Expr getSecond() {
+		return second;
+	}
+
+	public CodePosition getPosition() {
+		return codePos;
+	}
+ 
+	@Override
+	public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
+		return visitor.visit(this);
+	}
+>>>>>>> 93fd899f06fe4e5efea10a5256b20373ccfa5768
 
 }
