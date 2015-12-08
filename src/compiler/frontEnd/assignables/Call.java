@@ -102,6 +102,14 @@ public class Call implements AssignRHS {
     return codePos;
   }
   
+  public ArgList getArguments() {
+    return argList;
+  }
+  
+  public String getName() {
+    return name;
+  }
+  
   @Override
   public <T> T accept(AbstractSyntaxTreeVisitor<T> visitor) {
     return visitor.visit(this);
