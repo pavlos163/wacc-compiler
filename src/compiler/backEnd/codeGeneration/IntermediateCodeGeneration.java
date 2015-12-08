@@ -564,7 +564,9 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(BeginEndStat beginEnd) {
-    return null;
+    Deque<Token> token = new LinkedList<Token>();
+    token.addAll(beginEnd.getContent().accept(this));
+    return token;
   }
 
   @Override
