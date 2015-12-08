@@ -102,7 +102,13 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
   @Override
   public Integer visit(AssignStat assignStat) {
     AssignLHS lhs = assignStat.getLhs();
-    Identifier name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+    Identifier name;
+    if (lhs instanceof Variable) {
+      name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
+    }
+    else {
+      name = ((ArrayElem) lhs).getScope().lookUpAll(lhs.getName());
+    }
     
     if (name.isDeclaration()) {
       name.setDeclaration(false);
