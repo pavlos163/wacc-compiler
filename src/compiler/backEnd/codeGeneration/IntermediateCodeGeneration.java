@@ -3,6 +3,7 @@ package compiler.backEnd.codeGeneration;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import compiler.backEnd.instructions.Add;
 import compiler.backEnd.instructions.And;
@@ -24,6 +25,7 @@ import compiler.backEnd.instructions.Sub;
 import compiler.backEnd.instructions.Token;
 import compiler.backEnd.operands.Address;
 import compiler.backEnd.operands.ImmediateValue;
+import compiler.backEnd.operands.Operand;
 import compiler.backEnd.operands.Register;
 import compiler.backEnd.operands.RegisterList;
 import compiler.frontEnd.assignables.ArrayElem;
@@ -72,6 +74,9 @@ public class IntermediateCodeGeneration implements
   private int currOffset;
   private int extraOffset;
   private int currStackSize;
+  // Stack for the values there is no space for them 
+  // in the registers.
+  private Stack<Operand> stack = new Stack<Operand>();
   
   int labelCounter = 0;
   
@@ -311,8 +316,17 @@ public class IntermediateCodeGeneration implements
     statementList.addAll(rhs.accept(this));
     Register regRHS = returnedRegister;
     
-    registers.freeRegister(regRHS);
-    registers.freeRegister(regLHS);
+    if (stack.size() > 0) {
+      statementList.add(new Pop(Register.r11));
+      stack.pop();
+      regLHS = Register.r11;
+      regRHS = Register.r10;
+      registers.freeRegister(Register.r10);
+    } else {
+      registers.freeRegister(regLHS);
+      registers.freeRegister(regRHS);
+    }
+    
     Register destination = registers.getGeneralRegister();
     
     Register regZero = registers.getReturnRegister();
@@ -470,6 +484,11 @@ public class IntermediateCodeGeneration implements
       String intValue = valueExpr.getLiter().getString();
       // Find a register to store the value in.
       Register reg = registers.getGeneralRegister();
+      if (reg == null) { // 
+        statementList.add(new Push(Register.r10));
+        stack.add(new ImmediateValue(intValue));
+        reg = Register.r10;
+      }
       ImmediateValue val = new ImmediateValue(intValue);
       val.setPrefix("=");
       
@@ -479,6 +498,11 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeBool)) {
       int boolValue = ((BoolLiter) (valueExpr.getLiter())).getValue();
       Register reg = registers.getGeneralRegister();
+      if (reg == null) { // 
+        statementList.add(new Push(Register.r10));
+        stack.add(new ImmediateValue(boolValue));
+        reg = Register.r10;
+      }
       ImmediateValue val = new ImmediateValue(boolValue);
       
       statementList.add(new Mov(reg, val));
@@ -487,10 +511,14 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
       String charValue = valueExpr.getString();
       Register reg = registers.getGeneralRegister();
-      
       String c = removeEscapeSlash(charValue);
-      
       ImmediateValue val = new ImmediateValue(c);
+      
+      if (reg == null) { // 
+        statementList.add(new Push(Register.r10));
+        stack.add(val);
+        reg = Register.r10;
+      }
 
       statementList.add(new Mov(reg, val));
       returnedRegister = reg;
