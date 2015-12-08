@@ -261,8 +261,10 @@ public class IntermediateCodeGeneration implements
     Expr rhs = binExpr.getRHS();
     statementList.addAll(rhs.accept(this));
     Register regRHS = returnedRegister;
-        
-    Register destination = regLHS;
+    
+    registers.freeRegister(regRHS);
+    registers.freeRegister(regLHS);
+    Register destination = registers.getGeneralRegister();
     
     Register regZero = registers.getReturnRegister();
     Register regOne = registers.getReturnRegister();
@@ -357,7 +359,7 @@ public class IntermediateCodeGeneration implements
     
     registers.freeRegister(regZero);
     registers.freeRegister(regOne);
-    registers.freeRegister(destination);
+    // registers.freeRegister(destination);
     
     returnedRegister = destination;
     return statementList;
@@ -370,7 +372,6 @@ public class IntermediateCodeGeneration implements
     Expr expression = unExpr.getExpr();
     statementList.addAll(expression.accept(this));
     Register regExpr = returnedRegister;
-    Register regHelper = registers.getGeneralRegister();
     
     ImmediateValue zeroVal = new ImmediateValue("0");
     ImmediateValue oneVal = new ImmediateValue("1");
@@ -382,9 +383,14 @@ public class IntermediateCodeGeneration implements
       break;
     case "-":
       // R5 = 0
+      Register regHelper = registers.getGeneralRegister();
       statementList.add(new Mov(regHelper, zeroVal));
       // R4 = R5 - R4 => R4 = -R4
       statementList.add(new Sub(regExpr, regHelper, regExpr));
+      statementList.add(new BranchLink(Cond.VS,
+          new Label(codeState.INTEGER_OVERFLOW)));
+      codeState.throwOverflow();
+      registers.freeRegister(regHelper);
       break;
     case "ord":
       // ?
@@ -442,7 +448,7 @@ public class IntermediateCodeGeneration implements
       returnedRegister = reg;
     }
     
-    registers.freeRegister(returnedRegister);
+    // registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -474,7 +480,7 @@ public class IntermediateCodeGeneration implements
     
     AssignRHS rhs = assignStat.getRhs();
     statementList.addAll(rhs.accept(this));
-    Register regRHS = registers.getGeneralRegister();
+    Register regRHS = returnedRegister;
     
     AssignLHS lhs = assignStat.getLhs();
     Identifier name = null;
@@ -493,7 +499,6 @@ public class IntermediateCodeGeneration implements
       
     }
     else if (lhs instanceof ArrayElem) {
-      System.out.println("kfjaskj");
       int typeSize = ((BaseType) lhs.getType()).getSize();
       Register sizeReg = registers.getGeneralRegister();
       statementList.add(new Mov(sizeReg, new ImmediateValue(typeSize)));
@@ -521,7 +526,9 @@ public class IntermediateCodeGeneration implements
         }
       }
     }
-    
+
+    regRHS = returnedRegister;
+
     Address assignAddress = new Address(Register.sp, currOffset);
     if (name != null) {
       int stackPos = name.getStackPosition();
@@ -597,7 +604,6 @@ public class IntermediateCodeGeneration implements
 		statementList.add(new Cmp(reg, new ImmediateValue("0")));
 		statementList.add(new Branch(Cond.EQ, new Label("L" +
 		    (ifStatementCounter * 2))));
-    
 		registers.freeRegister(reg);
     statementList.addAll(ifStat.getIf().accept(this));
     
@@ -730,6 +736,7 @@ public class IntermediateCodeGeneration implements
     
     statementList.add(new Cmp(returnedRegister, new ImmediateValue("1")));
     statementList.add(new Branch(Cond.EQ, endWhile));
+    registers.freeRegister(returnedRegister);
     
     ifStatementCounter++;
     return statementList;
