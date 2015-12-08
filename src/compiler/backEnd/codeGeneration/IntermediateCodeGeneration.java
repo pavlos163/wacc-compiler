@@ -165,8 +165,27 @@ public class IntermediateCodeGeneration implements
   
   @Override
   public Deque<Token> visit(Function func) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    int funcOffset = func.accept(stackVisitor);
+    stackOffset += funcOffset;
+    currOffset = stackOffset;
+    
+    String nameLabel = "f_" + func.getIdent();
+    statementList.add(new Label(nameLabel));
+    statementList.add(new Push(Register.lr));
+    statementList.add(new Sub(Register.sp, Register.sp, 
+        new ImmediateValue(funcOffset)));
+    // Visit parameters first. Do something there.
+    // func.getParameters().
+    statementList.addAll(func.getStatements().accept(this));
+    statementList.add(new Add(Register.sp, Register.sp, 
+        new ImmediateValue(funcOffset)));
+    stackOffset -= funcOffset;
+    
+    statementList.add(new Pop(Register.pc));
+    statementList.add(new AssemblerDirective(".ltorg"));
+    return statementList;
   }
 
   @Override
@@ -281,8 +300,16 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(Call call) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    if (call.getArguments().numberOfArguments() != 0) {
+      // Do something.
+    }
+    
+    statementList.add(new BranchLink(new Label("f_" + call.getName())));
+    returnedRegister = registers.getGeneralRegister();
+    statementList.add(new Mov(returnedRegister, Register.r0));
+    
+    return statementList;
   }
 
   @Override
@@ -819,8 +846,13 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ReturnStat returnStat) {
-    // TODO Auto-generated method stub
-    return null;
+    Deque<Token> statementList = new LinkedList<Token>();
+    statementList.addAll(returnStat.getExpr().accept(this));
+    Register reg = returnedRegister;
+    statementList.add(new Mov(Register.r0, reg));
+    statementList.add(new Pop(Register.pc));
+    registers.freeRegister(reg);
+    return statementList;
   }
 
   @Override
@@ -972,5 +1004,4 @@ public class IntermediateCodeGeneration implements
     charValue = front + back;
     return charValue;
   }
-
 }

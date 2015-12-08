@@ -20,6 +20,10 @@ public class ReturnStat extends Stat {
     return codePos;
   }
   
+  public Expr getExpr() {
+    return returnedItem;
+  }
+  
   public String getMethod() {
     return method;
   }
