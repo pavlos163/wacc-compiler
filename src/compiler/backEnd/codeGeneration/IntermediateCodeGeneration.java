@@ -227,7 +227,7 @@ public class IntermediateCodeGeneration implements
     Expr expr;
     for (int i = 0; i < expressionList.size(); i++) {
       expr = expressionList.get(i);
-      System.out.println(expr);
+
       statementList.addAll(expr.accept(this));
       arrayIndexReg = returnedRegister;
       
@@ -262,7 +262,6 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(ArrayLiter arrayLiter) {
     Deque<Token> statementList = new LinkedList<Token>();
-    System.out.println("HERE!");
         
     int typeSize;
     if (!arrayLiter.getExpressions().isEmpty()) {
@@ -353,15 +352,15 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(First fst) {
-    return visitPairItem(true);
+    return visitPairItem(fst, true);
   }
   
   @Override
   public Deque<Token> visit(Second snd) {
-    return visitPairItem(false);
+    return visitPairItem(snd, false);
   }
 
-  private Deque<Token> visitPairItem(boolean isFst) {
+  private Deque<Token> visitPairItem(AssignLHS item, boolean isFst) {
     Deque<Token> tokens = new LinkedList<Token>();
     
     int addressSecond = 4;
@@ -377,6 +376,15 @@ public class IntermediateCodeGeneration implements
     }
     else {
       tokens.add(new Ldr(reg, new Address(reg, addressSecond)));
+    }
+    
+    System.out.println(item.getType());
+    if (item.getType().equals(BaseType.typeInt) ||
+        item.getType().equals(BaseType.typeChar)) {
+      tokens.add(new Ldr(reg, new Address(reg), true));
+    }
+    else {
+      tokens.add(new Ldr(reg, new Address(reg)));
     }
     
     returnedRegister = reg;
@@ -725,7 +733,6 @@ public class IntermediateCodeGeneration implements
       }
       
       if (isByte((Variable) lhs)) {
-        System.out.println("Hey " + lhs.getType() + lhs.getPosition());
         statementList.add(new Str(regRHS, assignAddress, true));
       }
       else {
