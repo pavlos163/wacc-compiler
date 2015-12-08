@@ -192,18 +192,24 @@ public class IntermediateCodeGeneration implements
       codeState.throwArrayBoundError();
       statementList.add(new Add(arrayReg, arrayReg, 
           new ImmediateValue("4")));
-      if (i == expressionList.size() - 1) {
+
+      if (i == expressionList.size() - 1 || !isString(expr.getType())) {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
       }
       else {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg));
       }
+      
       statementList.add(new Ldr(arrayReg, new Address(arrayReg)));
     }
     registers.freeRegister(arrayReg);
     
     returnedRegister = arrayReg;
     return statementList;
+  }
+
+  private boolean isString(Type type) {
+    return type.equals(new ArrType(BaseType.typeChar));
   }
   
   @Override
@@ -480,8 +486,11 @@ public class IntermediateCodeGeneration implements
     else if (valueExpr.getType().equals(BaseType.typeChar)) {
       String charValue = valueExpr.getString();
       Register reg = registers.getGeneralRegister();
-      charValue = removeEscapeSlash(charValue);
-      ImmediateValue val = new ImmediateValue(charValue);
+      
+      String c = removeEscapeSlash(charValue);
+      
+      ImmediateValue val = new ImmediateValue(c);
+
       statementList.add(new Mov(reg, val));
       returnedRegister = reg;
     }
@@ -540,6 +549,8 @@ public class IntermediateCodeGeneration implements
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
           assignStat.getCodePosition());
+      System.out.println(name.getPosition() + " " + 
+          assignStat.getCodePosition() +" " + lhs.getType());
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
@@ -552,6 +563,7 @@ public class IntermediateCodeGeneration implements
       }
       
       if (isByte((Variable) lhs)) {
+        System.out.println("Hey " + lhs.getType() + lhs.getPosition());
         statementList.add(new Str(regRHS, assignAddress, true));
       }
       else {
@@ -559,6 +571,7 @@ public class IntermediateCodeGeneration implements
       }
     }
     else if (lhs instanceof First) {
+      
     }
     else if (lhs instanceof Second) {
       
@@ -595,15 +608,21 @@ public class IntermediateCodeGeneration implements
         codeState.throwArrayBoundError();
         statementList.add(new Add(arrayReg, arrayReg, 
             new ImmediateValue("4")));
-        if (i == expressionList.size() - 1) {
-          statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
-        }
-        else {
+        if (isByte((Expr) rhs) && i == expressionList.size() - 1 
+            || isString(rhs.getType())) {
           statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg));
         }
+        else {
+          statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
+        }
       }
-      
-      statementList.add(new Str(regRHS, new Address(arrayReg)));
+            
+      if (isByte((Expr) rhs)) {
+        statementList.add(new Str(regRHS, new Address(arrayReg), true));
+      }
+      else {
+        statementList.add(new Str(regRHS, new Address(arrayReg)));
+      }
       registers.freeRegister(arrayReg);
       registers.freeRegister(arrayIndexReg);
     }
@@ -622,9 +641,9 @@ public class IntermediateCodeGeneration implements
     return 4;
   }
   
-  private boolean isByte(Variable var) {
-    return var.getType().equals(BaseType.typeBool) || 
-        var.getType().equals(BaseType.typeChar);
+  private boolean isByte(Expr expr) {
+    return expr.getType().equals(BaseType.typeBool) || 
+        expr.getType().equals(BaseType.typeChar);
   }
 
   @Override
@@ -662,34 +681,33 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(FreeStat freeStat) {
-  	Deque<Token> statementList = new LinkedList<Token>();
-		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
-		statementList.add(new BranchLink(new Label("p_free_pair")));
-		// TODO: call codeState to produce the free function.
-		statementList.addAll(freeStat.getItem().accept(this));
-		return statementList;
+    Deque<Token> statementList = new LinkedList<Token>();
+    statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
+    statementList.add(new BranchLink(new Label("p_free_pair") ));
+    statementList.addAll(freeStat.getItem().accept(this));
+    return statementList;
   }
 
   @Override
   public Deque<Token> visit(IfThenElseStat ifStat) {
-  	Deque<Token> statementList = new LinkedList<Token>();
-		Expr condition = ifStat.getCondition();
-		StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
-		statementList.addAll(condition.accept(this));
+    Deque<Token> statementList = new LinkedList<Token>();
+    Expr condition = ifStat.getCondition();
+    StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
+    statementList.addAll(condition.accept(this));
 
-		Label ifBodyLabel = new Label("L" + (labelCounter * 2));
-		Label elseBodyLabel = new Label("L" + (labelCounter * 2 + 1));
+    Label ifBodyLabel = new Label("L" + (labelCounter * 2));
+    Label elseBodyLabel = new Label("L" + (labelCounter * 2 + 1));
 
-		Register reg = returnedRegister;
-		
-		statementList.add(new Cmp(reg, new ImmediateValue("0")));
-		statementList.add(new Branch(Cond.EQ, ifBodyLabel));
-		registers.freeRegister(reg);
-		labelCounter++;
-		
-		// Create space in the stack for the ifBody scope.
-		int scopeOffset = ifStat.getIf().accept(stackVisitor);
-		currStackSize += scopeOffset;
+    Register reg = returnedRegister;
+    
+    statementList.add(new Cmp(reg, new ImmediateValue("0")));
+    statementList.add(new Branch(Cond.EQ, ifBodyLabel));
+    registers.freeRegister(reg);
+    labelCounter++;
+    
+    // Create space in the stack for the ifBody scope.
+    int scopeOffset = ifStat.getIf().accept(stackVisitor);
+    currStackSize += scopeOffset;
     currOffset += scopeOffset;
     extraOffset = scopeOffset;
     subExtraOffset(statementList);
@@ -700,7 +718,7 @@ public class IntermediateCodeGeneration implements
     
     statementList.add(new Branch(elseBodyLabel));
     statementList.add(ifBodyLabel);
-		
+    
     // Create space in the stack for the else scope.
     scopeOffset = ifStat.getElse().accept(stackVisitor);
     currStackSize += scopeOffset;
@@ -711,10 +729,10 @@ public class IntermediateCodeGeneration implements
     addExtraOffset(statementList);
     currOffset -= scopeOffset;
     currStackSize -= scopeOffset;
-		
-		statementList.add(elseBodyLabel);
-		
-  	return statementList;
+    
+    statementList.add(elseBodyLabel);
+    
+    return statementList;
   }
 
   @Override
@@ -739,7 +757,7 @@ public class IntermediateCodeGeneration implements
       Register register, Type type, Boolean isLn) {
     
     // String.
-    if (type.equals(new ArrType(BaseType.typeChar))) {
+    if (isString(type)) {
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_STRING)));
       codeState.usePrintString();
@@ -755,7 +773,6 @@ public class IntermediateCodeGeneration implements
       codeState.usePrintInt();
     }
     else if (type.equals(BaseType.typeChar)) {
-      System.out.print("Hey\n");
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
     }
@@ -856,21 +873,34 @@ public class IntermediateCodeGeneration implements
   }
   
   private String removeEscapeSlash(String charValue) {
-    String copyCharValue = charValue;
-    int len = copyCharValue.length();
-    int slashIndex = -1;
-    for (int i=0; i<copyCharValue.length(); i++) {
-      if (copyCharValue.charAt(i) == '\\') {
-        slashIndex = i;
-        break;
-      }
+    if (charValue.contains("\\0")) {
+      charValue = charValue.replace("\\0", "0");
     }
-    if (slashIndex == -1) {
-      return copyCharValue;
+    else if (charValue.contains("\\b")) {
+      charValue = charValue.replace("\\b", "\b");
     }
-    String front = copyCharValue.substring(0, slashIndex);
-    String back = copyCharValue.substring(slashIndex + 1, len);
-    charValue = front + back;
-    return charValue;
+    else if (charValue.contains("\\n")) {
+      charValue = charValue.replace("\\n", "\n");
+    }
+    else if (charValue.contains("\\f")) {
+      charValue = charValue.replace("\\f", "\f");
+    }
+    else if (charValue.contains("\\r")) {
+      charValue = charValue.replace("\\r", "\r");
+    }
+    else if (charValue.contains("\\\"")) {
+      charValue = charValue.replace("\\\"", "\"");
+    }
+    else if (charValue.contains("\\'")) {
+      charValue = charValue.replace("\\'", "'");
+    }
+    else if (charValue.contains("\\\\")) {
+      charValue = charValue.replace("\\\\", "\\");
+    }
+    else {
+      return charValue;
+    }
+    return "" + charValue.charAt(1);
   }
+
 }
