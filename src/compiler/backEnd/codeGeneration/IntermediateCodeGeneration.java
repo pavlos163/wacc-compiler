@@ -354,14 +354,14 @@ public class IntermediateCodeGeneration implements
       statementList.add(new BranchLink(new Label("malloc")));
       statementList.add(new Str(regExpr, new Address(Register.r0), 
           isByte(expression)));
-      System.out.println(isByte(expression));
+      System.out.println(heapReg);
       int heapValue = 4 * expressionNumber;
       statementList.add(new Str(Register.r0, new Address(heapReg, heapValue)));
+      registers.freeRegister(regExpr);
       expressionNumber++;
     }
     
-    registers.freeRegister(regExpr);
-    returnedRegister = regExpr;
+    returnedRegister = heapReg;
     return statementList;
   }
 
@@ -794,7 +794,7 @@ public class IntermediateCodeGeneration implements
     statementList.addAll(freeStat.getItem().accept(this));
     reg = returnedRegister;
     
-		statementList.add(new Mov(Register.r0, registers.getGeneralRegister()));
+		statementList.add(new Mov(Register.r0, reg));
 		statementList.add(new BranchLink(new Label(codeState.FREE_PAIR) ));
 		
 		codeState.freePair();
