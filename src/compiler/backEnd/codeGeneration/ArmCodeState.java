@@ -35,6 +35,8 @@ public class ArmCodeState {
   public static final String INTEGER_OVERFLOW = "p_throw_overflow_error";
   public static final String RUNTIME_ERROR = "p_throw_runtime_error";
   public static final String DIVIDE_BY_ZERO = "p_check_divide_by_zero";
+  public static final String ARRAY_BOUND = "p_check_array_bounds";
+
   
   private Set<String> usedFunctions = new HashSet<String>();
   private Deque<Token> code = new LinkedList<Token>();
@@ -219,6 +221,35 @@ public class ArmCodeState {
     code.add(new BranchLink(new Label("exit")));
     usePrintString();
     usedFunctions.add(RUNTIME_ERROR);
+  }
+  
+  public void throwArrayBoundError() {
+    String negIndexMessage = 
+        "ArrayIndexOutOfBoundsError: negative index\\n\\0";
+    String largeIndexMessage = 
+        "ArrayIndexOutOfBoundsError: index too large\\n\\0";
+    updateData(negIndexMessage);
+    updateData(largeIndexMessage);
+    if (usedFunctions.contains(ARRAY_BOUND)) {
+      return;
+    }
+    startFunction(ARRAY_BOUND);
+    code.add(new Cmp(Register.r0, new ImmediateValue(0)));
+    ImmediateValue negIndexImm = new ImmediateValue
+        (msgData.get(negIndexMessage));
+    negIndexImm.setPrefix("=");
+    code.add(new Ldr(Cond.LT, Register.r0, negIndexImm));
+    code.add(new BranchLink(Cond.LT, new Label(RUNTIME_ERROR)));
+    code.add(new Ldr(Register.r1, new Address(Register.r1)));
+    code.add(new Cmp(Register.r0, Register.r1));
+    ImmediateValue largeIndexImm = new ImmediateValue
+        (msgData.get(largeIndexMessage));
+    negIndexImm.setPrefix("=");
+    code.add(new Ldr(Cond.CS, Register.r0, largeIndexImm));
+    code.add(new BranchLink(Cond.CS, new Label(RUNTIME_ERROR)));
+    throwRuntimeError();
+    usedFunctions.add(ARRAY_BOUND);
+    endFunction();
   }
  
   public Deque<Token> getData() {
