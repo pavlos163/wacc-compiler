@@ -7,5 +7,5 @@ public interface AssignLHS extends AssignRHS {
   public String getName();
     
   public Type getType();
-    
+      
 }
