@@ -56,6 +56,7 @@ import compiler.frontEnd.statements.WhileStat;
 import compiler.frontEnd.symbolTable.Identifier;
 import compiler.frontEnd.types.ArrType;
 import compiler.frontEnd.types.BaseType;
+import compiler.frontEnd.types.PairType;
 import compiler.frontEnd.types.Type;
 
 public class IntermediateCodeGeneration implements 
@@ -162,20 +163,8 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(ArrayElem arrayElem) {
-    System.out.println("VISITED ELEM!");
-    Deque<Token> statementList = new LinkedList<Token>();
-    
-    Register reg = registers.getGeneralRegister();
-    
-    ImmediateValue offsetValue = new ImmediateValue(currOffset);
-    statementList.add(new Add(reg, Register.sp, offsetValue));
-    
-    List<Expr> expressionList = arrayElem.getExpressions();
-    
-    for (Expr expression : expressionList) {
-      
-    }
-    return statementList;
+    System.out.println("fksjk");
+    return new LinkedList<Token>();
   }
 
   @Override
@@ -217,9 +206,10 @@ public class IntermediateCodeGeneration implements
     ImmediateValue arraySizeValue = new ImmediateValue(arraySize);
     arraySizeValue.setPrefix("=");
     
-    System.out.println(extraReg.toString());
     statementList.add(new Ldr(extraReg, arraySizeValue));
     statementList.add(new Str(extraReg, new Address(reg)));
+    
+    registers.freeRegister(extraReg);
     
     returnedRegister = reg;
     return statementList;
@@ -448,8 +438,13 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(reg, val));
       returnedRegister = reg;
     }
+    else if (valueExpr.getType().equals(new PairType())){
+      
+    }
+    else {
+      System.out.println("HEREEE!");
+    }
     
-    // registers.freeRegister(returnedRegister);
     return statementList;
   }
 
@@ -486,11 +481,26 @@ public class IntermediateCodeGeneration implements
     AssignLHS lhs = assignStat.getLhs();
     Identifier name = null;
 
+    System.out.println("LHS: " + lhs.toString());
+    System.out.println("RHS: " + rhs.toString());
+    
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName());
       if (name.getStackPosition() == -1) {
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset);
+      }
+      Address assignAddress = new Address(Register.sp, currOffset);
+      if (name != null) {
+        int stackPos = name.getStackPosition();
+        assignAddress = new Address(Register.sp, stackPos);
+      }
+      
+      if (isByte((Variable) lhs)) {
+        statementList.add(new Str(regRHS, assignAddress, true));
+      }
+      else {
+        statementList.add(new Str(regRHS, assignAddress));
       }
     }
     else if (lhs instanceof First) {
@@ -501,46 +511,40 @@ public class IntermediateCodeGeneration implements
     }
     else if (lhs instanceof ArrayElem) {
       int typeSize = ((BaseType) lhs.getType()).getSize();
-      Register sizeReg = registers.getGeneralRegister();
-      statementList.add(new Mov(sizeReg, new ImmediateValue(typeSize)));
+      name = ((ArrayElem) lhs).getScope().lookUpAll(lhs.getName());
       
       Register arrayReg = registers.getGeneralRegister();
-      Register extraReg = registers.getGeneralRegister();
-      statementList.add(new Mov(extraReg, arrayReg));
+
+      Register arrayIndexReg = null;
+      if (name.getStackPosition() == -1) {
+        currOffset -= getSize(lhs);
+        name.setStackPosition(currOffset);
+      }
+      ImmediateValue offsetValue = new ImmediateValue(currOffset);
+      statementList.add(new Add(arrayReg, Register.sp, offsetValue));
       
-      Register arrayIndexReg = registers.getGeneralRegister();
       List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
       Expr expr;
       for (int i = 0; i < expressionList.size(); i++) {
+        System.out.println(expressionList.size());
         expr = expressionList.get(i);
         statementList.addAll(expr.accept(this));
-        statementList.add(new Mul(arrayIndexReg, returnedRegister, sizeReg));
-        statementList.add(new Add(arrayIndexReg, new ImmediateValue("4")));
+        arrayIndexReg = returnedRegister;
+        
+        statementList.add(new Ldr(arrayReg, new Address(arrayReg)));
+        statementList.add(new Mov(Register.r0, arrayIndexReg));
+        statementList.add(new Mov(Register.r1, arrayReg));
+        
+        statementList.add(new BranchLink(new Label("p_check_array_bounds")));
+        statementList.add(new Add(arrayReg, arrayReg, new ImmediateValue("4")));
         if (i == expressionList.size() - 1) {
-          Address address = new Address(arrayReg, arrayIndexReg);
-          if (typeSize == 4) {
-            statementList.add(new Str(regRHS, address));
-          }
-          else {
-            statementList.add(new Str(regRHS, address, true));
-          }
+          statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
+        }
+        else {
+          statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg));
         }
       }
-    }
-
-    // regRHS = returnedRegister;
-
-    Address assignAddress = new Address(Register.sp, currOffset);
-    if (name != null) {
-      int stackPos = name.getStackPosition();
-      assignAddress = new Address(Register.sp, stackPos);
-    }
-    
-    if (isByte((Variable) lhs)) {
-      statementList.add(new Str(regRHS, assignAddress, true));
-    }
-    else {
-      statementList.add(new Str(regRHS, assignAddress));
+      registers.freeRegister(arrayIndexReg);
     }
     
     registers.freeRegister(regRHS);
@@ -599,7 +603,6 @@ public class IntermediateCodeGeneration implements
 		Expr condition = ifStat.getCondition();
 		
 		statementList.addAll(condition.accept(this));
-		
 		Register reg = returnedRegister;
 		
 		statementList.add(new Cmp(reg, new ImmediateValue("0")));
@@ -628,6 +631,7 @@ public class IntermediateCodeGeneration implements
 
   @Override
   public Deque<Token> visit(PrintlnStat printlnStat) {
+    System.out.println(printlnStat.getExpr().toString());
     return  visitPrint(printlnStat.getExpr().accept(this), 
         returnedRegister, printlnStat.getExpr().getType(), true);
   }
@@ -713,6 +717,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(StatList statList) {
     Deque<Token> tokens = new LinkedList<Token>();
     for (ASTNode stat: statList.getChildren()) {
+      System.out.println(stat.toString());
       tokens.addAll(stat.accept(this));
     }
     

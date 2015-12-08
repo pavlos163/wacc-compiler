@@ -1,6 +1,7 @@
 package compiler.backEnd.instructions;
 
 import compiler.backEnd.operands.Operand;
+import compiler.backEnd.operands.Register;
 
 public class Add extends Instruction {
  
@@ -23,10 +24,19 @@ public class Add extends Instruction {
     super(destination, primarySource, secondarySource);
   }
   
+  public Add(Register destination, Register primarySource, 
+      Register secondarySource, int offset) {
+    super(destination, primarySource, secondarySource, offset);
+  }
+
   @Override
   public String toString() {
-    return "ADD" + (s?"S":"") + getCond() + getDestination() + ", " + 
+    String str = "ADD" + (s?"S":"") + getCond() + getDestination() + ", " + 
         getPrimarySource() + ", " + getSecondarySource();
+    if (offset != 0) {
+      str += ", LSL #" + offset;
+    }
+    return str;
   }
 
   @Override
