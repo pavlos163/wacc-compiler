@@ -173,15 +173,14 @@ public class IntermediateCodeGeneration implements
     
     Identifier name = arrayElem.getScope().lookUpAll(arrayElem.getName());
     
-    if (name.getStackPosition() != currOffset) {
-      ImmediateValue offsetValue = new ImmediateValue(currOffset);
-      statementList.add(new Add(arrayReg, Register.sp, offsetValue));
-    }
+    ImmediateValue offsetValue = new ImmediateValue(currOffset);
+    statementList.add(new Add(arrayReg, Register.sp, offsetValue));
     
     List<Expr> expressionList = ((ArrayElem) arrayElem).getExpressions();
     Expr expr;
     for (int i = 0; i < expressionList.size(); i++) {
       expr = expressionList.get(i);
+      System.out.println(expr);
       statementList.addAll(expr.accept(this));
       arrayIndexReg = returnedRegister;
       
@@ -191,7 +190,8 @@ public class IntermediateCodeGeneration implements
 
       statementList.add(new BranchLink(new Label(codeState.ARRAY_BOUND)));
       codeState.throwArrayBoundError();
-      statementList.add(new Add(arrayReg, arrayReg, new ImmediateValue("4")));
+      statementList.add(new Add(arrayReg, arrayReg, 
+          new ImmediateValue("4")));
       if (i == expressionList.size() - 1) {
         statementList.add(new Add(arrayReg, arrayReg, arrayIndexReg, 2));
       }
@@ -210,7 +210,7 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(ArrayLiter arrayLiter) {
     Deque<Token> statementList = new LinkedList<Token>();
     System.out.println("HERE!");
-    
+        
     int typeSize;
     if (!arrayLiter.getExpressions().isEmpty()) {
        typeSize = ((BaseType) arrayLiter.getBaseType()).getSize();
@@ -228,10 +228,11 @@ public class IntermediateCodeGeneration implements
 
     Register reg = registers.getGeneralRegister();
     
+    
     statementList.add(new Ldr(Register.r0, literSizeValue));
     statementList.add(new BranchLink(new Label("malloc")));
     statementList.add(new Mov(reg, Register.r0));
-    
+        
     List<Expr> expressionList = arrayLiter.getExpressions();
     Address address;
         
@@ -249,7 +250,7 @@ public class IntermediateCodeGeneration implements
       offset += typeSize;
       registers.freeRegister(returnedRegister);
     }
-        
+            
     if (returnedRegister == null) {
       returnedRegister = registers.getGeneralRegister();
     }
@@ -437,7 +438,7 @@ public class IntermediateCodeGeneration implements
     case "ord":
       // ?
     case "len":
-      // ?
+      statementList.add(new Ldr(regExpr, new Address(regExpr)));
     case "chr":
       // ?
     }
@@ -518,8 +519,6 @@ public class IntermediateCodeGeneration implements
       statementList.add(new Ldr(returnedRegister, 
           new Address(Register.sp, (currStackSize - varName.getStackSize()) + 
               varName.getStackPosition())));
-      statementList.add(new Ldr(returnedRegister,
-          new Address(returnedRegister)));
     }
     
     return statementList;
@@ -537,7 +536,7 @@ public class IntermediateCodeGeneration implements
 
     AssignLHS lhs = assignStat.getLhs();
     Identifier name = null;
-    
+        
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(), 
           assignStat.getCodePosition());
@@ -574,13 +573,14 @@ public class IntermediateCodeGeneration implements
         currOffset -= getSize(lhs);
         name.setStackPosition(currOffset, currStackSize);
       }
-      
+            
       ImmediateValue offsetValue = new ImmediateValue(currOffset);
       statementList.add(new Add(arrayReg, Register.sp, offsetValue));
 
       List<Expr> expressionList = ((ArrayElem) lhs).getExpressions();
       Expr expr;
       
+
       for (int i = 0; i < expressionList.size(); i++) {
         expr = expressionList.get(i);
         statementList.addAll(expr.accept(this));
@@ -591,6 +591,7 @@ public class IntermediateCodeGeneration implements
         statementList.add(new Mov(Register.r1, arrayReg));
 
         statementList.add(new BranchLink(new Label(codeState.ARRAY_BOUND)));
+
         codeState.throwArrayBoundError();
         statementList.add(new Add(arrayReg, arrayReg, 
             new ImmediateValue("4")));
@@ -603,8 +604,6 @@ public class IntermediateCodeGeneration implements
       }
       
       statementList.add(new Str(regRHS, new Address(arrayReg)));
-      statementList.add(new Add(regRHS, Register.sp, 
-          new ImmediateValue(currOffset)));
       registers.freeRegister(arrayReg);
       registers.freeRegister(arrayIndexReg);
     }
@@ -758,6 +757,11 @@ public class IntermediateCodeGeneration implements
       System.out.print("Hey\n");
       tokens.add(new Mov(Register.r0, register));
       tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_CHAR)));
+    }
+    else {
+      tokens.add(new Mov(Register.r0, register));
+      tokens.add(new BranchLink(new Label(ArmCodeState.PRINT_REF)));
+      codeState.usePrintRef();
     }
     
     if (isLn) {
