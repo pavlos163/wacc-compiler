@@ -604,7 +604,6 @@ public class IntermediateCodeGeneration implements
   public Deque<Token> visit(AssignStat assignStat) {
     Deque<Token> statementList = new LinkedList<Token>();
     
-    // For now (if we suppose all LHS to be just variables).
     AssignRHS rhs = assignStat.getRhs();
 
     statementList.addAll(rhs.accept(this));
@@ -639,9 +638,20 @@ public class IntermediateCodeGeneration implements
       }
     }
     else if (lhs instanceof First) {
+      First fst = (First) assignStat.getLhs();
+      Register reg = registers.getGeneralRegister();
       
+      statementList.add(new Mov(Register.r0, reg));
+      statementList.add(new BranchLink(new Label("p_check_null_pointer")));
+      statementList.add(new Str(regRHS, new Address(reg)));
     }
     else if (lhs instanceof Second) {
+      Second snd = (Second) assignStat.getLhs();
+      Register reg = registers.getGeneralRegister();
+      
+      statementList.add(new Mov(Register.r0, reg));
+      statementList.add(new BranchLink(new Label("p_check_null_pointer")));
+      statementList.add(new Str(regRHS, new Address(reg, 4)));
       
     }
     else if (lhs instanceof ArrayElem) {

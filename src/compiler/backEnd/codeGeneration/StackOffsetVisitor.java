@@ -12,6 +12,7 @@ import compiler.frontEnd.expressions.BinaryOperExpr;
 import compiler.frontEnd.expressions.UnaryOperExpr;
 import compiler.frontEnd.expressions.ValueExpr;
 import compiler.frontEnd.literals.ArrayLiter;
+import compiler.frontEnd.literals.PairLiter;
 import compiler.frontEnd.statements.AssignStat;
 import compiler.frontEnd.statements.BeginEndStat;
 import compiler.frontEnd.statements.ExitStat;
@@ -102,11 +103,17 @@ public class StackOffsetVisitor implements AbstractSyntaxTreeVisitor<Integer> {
   @Override
   public Integer visit(AssignStat assignStat) {
     AssignLHS lhs = assignStat.getLhs();
-    
-    Identifier name;
+    Identifier name = null;
+    System.out.println(lhs);
     if (lhs instanceof Variable) {
       name = ((Variable) lhs).getScope().lookUpAll(lhs.getName(),
           assignStat.getCodePosition());
+    }
+    else if (lhs instanceof First) {
+      
+    }
+    else if (lhs instanceof Second) {
+
     }
     else {
       name = ((ArrayElem) lhs).getScope().lookUpAll(lhs.getName(), 
