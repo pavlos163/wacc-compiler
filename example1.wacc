@@ -1,6 +1,8 @@
 begin
-int x = 1;
-int y = 2;
-int z = 3;
-int v = 4
+ int y = 1;
+  print "y is ";
+  println y;
+  int x = 5;
+  print "y is still ";
+  println y
 end

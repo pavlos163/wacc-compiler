@@ -182,6 +182,11 @@ public class IntermediateCodeGeneration implements
   @Override
   public Deque<Token> visit(Function func) {
     Deque<Token> tokens = new LinkedList<Token>();
+    
+    // First visit the parameters.
+    visitParameters(func.getParameters());
+    
+    // Visit the body of the function.
     StackOffsetVisitor stackVisitor = new StackOffsetVisitor();
     int funcOffset = func.getStatements().accept(stackVisitor);
     stackOffset += funcOffset;
@@ -192,12 +197,12 @@ public class IntermediateCodeGeneration implements
     tokens.add(new Push(Register.lr));
     tokens.add(new Sub(Register.sp, Register.sp, 
         new ImmediateValue(funcOffset)));
-    // Visit parameters first. Do something there.
-    visitParameters(func.getParameters());
+    
     tokens.addAll(func.getStatements().accept(this));
     tokens.add(new Add(Register.sp, Register.sp, 
         new ImmediateValue(funcOffset)));
     stackOffset -= funcOffset;
+    currOffset = stackOffset;
     
     tokens.add(new Pop(Register.pc));
     tokens.add(new AssemblerDirective(".ltorg"));
@@ -205,7 +210,6 @@ public class IntermediateCodeGeneration implements
   }
   
   public void visitParameters(List<Param> parameters) {
-    // We need to calculate the offsets for the parameters.
     
     int paramOffset = 0;
     for (Param param : parameters) {
@@ -768,6 +772,12 @@ public class IntermediateCodeGeneration implements
       
       if (name != null) {
         int stackPos = name.getStackPosition();
+        System.out.println("Current Stack size: " + currStackSize);
+        System.out.println("Stack size at his scope: " + name.getStackSize());
+        System.out.println("Name of the variable: " + lhs.getName() + 
+            " Position: " + name.getStackPosition());
+        System.out.println(currStackSize - name.getStackSize() 
+            + name.getStackSize());
         assignAddress = new Address(Register.sp, (currStackSize -
             name.getStackSize()) + stackPos);
       }

@@ -1,4 +1,18 @@
 begin
-int y = 16;
-int x = (1 + ( 2 + ( 3 + ( 4 + ( 5 + ( 6 + ( 7 + ( 8 + ( 9 + ( 10 + ( 11 + ( 12 + ( 13 + ( 14 + ( 15 + y) ) ) ) ) ) ) ) ) ) ) ) ) ) )
+
+  int f(int paok) is
+    print "x is ";
+    println paok;
+    paok = 5;
+    print "x is now ";
+    println paok;
+    return paok
+  end
+
+  int y = 1;
+  print "y is ";
+  println y;
+  int x = call f(y);
+  print "y is still ";
+  println y
 end

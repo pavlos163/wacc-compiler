@@ -35,6 +35,7 @@ public class Identifier {
   public void setStackPosition(int newPosition, int stackSize) {
     stackPosition = newPosition;
     this.stackSize = stackSize;
+    isDeclaration = false;
   }
   
   public boolean isDeclaration() {
