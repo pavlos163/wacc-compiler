@@ -161,7 +161,7 @@ public class IntermediateCodeGeneration implements
     }
   }
   
-  // Those two methods manipulate the offset if it is more than 1024. Instead 
+  // Those two methods manipulate the offset if it is more than 1024. Instead
   // of subbing and adding normally from the stack pointer at the start and end
   // of the program, it divides the offset into more additions/subtractions.
   
@@ -369,17 +369,19 @@ public class IntermediateCodeGeneration implements
     for (Expr expr : argList) {
       tokens.addAll(expr.accept(this));
       Register reg = returnedRegister;
-      if (expr.getType().equals(BaseType.typeInt) || expr.getType().equals(new ArrType(null))
+      if (expr.getType().equals(BaseType.typeInt) || 
+          expr.getType().equals(new ArrType(null))
           || expr.getType().equals(new PairType())) {
         argOffSet = -4;
+        tokens.add(new Str(reg, new Address(Register.sp, argOffSet)));
         argSize += 4;
       }
       if (expr.getType().equals(BaseType.typeBool) || 
           expr.getType().equals(BaseType.typeChar)) {
         argOffSet = -1;
+        tokens.add(new Str(reg, new Address(Register.sp, argOffSet), true));
         argSize++;
       }
-      tokens.add(new Str(reg, new Address(Register.sp, argOffSet)));
       registers.freeRegister(reg);
     }
     return tokens;
