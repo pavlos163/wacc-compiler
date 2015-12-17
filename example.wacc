@@ -8,11 +8,16 @@ begin
     println paok;
     return paok
   end
+  
+  int f(int paok, int ok) is 
+    print "Function overloading works";
+    return 1
+  end
 
   int y = 1;
   print "y is ";
   println y;
-  int x = call fx(y);
+  int x = call f(y);
   print "y is still ";
   println y
 end

@@ -772,12 +772,6 @@ public class IntermediateCodeGeneration implements
       
       if (name != null) {
         int stackPos = name.getStackPosition();
-        System.out.println("Current Stack size: " + currStackSize);
-        System.out.println("Stack size at his scope: " + name.getStackSize());
-        System.out.println("Name of the variable: " + lhs.getName() + 
-            " Position: " + name.getStackPosition());
-        System.out.println(currStackSize - name.getStackSize() 
-            + name.getStackSize());
         assignAddress = new Address(Register.sp, (currStackSize -
             name.getStackSize()) + stackPos);
       }

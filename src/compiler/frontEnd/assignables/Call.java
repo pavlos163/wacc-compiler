@@ -83,7 +83,13 @@ public class Call implements AssignRHS {
   }
   
   private String getParamStr() {
-    return "";
+    String ret = "";
+    
+    for (Expr expr : argList.getArguments()) {
+      ret += expr.getType().toString().charAt(0);
+    }
+    
+    return ret;
   }
 
   private FunctionIdentifier giveIdentifier() {
