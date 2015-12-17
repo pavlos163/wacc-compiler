@@ -81,10 +81,20 @@ public class Call implements AssignRHS {
     }
     return false;
   }
+  
+  private String getParamStr() {
+    return "";
+  }
 
   private FunctionIdentifier giveIdentifier() {
+    String nameWithTypes = name + getParamStr();
+    
+    if (functions.lookUpAll(nameWithTypes) == null) {
+      throw new SemanticException("At: " + codePos + " undeclared "
+          + "function error: " + name);
+    }
     FunctionIdentifier fIdent = 
-        (FunctionIdentifier) functions.lookUpAll(name);
+        (FunctionIdentifier) functions.lookUpAll(nameWithTypes);
     return fIdent;
   }
   

@@ -374,7 +374,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       parameters = visitParamList(ctx.paramList()).getParameters();
     }
     Type returnType = visitType(ctx.type());
-    currFunc = ctx.IDENT().getText();
+    currFunc = ctx.IDENT().getText() + getParamStr(parameters);
     functionHasReturn = false;
     
     for (Param param: parameters) {
@@ -524,12 +524,17 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     if (ctx.paramList() != null) {
       parameters = visitParamList(ctx.paramList()).getParameters();
     }
+    
     Type returnType = visitType(ctx.type());
     currFunc = ctx.IDENT().getText();
     
     for (Param param: parameters) {
       typeOfParameters.add(param.getType());
     }
+    
+    // Somehow retrieve a unique string depending on the type of the parameters.
+    
+    String typeString = getParamStr(parameters);
     
     if (functions.lookUpAll(currFunc) != null) {
       throw new SemanticException("At: " + codePos + " function "
@@ -540,6 +545,10 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
         codePos));
     
     currFunc = null;
+  }
+  
+  private String getParamStr(List<Param> parameters) {
+    return "";
   }
 
   
