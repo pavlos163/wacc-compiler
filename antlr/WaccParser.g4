@@ -23,6 +23,7 @@ stat:
 | PRINT expr                     # printStat
 | PRINTLN expr                   # printlnStat
 | IF expr THEN stat ELSE stat FI #ifThenElseStat
+| IF expr THEN stat FI 			 # ifStat
 | WHILE expr DO stat DONE        # WhileStat
 | BEGIN stat END                 # BeginStat   
 | stat SEMICOLON stat            # statList

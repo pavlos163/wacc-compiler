@@ -29,6 +29,7 @@ import antlr.WaccParser.ExprContext;
 import antlr.WaccParser.FreeStatContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IdentExprContext;
+import antlr.WaccParser.IfStatContext;
 import antlr.WaccParser.IfThenElseStatContext;
 import antlr.WaccParser.IntLiterContext;
 import antlr.WaccParser.IntLiterExprContext;
@@ -640,6 +641,18 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
         functionHasReturn = initialReturn;
       }
     }
+    Expr condition = visitExpr(ctx.expr());
+    return new IfThenElseStat(condition, ifBody, elseBody, codePos);
+  }
+  
+  @Override
+  public ReturnableType visitIfStat(IfStatContext ctx) {
+    CodePosition codePos = initialisePosition(ctx);
+    scope = scope.newScope();
+    Stat ifBody = visitStat(ctx.stat());
+    scope = scope.getParentScope();
+    // Simply skip the else statement since it doesn't exist.
+    Stat elseBody = new SkipStat(codePos);
     Expr condition = visitExpr(ctx.expr());
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }

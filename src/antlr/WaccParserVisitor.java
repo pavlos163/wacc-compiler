@@ -246,6 +246,13 @@ public interface WaccParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(@NotNull WaccParser.ProgramContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ifStat}
+	 * labeled alternative in {@link WaccParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStat(@NotNull WaccParser.IfStatContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link WaccParser#pairType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
