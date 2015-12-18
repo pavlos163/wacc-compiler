@@ -123,7 +123,7 @@ public class Call implements AssignRHS {
   }
   
   public String getName() {
-    return name;
+    return name + getParamStr();
   }
   
   @Override
