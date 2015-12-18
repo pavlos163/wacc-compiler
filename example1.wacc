@@ -1,6 +1,6 @@
 begin
  int y = 1;
-  if y == 1 then
+  if true then
     y = y + 1
   fi
 end

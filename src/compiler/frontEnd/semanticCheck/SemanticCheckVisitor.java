@@ -273,6 +273,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BoolLiter visitBoolLiter(BoolLiterContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
+    System.out.print("Bool liter\n");
     if (ctx.TRUE() != null) {
       return new BoolLiter("true", codePos);
     }
@@ -622,7 +623,7 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
 
   @Override
-  public IfThenElseStat visitIfThenElseStat(IfThenElseStatContext ctx) {
+  public Stat visitIfThenElseStat(IfThenElseStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     scope = scope.newScope();
     boolean initialReturn = functionHasReturn;
@@ -642,6 +643,21 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
       }
     }
     Expr condition = visitExpr(ctx.expr());
+    
+    // Control flow optimization.
+    if (condition instanceof ValueExpr) {
+      ValueExpr val = (ValueExpr) condition;
+      if (val.getLiter() instanceof BoolLiter) {
+        BoolLiter bool = (BoolLiter) val.getLiter();
+        if (bool.getValue() == 1) {
+          return ifBody;
+        }
+        else {
+          return elseBody;
+        }
+      }
+    }
+    
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }
   
@@ -654,6 +670,21 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
     // Simply skip the else statement since it doesn't exist.
     Stat elseBody = new SkipStat(codePos);
     Expr condition = visitExpr(ctx.expr());
+    
+    // Control flow optimization.
+    if (condition instanceof ValueExpr) {
+      ValueExpr val = (ValueExpr) condition;
+      if (val.getLiter() instanceof BoolLiter) {
+        BoolLiter bool = (BoolLiter) val.getLiter();
+        if (bool.getValue() == 1) {
+          return ifBody;
+        }
+        else {
+          return elseBody;
+        }
+      }
+    }
+    
     return new IfThenElseStat(condition, ifBody, elseBody, codePos);
   }
 
