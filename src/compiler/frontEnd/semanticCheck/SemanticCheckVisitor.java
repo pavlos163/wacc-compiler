@@ -760,11 +760,23 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   }
   
   @Override
-  public WhileStat visitWhileStat(WhileStatContext ctx) {
+  public Stat visitWhileStat(WhileStatContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
     scope = scope.newScope();
     
     Expr condition = visitExpr(ctx.expr());
+    
+    // Control flow optimization
+    if (condition instanceof ValueExpr) {
+      ValueExpr val = (ValueExpr) condition;
+      if (val.getLiter() instanceof BoolLiter) {
+        BoolLiter bool = (BoolLiter) val.getLiter();
+        if (bool.getValue() == 0) {
+          return new SkipStat(codePos);
+        }
+      }
+    }
+    
     Stat whileBody = visitStat(ctx.stat());
     
     scope = scope.getParentScope();
