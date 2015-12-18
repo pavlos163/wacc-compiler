@@ -1,0 +1,6 @@
+begin
+if true then
+skip
+else
+skip
+end

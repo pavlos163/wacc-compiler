@@ -273,7 +273,6 @@ public class SemanticCheckVisitor implements WaccParserVisitor<ReturnableType> {
   @Override
   public BoolLiter visitBoolLiter(BoolLiterContext ctx) {
     CodePosition codePos = initialisePosition(ctx);
-    System.out.print("Bool liter\n");
     if (ctx.TRUE() != null) {
       return new BoolLiter("true", codePos);
     }
