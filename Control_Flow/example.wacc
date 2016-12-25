@@ -1,6 +1,0 @@
-begin
-while false do
-int y = 1;
-y = y + 1
-done
-end

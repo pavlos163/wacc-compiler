@@ -1,6 +1,0 @@
-begin
- int y = 1;
-  if true then
-    y = y + 1
-  fi
-end
